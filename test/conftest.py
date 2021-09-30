@@ -1,15 +1,48 @@
 import pytest
+import tempfile
+
 from pytest_postgresql import factories
 from pathlib import Path
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 test_folder = Path(__file__).parent
-postgresql_session = factories.postgresql_proc(host='127.0.0.1', port=9876, user='gisfireuser')
+socket_dir = tempfile.TemporaryDirectory()
+postgresql_session = factories.postgresql_proc(port=None, unixsocketdir=socket_dir.name)
 postgresql_schema = factories.postgresql('postgresql_proc', dbname='test', load=[
-    'database_init.sql',
+    str(test_folder) + '/database_init.sql',
     str(test_folder.parent) + '/database/meteocat_xdde.sql',
-    str(test_folder.parent) + '/database/meteocat_xema.sql',
-    str(test_folder.parent) + '/database/meteocat_ref.sql',
-    'database_populate.sql'])
+    str(test_folder.parent) + '/database/meteocat_xema.sql'])
+
+
+@pytest.fixture(scope='function')
+def db_engine(postgresql_schema):
+    """yields a SQLAlchemy engine which is suppressed after the test session"""
+    def db_creator():
+        return postgresql_schema
+
+    engine_ =  create_engine('postgresql+psycopg2://', creator=db_creator)
+
+    yield engine_
+
+    engine_.dispose()
+
+
+@pytest.fixture(scope='function')
+def db_session_factory(db_engine):
+    """returns a SQLAlchemy scoped session factory"""
+    return scoped_session(sessionmaker(bind=db_engine))
+
+
+@pytest.fixture(scope='function')
+def db_session(db_session_factory):
+    """yields a SQLAlchemy connection which is rollbacked after the test"""
+    session_ = db_session_factory()
+
+    yield session_
+
+    session_.rollback()
+    session_.close()
 
 
 @pytest.fixture(scope='session')
