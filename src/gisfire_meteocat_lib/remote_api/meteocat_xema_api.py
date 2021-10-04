@@ -1,6 +1,6 @@
 import requests
 
-from remote_api import meteocat_urls
+from gisfire_meteocat_lib.remote_api import meteocat_urls
 
 TIMEOUT = 5
 RETRIES = 3

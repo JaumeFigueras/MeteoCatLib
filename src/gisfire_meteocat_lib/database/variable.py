@@ -1,4 +1,4 @@
-from database import db
+from gisfire_meteocat_lib.database import db
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String

@@ -11,8 +11,8 @@ socket_dir = tempfile.TemporaryDirectory()
 postgresql_session = factories.postgresql_proc(port=None, unixsocketdir=socket_dir.name)
 postgresql_schema = factories.postgresql('postgresql_proc', dbname='test', load=[
     str(test_folder) + '/database_init.sql',
-    str(test_folder.parent) + '/database/meteocat_xdde.sql',
-    str(test_folder.parent) + '/database/meteocat_xema.sql'])
+    str(test_folder.parent) + '/src/gisfire_meteocat_lib/database/meteocat_xdde.sql',
+    str(test_folder.parent) + '/src/gisfire_meteocat_lib/database/meteocat_xema.sql'])
 
 
 @pytest.fixture(scope='function')
@@ -21,7 +21,7 @@ def db_engine(postgresql_schema):
     def db_creator():
         return postgresql_schema
 
-    engine_ =  create_engine('postgresql+psycopg2://', creator=db_creator)
+    engine_ = create_engine('postgresql+psycopg2://', creator=db_creator)
 
     yield engine_
 

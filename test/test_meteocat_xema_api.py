@@ -1,4 +1,3 @@
-import requests_mock
 import requests
 import os
 import sys
@@ -7,8 +6,8 @@ import inspect
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
-from remote_api import meteocat_xema_api
-from remote_api import meteocat_urls
+from src.gisfire_meteocat_lib.remote_api import meteocat_xema_api
+from src.gisfire_meteocat_lib.remote_api import meteocat_urls
 
 
 def test_metadata_variables_01(requests_mock, meteocat_invalid_token):
@@ -87,7 +86,8 @@ def test_metadata_variables_06(requests_mock, meteocat_variables_multivariate_me
     :param meteocat_variables_multivariate_metadata: Fixture that simulates the return data from a real request obtained
     from MeteoCat API
     """
-    requests_mock.get(meteocat_urls.MULTI_VARIABLES_METADATA, json=meteocat_variables_multivariate_metadata, status_code=200)
+    requests_mock.get(meteocat_urls.MULTI_VARIABLES_METADATA, json=meteocat_variables_multivariate_metadata,
+                      status_code=200)
     result = meteocat_xema_api.get_variables_multivariate_metadata('2406')
     assert result == meteocat_variables_multivariate_metadata
 
@@ -128,6 +128,7 @@ def test_metadata_variables_09(requests_mock, meteocat_variables_auxiliary_metad
     :param meteocat_variables_auxiliary_metadata: Fixture that simulates the return data from a real request obtained
     from MeteoCat API
     """
-    requests_mock.get(meteocat_urls.AUXILIARY_VARIABLES_METADATA, json=meteocat_variables_auxiliary_metadata, status_code=200)
+    requests_mock.get(meteocat_urls.AUXILIARY_VARIABLES_METADATA, json=meteocat_variables_auxiliary_metadata,
+                      status_code=200)
     result = meteocat_xema_api.get_variables_auxiliary_metadata('2406')
     assert result == meteocat_variables_auxiliary_metadata
