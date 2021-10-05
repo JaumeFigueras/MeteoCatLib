@@ -1,13 +1,7 @@
 import requests
-import os
-import sys
-import inspect
-
-current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parent_dir = os.path.dirname(current_dir)
-sys.path.insert(0, parent_dir)
 from src.gisfire_meteocat_lib.remote_api import meteocat_xema_api
 from src.gisfire_meteocat_lib.remote_api import meteocat_urls
+from src.gisfire_meteocat_lib.remote_api import meteocat_api
 
 
 def test_metadata_variables_01(requests_mock, meteocat_invalid_token):
@@ -29,12 +23,12 @@ def test_metadata_variables_02(requests_mock):
     :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
     """
     # Set small timeout time to save testing execution time
-    meteocat_xema_api.TIMEOUT = 0.1
+    meteocat_api.TIMEOUT = 0.1
     requests_mock.get(meteocat_urls.VARIABLES_METADATA, exc=requests.exceptions.ConnectTimeout)
     result = meteocat_xema_api.get_variables_measured_metadata('2406')
     assert result is None
     # Return to previous state
-    meteocat_xema_api.TIMEOUT = 5
+    meteocat_api.TIMEOUT = 5
 
 
 def test_metadata_variables_03(requests_mock, meteocat_variables_measured_metadata):
@@ -69,13 +63,13 @@ def test_metadata_variables_05(requests_mock):
     :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
     """
     # Set small timeout time to save testing execution time
-    meteocat_xema_api.TIMEOUT = 0.1
+    meteocat_api.TIMEOUT = 0.1
     requests_mock.get(meteocat_urls.MULTI_VARIABLES_METADATA, exc=requests.exceptions.ConnectTimeout)
     result = meteocat_xema_api.get_variables_multivariate_metadata('2406')
     assert result is None
     # Return to previous state
     requests_mock.exc = None
-    meteocat_xema_api.TIMEOUT = 5
+    meteocat_api.TIMEOUT = 5
 
 
 def test_metadata_variables_06(requests_mock, meteocat_variables_multivariate_metadata):
@@ -111,13 +105,13 @@ def test_metadata_variables_08(requests_mock):
     :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
     """
     # Set small timeout time to save testing execution time
-    meteocat_xema_api.TIMEOUT = 0.1
+    meteocat_api.TIMEOUT = 0.1
     requests_mock.get(meteocat_urls.AUXILIARY_VARIABLES_METADATA, exc=requests.exceptions.ConnectTimeout)
     result = meteocat_xema_api.get_variables_auxiliary_metadata('2406')
     assert result is None
     # Return to previous state
     requests_mock.exc = None
-    meteocat_xema_api.TIMEOUT = 5
+    meteocat_api.TIMEOUT = 5
 
 
 def test_metadata_variables_09(requests_mock, meteocat_variables_auxiliary_metadata):
