@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import requests
 from src.gisfire_meteocat_lib.remote_api import meteocat_xema_api
 from src.gisfire_meteocat_lib.remote_api import meteocat_urls
