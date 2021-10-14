@@ -18,7 +18,7 @@ SRID_WEATHER_STATIONS = 4258
 class WeatherStationStatus(db.Base):
     __tablename__ = 'meteocat_weather_stations_status'
     id = Column(Integer, primary_key=True)
-    _codi = Column(String, nullable=False)
+    _codi = Column(Integer, nullable=False)
     _data_inici = Column(DateTime(timezone=True), nullable=False)
     _data_fi = Column(DateTime(timezone=True))
     meteocat_weather_stations_id = Column(Integer, ForeignKey('meteocat_weather_stations.id'))
