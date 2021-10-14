@@ -166,6 +166,6 @@ def test_metadata_stations_03(requests_mock, meteocat_stations_metadata):
     :param meteocat_stations_metadata: Fixture that simulates the return data from a real request obtained from MeteoCat
     API
     """
-    requests_mock.get(meteocat_urls.VARIABLES_METADATA, json=meteocat_stations_metadata, status_code=200)
-    result = meteocat_xema_api.get_variables_measured_metadata('2406')
+    requests_mock.get(meteocat_urls.WEATHER_STATIONS, json=meteocat_stations_metadata, status_code=200)
+    result = meteocat_xema_api.get_weather_stations('2406')
     assert result == meteocat_stations_metadata

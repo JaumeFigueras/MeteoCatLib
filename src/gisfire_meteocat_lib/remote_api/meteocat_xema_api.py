@@ -50,4 +50,4 @@ def get_weather_stations(api_token):
     :return: JSON metadata obtained from the API
     :rtype: list of dict or None. Data contained in dicts can be retrieved from:
     """
-    return meteocat_api.get_from_api(api_token, meteocat_urls.AUXILIARY_VARIABLES_METADATA)
+    return meteocat_api.get_from_api(api_token, meteocat_urls.WEATHER_STATIONS)
