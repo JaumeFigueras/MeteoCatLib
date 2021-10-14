@@ -1,4 +1,5 @@
 import pytest
+import json
 
 
 @pytest.fixture(scope='session')
@@ -714,3 +715,1093 @@ def meteocat_variables_auxiliary_metadata():
           }
         ]
 
+
+@pytest.fixture(scope='session')
+def meteocat_stations_metadata():
+    return json.loads(""" [
+          {
+            "codi": "AN",
+            "nom": "Barcelona - Av. Lluís Companys",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.39004,
+              "longitud": 2.18091
+            },
+            "emplacament": "Av. Lluís Companys (Ciutadella)",
+            "altitud": 7.5,
+            "municipi": {
+              "codi": "080193",
+              "nom": "Barcelona"
+            },
+            "comarca": {
+              "codi": 13,
+              "nom": "Barcelonès"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1992-05-11T15:30Z",
+                "dataFi": "2002-10-29T05:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2002-10-29T05:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CA",
+            "nom": "Clariana de Cardener",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.95378,
+              "longitud": 1.5851
+            },
+            "emplacament": "Abocador comarcal",
+            "altitud": 693,
+            "municipi": {
+              "codi": "250753",
+              "nom": "Clariana de Cardener"
+            },
+            "comarca": {
+              "codi": 35,
+              "nom": "Solsonès"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-05-02T09:00Z",
+                "dataFi": "2012-07-10T13:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2012-07-10T13:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CB",
+            "nom": "les Llosses",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.15085,
+              "longitud": 2.19914
+            },
+            "emplacament": "Abocador comarcal",
+            "altitud": 700,
+            "municipi": {
+              "codi": "170963",
+              "nom": "Les Llosses"
+            },
+            "comarca": {
+              "codi": 31,
+              "nom": "Ripollès"
+            },
+            "provincia": {
+              "codi": 17,
+              "nom": "Girona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-30T15:00Z",
+                "dataFi": "2003-06-02T08:30Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2003-06-02T08:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CC",
+            "nom": "Orís",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.07398,
+              "longitud": 2.20862
+            },
+            "emplacament": "Abocador comarcal",
+            "altitud": 626,
+            "municipi": {
+              "codi": "081509",
+              "nom": "Orís"
+            },
+            "comarca": {
+              "codi": 24,
+              "nom": "Osona"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CD",
+            "nom": "la Seu d'Urgell - Bellestar",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.37083,
+              "longitud": 1.43277
+            },
+            "emplacament": "Abocador comarcal",
+            "altitud": 849,
+            "municipi": {
+              "codi": "252038",
+              "nom": "La Seu d'Urgell"
+            },
+            "comarca": {
+              "codi": 4,
+              "nom": "Alt Urgell"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-01-16T12:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CE",
+            "nom": "els Hostalets de Pierola",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.53109,
+              "longitud": 1.80813
+            },
+            "emplacament": "Abocador de residus",
+            "altitud": 316,
+            "municipi": {
+              "codi": "081629",
+              "nom": "Els Hostalets de Pierola"
+            },
+            "comarca": {
+              "codi": 6,
+              "nom": "Anoia"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-03-31T23:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CF",
+            "nom": "Lloret de Mar",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.72346,
+              "longitud": 2.84282
+            },
+            "emplacament": "Abocador municipal",
+            "altitud": 63.3,
+            "municipi": {
+              "codi": "170950",
+              "nom": "Lloret de Mar"
+            },
+            "comarca": {
+              "codi": 34,
+              "nom": "Selva"
+            },
+            "provincia": {
+              "codi": 17,
+              "nom": "Girona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-02-05T12:00Z",
+                "dataFi": "2003-06-16T09:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2003-06-16T09:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CG",
+            "nom": "Molló - Fabert",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.37717,
+              "longitud": 2.41456
+            },
+            "emplacament": "Veïnat de Fabert",
+            "altitud": 1405,
+            "municipi": {
+              "codi": "171077",
+              "nom": "Molló"
+            },
+            "comarca": {
+              "codi": 31,
+              "nom": "Ripollès"
+            },
+            "provincia": {
+              "codi": 17,
+              "nom": "Girona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-06-06T14:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CH",
+            "nom": "Falset - Escola",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.15076,
+              "longitud": 0.82357
+            },
+            "emplacament": "Col·legi Públic Antoni Vilanova",
+            "altitud": 350,
+            "municipi": {
+              "codi": "430555",
+              "nom": "Falset"
+            },
+            "comarca": {
+              "codi": 29,
+              "nom": "Priorat"
+            },
+            "provincia": {
+              "codi": 43,
+              "nom": "Tarragona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-12-01T02:00Z",
+                "dataFi": "2005-07-05T16:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2005-07-05T16:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CI",
+            "nom": "Sant Pau de Segúries",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.25839,
+              "longitud": 2.36429
+            },
+            "emplacament": "Estació meteorològica municipal",
+            "altitud": 852,
+            "municipi": {
+              "codi": "171772",
+              "nom": "Sant Pau de Segúries"
+            },
+            "comarca": {
+              "codi": 31,
+              "nom": "Ripollès"
+            },
+            "provincia": {
+              "codi": 17,
+              "nom": "Girona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-24T15:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CJ",
+            "nom": "Organyà",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.21624,
+              "longitud": 1.33132
+            },
+            "emplacament": "Càmping municipal",
+            "altitud": 566.5,
+            "municipi": {
+              "codi": "251556",
+              "nom": "Organyà"
+            },
+            "comarca": {
+              "codi": 4,
+              "nom": "Alt Urgell"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-01-16T10:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CK",
+            "nom": "Santa Coloma de Farners",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.86472,
+              "longitud": 2.66451
+            },
+            "emplacament": "Dipòsit d'aigua",
+            "altitud": 163,
+            "municipi": {
+              "codi": "171805",
+              "nom": "Santa Coloma de Farners"
+            },
+            "comarca": {
+              "codi": 34,
+              "nom": "Selva"
+            },
+            "provincia": {
+              "codi": 17,
+              "nom": "Girona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-02-05T17:30Z",
+                "dataFi": "2004-06-08T09:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2004-06-08T09:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CL",
+            "nom": "Sant Salvador de Guardiola",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.67399,
+              "longitud": 1.76796
+            },
+            "emplacament": "Urbanització Miralda",
+            "altitud": 349,
+            "municipi": {
+              "codi": "080983",
+              "nom": "Sant Salvador de Guardiola"
+            },
+            "comarca": {
+              "codi": 7,
+              "nom": "Bages"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-02-02T11:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CM",
+            "nom": "Montmeló",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.54911,
+              "longitud": 2.24546
+            },
+            "emplacament": "Torreta de Can Campanyà",
+            "altitud": 75.2,
+            "municipi": {
+              "codi": "081350",
+              "nom": "Montmeló"
+            },
+            "comarca": {
+              "codi": 41,
+              "nom": "Vallès Oriental"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-01-23T19:30Z",
+                "dataFi": "2006-03-22T09:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2006-03-22T09:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CN",
+            "nom": "Guardiola de Berguedà - Escola",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.22903,
+              "longitud": 1.87672
+            },
+            "emplacament": "Centre d'Assistència Primària",
+            "altitud": 719.8,
+            "municipi": {
+              "codi": "080996",
+              "nom": "Guardiola de Berguedà"
+            },
+            "comarca": {
+              "codi": 14,
+              "nom": "Berguedà"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-02-20T11:00Z",
+                "dataFi": "2005-03-21T10:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2005-03-21T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CO",
+            "nom": "Torres de Segre - Depuradora",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.52603,
+              "longitud": 0.52711
+            },
+            "emplacament": "Depuradora municipal",
+            "altitud": 143.6,
+            "municipi": {
+              "codi": "252326",
+              "nom": "Torres de Segre"
+            },
+            "comarca": {
+              "codi": 33,
+              "nom": "Segrià"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-23T17:00Z",
+                "dataFi": "2006-05-25T10:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2006-05-25T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CP",
+            "nom": "Sant Romà d'Abella",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.13924,
+              "longitud": 1.03893
+            },
+            "emplacament": "Sant Romà d'Abella - el Tossal",
+            "altitud": 690,
+            "municipi": {
+              "codi": "251155",
+              "nom": "Isona i Conca Dellà"
+            },
+            "comarca": {
+              "codi": 25,
+              "nom": "Pallars Jussà"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-05-20T14:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CQ",
+            "nom": "Vilanova de Meià",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.99546,
+              "longitud": 1.02569
+            },
+            "emplacament": "Camp de fútbol",
+            "altitud": 594,
+            "municipi": {
+              "codi": "252509",
+              "nom": "Vilanova de Meià"
+            },
+            "comarca": {
+              "codi": 23,
+              "nom": "Noguera"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-04-01T11:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CR",
+            "nom": "la Quar",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.08032,
+              "longitud": 1.9624
+            },
+            "emplacament": "Sant Maurici",
+            "altitud": 873,
+            "municipi": {
+              "codi": "081770",
+              "nom": "La Quar"
+            },
+            "comarca": {
+              "codi": 14,
+              "nom": "Berguedà"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-03-13T11:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CS",
+            "nom": "Viladrau - centre",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.84502,
+              "longitud": 2.3881
+            },
+            "emplacament": "Mas del Torrent",
+            "altitud": 777,
+            "municipi": {
+              "codi": "172207",
+              "nom": "Viladrau"
+            },
+            "comarca": {
+              "codi": 24,
+              "nom": "Osona"
+            },
+            "provincia": {
+              "codi": 17,
+              "nom": "Girona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-12-05T10:30Z",
+                "dataFi": "2004-06-08T14:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2004-06-08T14:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CT",
+            "nom": "el Pont de Suert",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.39811,
+              "longitud": 0.74362
+            },
+            "emplacament": "Depuradora municipal",
+            "altitud": 823,
+            "municipi": {
+              "codi": "251734",
+              "nom": "El Pont de Suert"
+            },
+            "comarca": {
+              "codi": 5,
+              "nom": "Alta Ribagorça"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-02-14T14:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CV",
+            "nom": "la Pobla de Segur - Bombers",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 42.23939,
+              "longitud": 0.96434
+            },
+            "emplacament": "Parc de Bombers",
+            "altitud": 513.3,
+            "municipi": {
+              "codi": "251713",
+              "nom": "La Pobla de Segur"
+            },
+            "comarca": {
+              "codi": 25,
+              "nom": "Pallars Jussà"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-12-22T16:00Z",
+                "dataFi": "2016-11-18T14:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2016-11-18T14:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CW",
+            "nom": "l'Espluga de Francolí",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.39241,
+              "longitud": 1.09894
+            },
+            "emplacament": "Urb. Espluga Parc",
+            "altitud": 446,
+            "municipi": {
+              "codi": "430542",
+              "nom": "L'Espluga de Francolí"
+            },
+            "comarca": {
+              "codi": 16,
+              "nom": "Conca de Barberà"
+            },
+            "provincia": {
+              "codi": 43,
+              "nom": "Tarragona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-02-23T21:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CX",
+            "nom": "Vic - 1",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.93582,
+              "longitud": 2.23857
+            },
+            "emplacament": "Estadi d'atletisme",
+            "altitud": 497.8,
+            "municipi": {
+              "codi": "082981",
+              "nom": "Vic"
+            },
+            "comarca": {
+              "codi": 24,
+              "nom": "Osona"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-01-18T14:30Z",
+                "dataFi": "2003-01-01T00:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2003-01-01T00:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CY",
+            "nom": "Muntanyola",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.87813,
+              "longitud": 2.17873
+            },
+            "emplacament": "Esglèsia de St. Quirze i Sta. Julita",
+            "altitud": 816,
+            "municipi": {
+              "codi": "081290",
+              "nom": "Muntanyola"
+            },
+            "comarca": {
+              "codi": 24,
+              "nom": "Osona"
+            },
+            "provincia": {
+              "codi": 8,
+              "nom": "Barcelona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-01-12T12:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "CZ",
+            "nom": "Ulldemolins - Zona Esportiva",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.3191,
+              "longitud": 0.87868
+            },
+            "emplacament": "Poliesportiu municipal",
+            "altitud": 631,
+            "municipi": {
+              "codi": "431573",
+              "nom": "Ulldemolins"
+            },
+            "comarca": {
+              "codi": 29,
+              "nom": "Priorat"
+            },
+            "provincia": {
+              "codi": 43,
+              "nom": "Tarragona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1996-03-04T10:30Z",
+                "dataFi": "2008-04-15T09:00Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2008-04-15T09:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "C6",
+            "nom": "Castellnou de Seana",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.6566,
+              "longitud": 0.95172
+            },
+            "emplacament": "Abocador comarcal",
+            "altitud": 264,
+            "municipi": {
+              "codi": "250680",
+              "nom": "Castellnou de Seana"
+            },
+            "comarca": {
+              "codi": 27,
+              "nom": "Pla d'Urgell"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-12-16T23:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "C7",
+            "nom": "Tàrrega",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.66695,
+              "longitud": 1.16234
+            },
+            "emplacament": "Abocador comarcal",
+            "altitud": 427,
+            "municipi": {
+              "codi": "252173",
+              "nom": "Tàrrega"
+            },
+            "comarca": {
+              "codi": 38,
+              "nom": "Urgell"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-06T18:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "C8",
+            "nom": "Cervera",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 41.67555,
+              "longitud": 1.29609
+            },
+            "emplacament": "Abocador comarcal",
+            "altitud": 554,
+            "municipi": {
+              "codi": "250729",
+              "nom": "Cervera"
+            },
+            "comarca": {
+              "codi": 32,
+              "nom": "Segarra"
+            },
+            "provincia": {
+              "codi": 25,
+              "nom": "Lleida"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-10-27T10:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": "C9",
+            "nom": "Mas de Barberans",
+            "tipus": "A",
+            "coordenades": {
+              "latitud": 40.71825,
+              "longitud": 0.39988
+            },
+            "emplacament": "Abocador comarcal",
+            "altitud": 240,
+            "municipi": {
+              "codi": "430770",
+              "nom": "Mas de Barberans"
+            },
+            "comarca": {
+              "codi": 22,
+              "nom": "Montsià"
+            },
+            "provincia": {
+              "codi": 43,
+              "nom": "Tarragona"
+            },
+            "xarxa": {
+              "codi": 1,
+              "nom": "XEMA"
+            },
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1997-04-11T11:30Z",
+                "dataFi": null
+              }
+            ]
+          }
+        ]""")

@@ -1,6 +1,4 @@
-import pytest
 import tempfile
-import json
 
 from pytest_postgresql import factories
 from pathlib import Path

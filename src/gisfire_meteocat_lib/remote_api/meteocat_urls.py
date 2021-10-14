@@ -6,3 +6,4 @@ MULTI_VARIABLES_METADATA = 'https://api.meteo.cat/xema/v1/variables/cmv/metadade
 AUXILIARY_VARIABLES_METADATA = 'https://api.meteo.cat/xema/v1/variables/auxiliars/metadades'
 COMARQUES = 'https://api.meteo.cat/referencia/v1/comarques'
 MUNICIPIS = 'https://api.meteo.cat/referencia/v1/municipis'
+WEATHER_STATIONS = 'https://api.meteo.cat/referencia/v1/estacions/metadades'
