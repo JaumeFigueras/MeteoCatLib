@@ -92,3 +92,21 @@ WITH (
 ALTER TABLE public.meteocat_weather_stations_status
   OWNER TO gisfireuser
 ;
+
+CREATE TABLE public.meteocat_station_variable_association
+(
+  meteocat_weather_stations_id bigint,
+  meteocat_metadata_variables_id bigint,
+  ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
+  CONSTRAINT pk_meteocat_station_variable_association PRIMARY KEY (meteocat_weather_stations_id, meteocat_metadata_variables_id),
+  CONSTRAINT fk_meteocat_weather_stations_id_station_variable_association FOREIGN KEY (meteocat_weather_stations_id) REFERENCES meteocat_weather_stations(id),
+  CONSTRAINT fk_meteocat_metadata_variables_id_station_variable_association FOREIGN KEY (meteocat_metadata_variables_id) REFERENCES meteocat_metadata_variables(id)
+)
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE public.meteocat_station_variable_association
+  OWNER TO gisfireuser
+;
+

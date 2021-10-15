@@ -23,6 +23,8 @@ class Measure(db.Base):
     meteocat_weather_stations_id = Column(Integer, ForeignKey('meteocat_weather_stations.id'))
     meteocat_metadata_variables_id = Column(Integer, ForeignKey('meteocat_metadata_variables.id'))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+    station = relationship('WeatherStation', back_populates='measures')
+    variable = relationship('Variable', back_populates='measures')
 
     def __init__(self, _data, _valor, _estat, _base_horaria):
         self._data = _data

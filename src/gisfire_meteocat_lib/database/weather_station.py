@@ -9,6 +9,7 @@ from sqlalchemy import String
 from sqlalchemy import DateTime
 from sqlalchemy import func
 from sqlalchemy import ForeignKey
+from sqlalchemy import Table
 from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
 
@@ -23,11 +24,18 @@ class WeatherStationStatus(db.Base):
     _data_fi = Column(DateTime(timezone=True))
     meteocat_weather_stations_id = Column(Integer, ForeignKey('meteocat_weather_stations.id'))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+    station = relationship('WeatherStation', back_populates='status')
 
     def __init__(self, _codi, _data_inici, _data_fi=None):
         self._codi = _codi
         self._data_inici = _data_inici
         self._data_fi = _data_fi
+
+
+weather_station_variable_association_table = \
+    Table('meteocat_station_variable_association', db.Base.metadata,
+          Column('meteocat_weather_stations_id', ForeignKey('meteocat_weather_stations.id'), primary_key=True),
+          Column('meteocat_metadata_variables_id', ForeignKey('meteocat_metadata_variables.id'), primary_key=True))
 
 
 class WeatherStation(db.Base):
@@ -50,8 +58,10 @@ class WeatherStation(db.Base):
     _xarxa_nom = Column(String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     geom = Column(Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
-    status = relationship("WeatherStationStatus", backref='meteocat_weather_stations', lazy='joined')
-    measures = relationship("Measure", backref='meteocat_weather_stations', lazy='select')
+    status = relationship("WeatherStationStatus", back_populates='station', lazy='joined')
+    measures = relationship("Measure", back_populates='station', lazy='select')
+    variables = relationship("Variable", secondary=weather_station_variable_association_table,
+                             back_populates="stations", lazy='select')
 
     def __init__(self, _codi, _nom, _tipus, _coordenades_latitud, _coordenades_longitud, _emplacament, _altitud,
                  _municipi_codi, _municipi_nom, _comarca_codi, _comarca_nom, _provincia_codi, _provincia_nom,

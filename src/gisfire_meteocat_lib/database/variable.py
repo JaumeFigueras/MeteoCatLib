@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from . import db
+from .weather_station import weather_station_variable_association_table
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
@@ -20,7 +21,9 @@ class Variable(db.Base):
     _tipus = Column(String, nullable=False)
     _decimals = Column(String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    measures = relationship("Measure", backref='meteocat_metadata_variables', lazy='select')
+    measures = relationship('Measure', back_populates='variable')
+    stations = relationship("WeatherStation", secondary=weather_station_variable_association_table,
+                            back_populates='variables', lazy='select')
 
     def __init__(self, _codi, _nom, _unitat, _acronim, _tipus, _decimals):
         self._codi = _codi
