@@ -50,7 +50,8 @@ class WeatherStation(db.Base):
     _xarxa_nom = Column(String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     geom = Column(Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
-    status = relationship("WeatherStationStatus", backref='meteocat_weather_stations')
+    status = relationship("WeatherStationStatus", backref='meteocat_weather_stations', lazy='joined')
+    measures = relationship("Measure", backref='meteocat_weather_stations', lazy='select')
 
     def __init__(self, _codi, _nom, _tipus, _coordenades_latitud, _coordenades_longitud, _emplacament, _altitud,
                  _municipi_codi, _municipi_nom, _comarca_codi, _comarca_nom, _provincia_codi, _provincia_nom,

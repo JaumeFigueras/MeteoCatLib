@@ -4,6 +4,7 @@
 from ..src.gisfire_meteocat_lib.database.variable import Variable
 from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStation
 from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStationStatus
+from ..src.gisfire_meteocat_lib.database.measures import Measure
 import datetime
 import pytz
 
@@ -74,10 +75,10 @@ def test_add_weather_station_02(db_session, postgresql_schema):
     assert record[0] == 1
     cursor.execute('SELECT * FROM meteocat_weather_stations_status')
     record = cursor.fetchone()
-    assert record[1] == station.id
-    assert record[2] == 2
-    assert record[3] == datetime.datetime(2003, 11, 6, 13, 0, tzinfo=pytz.UTC)
-    assert record[4] is None
+    assert record[1] == 2
+    assert record[2] == datetime.datetime(2003, 11, 6, 13, 0, tzinfo=pytz.UTC)
+    assert record[3] is None
+    assert record[4] == station.id
 
 
 def test_add_weather_station_03(db_session, postgresql_schema):
@@ -100,18 +101,43 @@ def test_add_weather_station_03(db_session, postgresql_schema):
     assert record[0] == 3
     cursor.execute('SELECT * FROM meteocat_weather_stations_status')
     record = cursor.fetchone()
-    assert record[1] == station.id
-    assert record[2] == 2
-    assert record[3] == datetime.datetime(1997, 9, 17, 15, 0, tzinfo=pytz.UTC)
-    assert record[4] == datetime.datetime(2003, 2, 24, 21, 0, tzinfo=pytz.UTC)
-    record = cursor.fetchone()
-    assert record[1] == station.id
-    assert record[2] == 3
+    assert record[1] == 2
+    assert record[2] == datetime.datetime(1997, 9, 17, 15, 0, tzinfo=pytz.UTC)
     assert record[3] == datetime.datetime(2003, 2, 24, 21, 0, tzinfo=pytz.UTC)
-    assert record[4] == datetime.datetime(2004, 12, 3, 12, 0, tzinfo=pytz.UTC)
+    assert record[4] == station.id
     record = cursor.fetchone()
-    assert record[1] == station.id
-    assert record[2] == 2
+    assert record[1] == 3
+    assert record[2] == datetime.datetime(2003, 2, 24, 21, 0, tzinfo=pytz.UTC)
     assert record[3] == datetime.datetime(2004, 12, 3, 12, 0, tzinfo=pytz.UTC)
-    assert record[4] is None
+    assert record[4] == station.id
+    record = cursor.fetchone()
+    assert record[1] == 2
+    assert record[2] == datetime.datetime(2004, 12, 3, 12, 0, tzinfo=pytz.UTC)
+    assert record[3] is None
+    assert record[4] == station.id
 
+
+def test_add_measure_01(db_session, postgresql_schema):
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    db_session.add(variable)
+    station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
+                             24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
+    db_session.add(station)
+    db_session.commit()
+    measure = Measure('2017-03-27T00:00Z', 8.3, 'V', 'SH')
+    variable.measures.append(measure)
+    station.measures.append(measure)
+    db_session.add(measure)
+    db_session.commit()
+    cursor = postgresql_schema.cursor()
+    cursor.execute('SELECT count(*) FROM meteocat_measures')
+    record = cursor.fetchone()
+    assert record[0] == 1
+    cursor.execute('SELECT * FROM meteocat_measures')
+    record = cursor.fetchone()
+    assert record[1] == datetime.datetime(2017, 3, 27, 0, 0, tzinfo=pytz.UTC)
+    assert record[2] == 8.3
+    assert record[3] == 'V'
+    assert record[4] == 'SH'
+    assert record[5] == station.id
+    assert record[6] == variable.id

@@ -7,6 +7,7 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import DateTime
 from sqlalchemy import func
+from sqlalchemy.orm import relationship
 
 
 class Variable(db.Base):
@@ -19,6 +20,7 @@ class Variable(db.Base):
     _tipus = Column(String, nullable=False)
     _decimals = Column(String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+    measures = relationship("Measure", backref='meteocat_metadata_variables', lazy='select')
 
     def __init__(self, _codi, _nom, _unitat, _acronim, _tipus, _decimals):
         self._codi = _codi
