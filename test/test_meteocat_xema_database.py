@@ -141,3 +141,22 @@ def test_add_measure_01(db_session, postgresql_schema):
     assert record[4] == 'SH'
     assert record[5] == station.id
     assert record[6] == variable.id
+
+
+def test_add_station_variable_01(db_session, postgresql_schema):
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    db_session.add(variable)
+    station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
+                             24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
+    db_session.add(station)
+    db_session.commit()
+    station.variables.append(variable)
+    db_session.commit()
+    cursor = postgresql_schema.cursor()
+    cursor.execute('SELECT count(*) FROM meteocat_station_variable_association')
+    record = cursor.fetchone()
+    assert record[0] == 1
+    cursor.execute('SELECT * FROM meteocat_station_variable_association')
+    record = cursor.fetchone()
+    assert record[0] == station.id
+    assert record[1] == variable.id
