@@ -1,4 +1,4 @@
-CREATE TABLE public.meteocat_metadata_variables
+CREATE TABLE public.meteocat_variable
 (
   id bigserial,
   _codi int NOT NULL,
@@ -9,17 +9,17 @@ CREATE TABLE public.meteocat_metadata_variables
   _decimals int NOT NULL,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
   UNIQUE (_codi),
-  CONSTRAINT pk_meteocat_metadata_variables PRIMARY KEY (id)
+  CONSTRAINT pk_meteocat_variable PRIMARY KEY (id)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_metadata_variables
+ALTER TABLE public.meteocat_variable
   OWNER TO gisfireuser
 ;
 
-CREATE TABLE public.meteocat_weather_stations
+CREATE TABLE public.meteocat_weather_station
 (
   id bigserial,
   _codi varchar NOT NULL,
@@ -39,74 +39,94 @@ CREATE TABLE public.meteocat_weather_stations
   _xarxa_nom varchar NOT NULL,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
   UNIQUE (_codi),
-  CONSTRAINT pk_meteocat_weather_stations PRIMARY KEY (id)
+  CONSTRAINT pk_meteocat_weather_station PRIMARY KEY (id)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_weather_stations
+ALTER TABLE public.meteocat_weather_station
   OWNER TO gisfireuser
 ;
-SELECT AddGeometryColumn ('public', 'meteocat_weather_stations', 'geom', 4258, 'POINT', 2)
+SELECT AddGeometryColumn ('public', 'meteocat_weather_station', 'geom', 4258, 'POINT', 2)
 ;
 
-CREATE TABLE public.meteocat_weather_stations_status
+CREATE TABLE public.meteocat_weather_station_status
 (
   id bigserial,
   _codi int NOT NULL,
   _data_inici timestamp with time zone NOT NULL,
   _data_fi timestamp with time zone,
-  meteocat_weather_stations_id bigint,
+  meteocat_weather_station_id bigint,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
-  UNIQUE (meteocat_weather_stations_id, _data_inici),
-  CONSTRAINT pk_meteocat_weather_stations_status PRIMARY KEY (id),
-  CONSTRAINT fk_meteocat_weather_stations_id_weather_stations_status FOREIGN KEY (meteocat_weather_stations_id) REFERENCES meteocat_weather_stations(id)
+  UNIQUE (meteocat_weather_station_id, _data_inici),
+  CONSTRAINT pk_meteocat_weather_station_status PRIMARY KEY (id),
+  CONSTRAINT fk_meteocat_weather_station_id_weather_stations_status FOREIGN KEY (meteocat_weather_station_id) REFERENCES meteocat_weather_station(id)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_weather_stations_status
+ALTER TABLE public.meteocat_weather_station_status
   OWNER TO gisfireuser
 ;
 
-CREATE TABLE public.meteocat_measures
+CREATE TABLE public.meteocat_measure
 (
   id bigserial,
   _data timestamp with time zone NOT NULL,
   _valor double precision NOT NULL,
   _estat varchar NOT NULL,
   _base_horaria varchar NOT NULL,
-  meteocat_weather_stations_id bigint,
-  meteocat_metadata_variables_id bigint,
+  meteocat_weather_station_id bigint,
+  meteocat_variable_id bigint,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
-  CONSTRAINT pk_meteocat_measures PRIMARY KEY (id),
-  CONSTRAINT fk_meteocat_weather_stations_id_measures FOREIGN KEY (meteocat_weather_stations_id) REFERENCES meteocat_weather_stations(id),
-  CONSTRAINT fk_meteocat_metadata_variables_id_measures FOREIGN KEY (meteocat_metadata_variables_id) REFERENCES meteocat_metadata_variables(id)
+  CONSTRAINT pk_meteocat_measure PRIMARY KEY (id),
+  CONSTRAINT fk_meteocat_weather_station_id_measure FOREIGN KEY (meteocat_weather_station_id) REFERENCES meteocat_weather_station(id),
+  CONSTRAINT fk_meteocat_variable_id_measure FOREIGN KEY (meteocat_variable_id) REFERENCES meteocat_variable(id)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_weather_stations_status
+ALTER TABLE public.meteocat_weather_station_status
   OWNER TO gisfireuser
 ;
 
-CREATE TABLE public.meteocat_station_variable_association
+CREATE TABLE public.meteocat_variable_status
 (
-  meteocat_weather_stations_id bigint,
-  meteocat_metadata_variables_id bigint,
+  id bigserial,
+  _codi int NOT NULL,
+  _data_inici timestamp with time zone NOT NULL,
+  _data_fi timestamp with time zone,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
-  CONSTRAINT pk_meteocat_station_variable_association PRIMARY KEY (meteocat_weather_stations_id, meteocat_metadata_variables_id),
-  CONSTRAINT fk_meteocat_weather_stations_id_station_variable_association FOREIGN KEY (meteocat_weather_stations_id) REFERENCES meteocat_weather_stations(id),
-  CONSTRAINT fk_meteocat_metadata_variables_id_station_variable_association FOREIGN KEY (meteocat_metadata_variables_id) REFERENCES meteocat_metadata_variables(id)
+  CONSTRAINT pk_meteocat_variable_status PRIMARY KEY (id)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_station_variable_association
+ALTER TABLE public.meteocat_variable_status
+  OWNER TO gisfireuser
+;
+
+
+CREATE TABLE public.meteocat_station_variable_status_association
+(
+  meteocat_weather_station_id bigint,
+  meteocat_variable_id bigint,
+  meteocat_variable_status_id bigint,
+  ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
+  CONSTRAINT pk_meteocat_station_variable_status_association PRIMARY KEY (meteocat_weather_station_id, meteocat_variable_id, meteocat_variable_status_id),
+  CONSTRAINT fk_meteocat_weather_station_id_station_variable_status_association FOREIGN KEY (meteocat_weather_station_id) REFERENCES meteocat_weather_station(id),
+  CONSTRAINT fk_meteocat_variable_id_station_variable_status_association FOREIGN KEY (meteocat_variable_id) REFERENCES meteocat_variable(id),
+  CONSTRAINT fk_meteocat_variable_status_id_station_variable_status_association FOREIGN KEY (meteocat_variable_status_id) REFERENCES meteocat_variable_status(id)
+)
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE public.meteocat_station_variable_status_association
   OWNER TO gisfireuser
 ;
 

@@ -14,14 +14,14 @@ from sqlalchemy.orm import relationship
 
 
 class Measure(db.Base):
-    __tablename__ = 'meteocat_measures'
+    __tablename__ = 'meteocat_measure'
     id = Column(Integer, primary_key=True)
     _data = Column(DateTime(timezone=True), nullable=False)
     _valor = Column(Float, nullable=False)
     _estat = Column(String, nullable=False)
     _base_horaria = Column(String, nullable=False)
-    meteocat_weather_stations_id = Column(Integer, ForeignKey('meteocat_weather_stations.id'))
-    meteocat_metadata_variables_id = Column(Integer, ForeignKey('meteocat_metadata_variables.id'))
+    meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
+    meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     station = relationship('WeatherStation', back_populates='measures')
     variable = relationship('Variable', back_populates='measures')

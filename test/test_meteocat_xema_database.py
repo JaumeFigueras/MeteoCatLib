@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from ..src.gisfire_meteocat_lib.database.variable import Variable
+from ..src.gisfire_meteocat_lib.database.variable import VariableStatus
 from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStation
 from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStationStatus
 from ..src.gisfire_meteocat_lib.database.measures import Measure
@@ -14,10 +15,10 @@ def test_add_variable_01(db_session, postgresql_schema):
     db_session.add(var)
     db_session.commit()
     cursor = postgresql_schema.cursor()
-    cursor.execute('SELECT count(*) FROM meteocat_metadata_variables')
+    cursor.execute('SELECT count(*) FROM meteocat_variable')
     record = cursor.fetchone()
     assert record[0] == 1
-    cursor.execute('SELECT * FROM meteocat_metadata_variables')
+    cursor.execute('SELECT * FROM meteocat_variable')
     record = cursor.fetchone()
     assert record[1] == 1
     assert record[2] == 'Pressió atmosfèrica màxima'
@@ -33,10 +34,10 @@ def test_add_weather_station_01(db_session, postgresql_schema):
     db_session.add(station)
     db_session.commit()
     cursor = postgresql_schema.cursor()
-    cursor.execute('SELECT count(*) FROM meteocat_weather_stations')
+    cursor.execute('SELECT count(*) FROM meteocat_weather_station')
     record = cursor.fetchone()
     assert record[0] == 1
-    cursor.execute('SELECT * FROM meteocat_weather_stations')
+    cursor.execute('SELECT * FROM meteocat_weather_station')
     record = cursor.fetchone()
     assert record[1] == 'CC'
     assert record[2] == 'Orís'
@@ -53,7 +54,7 @@ def test_add_weather_station_01(db_session, postgresql_schema):
     assert record[13] == 'Barcelona'
     assert record[14] == 1
     assert record[15] == 'XEMA'
-    cursor.execute('SELECT ST_X(geom), ST_Y(geom) FROM meteocat_weather_stations')
+    cursor.execute('SELECT ST_X(geom), ST_Y(geom) FROM meteocat_weather_station')
     record = cursor.fetchone()
     assert record[0] == 2.20980884646
     assert record[1] == 42.075052799
@@ -67,13 +68,13 @@ def test_add_weather_station_02(db_session, postgresql_schema):
     db_session.add(station)
     db_session.commit()
     cursor = postgresql_schema.cursor()
-    cursor.execute('SELECT count(*) FROM meteocat_weather_stations')
+    cursor.execute('SELECT count(*) FROM meteocat_weather_station')
     record = cursor.fetchone()
     assert record[0] == 1
-    cursor.execute('SELECT count(*) FROM meteocat_weather_stations_status')
+    cursor.execute('SELECT count(*) FROM meteocat_weather_station_status')
     record = cursor.fetchone()
     assert record[0] == 1
-    cursor.execute('SELECT * FROM meteocat_weather_stations_status')
+    cursor.execute('SELECT * FROM meteocat_weather_station_status')
     record = cursor.fetchone()
     assert record[1] == 2
     assert record[2] == datetime.datetime(2003, 11, 6, 13, 0, tzinfo=pytz.UTC)
@@ -93,13 +94,13 @@ def test_add_weather_station_03(db_session, postgresql_schema):
     db_session.add(station)
     db_session.commit()
     cursor = postgresql_schema.cursor()
-    cursor.execute('SELECT count(*) FROM meteocat_weather_stations')
+    cursor.execute('SELECT count(*) FROM meteocat_weather_station')
     record = cursor.fetchone()
     assert record[0] == 1
-    cursor.execute('SELECT count(*) FROM meteocat_weather_stations_status')
+    cursor.execute('SELECT count(*) FROM meteocat_weather_station_status')
     record = cursor.fetchone()
     assert record[0] == 3
-    cursor.execute('SELECT * FROM meteocat_weather_stations_status')
+    cursor.execute('SELECT * FROM meteocat_weather_station_status')
     record = cursor.fetchone()
     assert record[1] == 2
     assert record[2] == datetime.datetime(1997, 9, 17, 15, 0, tzinfo=pytz.UTC)
@@ -130,10 +131,10 @@ def test_add_measure_01(db_session, postgresql_schema):
     db_session.add(measure)
     db_session.commit()
     cursor = postgresql_schema.cursor()
-    cursor.execute('SELECT count(*) FROM meteocat_measures')
+    cursor.execute('SELECT count(*) FROM meteocat_measure')
     record = cursor.fetchone()
     assert record[0] == 1
-    cursor.execute('SELECT * FROM meteocat_measures')
+    cursor.execute('SELECT * FROM meteocat_measure')
     record = cursor.fetchone()
     assert record[1] == datetime.datetime(2017, 3, 27, 0, 0, tzinfo=pytz.UTC)
     assert record[2] == 8.3
@@ -150,13 +151,16 @@ def test_add_station_variable_01(db_session, postgresql_schema):
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
     db_session.add(station)
     db_session.commit()
-    station.variables.append(variable)
+    status = VariableStatus(2, '2017-03-27T00:00Z')
+    db_session.add(status)
     db_session.commit()
+    # TODO: Move association table to ORM object.
     cursor = postgresql_schema.cursor()
-    cursor.execute('SELECT count(*) FROM meteocat_station_variable_association')
+    cursor.execute('SELECT count(*) FROM meteocat_station_variable_status_association')
     record = cursor.fetchone()
     assert record[0] == 1
-    cursor.execute('SELECT * FROM meteocat_station_variable_association')
+    cursor.execute('SELECT * FROM meteocat_station_variable_status_association')
     record = cursor.fetchone()
     assert record[0] == station.id
     assert record[1] == variable.id
+    assert record[2] == status.id
