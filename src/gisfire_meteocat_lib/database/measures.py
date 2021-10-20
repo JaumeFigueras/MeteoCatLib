@@ -9,7 +9,6 @@ from sqlalchemy import String
 from sqlalchemy import DateTime
 from sqlalchemy import func
 from sqlalchemy import ForeignKey
-from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
 
 

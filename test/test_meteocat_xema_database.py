@@ -5,7 +5,9 @@ from ..src.gisfire_meteocat_lib.database.variable import Variable
 from ..src.gisfire_meteocat_lib.database.variable import VariableStatus
 from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStation
 from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStationStatus
+from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStationVariableStatusAssociation
 from ..src.gisfire_meteocat_lib.database.measures import Measure
+from ..src.gisfire_meteocat_lib.database.meteocat_xema import get_weather_stations
 import datetime
 import pytz
 
@@ -146,15 +148,12 @@ def test_add_measure_01(db_session, postgresql_schema):
 
 def test_add_station_variable_01(db_session, postgresql_schema):
     variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
-    db_session.add(variable)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
-    db_session.add(station)
-    db_session.commit()
     status = VariableStatus(2, '2017-03-27T00:00Z')
-    db_session.add(status)
+    association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
+    db_session.add(association)
     db_session.commit()
-    # TODO: Move association table to ORM object.
     cursor = postgresql_schema.cursor()
     cursor.execute('SELECT count(*) FROM meteocat_station_variable_status_association')
     record = cursor.fetchone()
@@ -164,3 +163,114 @@ def test_add_station_variable_01(db_session, postgresql_schema):
     assert record[0] == station.id
     assert record[1] == variable.id
     assert record[2] == status.id
+    variables = db_session.query(WeatherStationVariableStatusAssociation)\
+        .filter(WeatherStationVariableStatusAssociation.meteocat_weather_station_id == station.id)\
+        .all()
+    assert len(variables) == 1
+    assert variables[0].meteocat_variable_id == variable.id
+    variables = db_session.query(WeatherStationVariableStatusAssociation)\
+        .filter(WeatherStationVariableStatusAssociation.meteocat_weather_station_id == station.id)\
+        .join(WeatherStationVariableStatusAssociation.status)\
+        .filter(VariableStatus._codi == 2)\
+        .all()
+    assert len(variables) == 1
+    assert variables[0].meteocat_variable_id == variable.id
+
+
+def test_get_weather_stations_01(db_session):
+    station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
+                             24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
+    status = WeatherStationStatus(2, '2003-11-06T13:00Z')
+    station.status.append(status)
+    db_session.add(station)
+    db_session.commit()
+    stations = get_weather_stations(db_session)
+    assert len(stations) == 1
+    assert stations[0].code == 'CC'
+    assert len(stations[0].status) == 1
+    stations = get_weather_stations(db_session, active_stations=True)
+    assert len(stations) == 1
+    status.to_date = '2013-11-06T13:00Z'
+    status = WeatherStationStatus(3, '2013-11-06T13:00Z', '2015-11-06T13:00Z')
+    station.status.append(status)
+    status = WeatherStationStatus(2, '2015-11-06T13:00Z')
+    station.status.append(status)
+    db_session.commit()
+    stations = get_weather_stations(db_session)
+    assert len(stations) == 1
+    assert stations[0].code == 'CC'
+    assert len(stations[0].status) == 3
+    station.status.pop()
+    db_session.commit()
+    stations = get_weather_stations(db_session, True)
+    assert len(stations) == 0
+    status = WeatherStationStatus(2, '2015-11-06T13:00Z')
+    station.status.append(status)
+    db_session.commit()
+    stations = get_weather_stations(db_session, True, '2014-11-06T13:00Z')
+    assert len(stations) == 0
+    stations = get_weather_stations(db_session, True, '2016-11-06T13:00Z')
+    assert len(stations) == 1
+    stations = get_weather_stations(db_session, True, datetime.datetime(2018, 10, 10, 10, 0, 0))
+    assert len(stations) == 1
+
+
+def test_get_weather_stations_02(db_session):
+    station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
+                             24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
+    status = WeatherStationStatus(2, '2003-11-06T13:00Z')
+    station.status.append(status)
+    db_session.add(station)
+    db_session.commit()
+    stations = get_weather_stations(db_session, active_stations=True)
+    assert len(stations) == 1
+
+
+def test_get_weather_stations_03(db_session):
+    station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
+                             24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
+    status = WeatherStationStatus(2, '2003-11-06T13:00Z', '2013-11-06T13:00Z')
+    station.status.append(status)
+    status = WeatherStationStatus(3, '2013-11-06T13:00Z', '2015-11-06T13:00Z')
+    station.status.append(status)
+    status = WeatherStationStatus(2, '2015-11-06T13:00Z')
+    station.status.append(status)
+    db_session.add(station)
+    db_session.commit()
+    stations = get_weather_stations(db_session)
+    assert len(stations) == 1
+    assert stations[0].code == 'CC'
+    assert len(stations[0].status) == 3
+
+
+def test_get_weather_stations_04(db_session):
+    station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
+                             24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
+    status = WeatherStationStatus(2, '2003-11-06T13:00Z', '2013-11-06T13:00Z')
+    station.status.append(status)
+    status = WeatherStationStatus(3, '2013-11-06T13:00Z', '2015-11-06T13:00Z')
+    station.status.append(status)
+    db_session.add(station)
+    db_session.commit()
+    stations = get_weather_stations(db_session, True)
+    assert len(stations) == 0
+
+
+def test_get_weather_stations_05(db_session):
+    station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
+                             24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
+    status = WeatherStationStatus(2, '2003-11-06T13:00Z', '2013-11-06T13:00Z')
+    station.status.append(status)
+    status = WeatherStationStatus(3, '2013-11-06T13:00Z', '2015-11-06T13:00Z')
+    station.status.append(status)
+    status = WeatherStationStatus(2, '2015-11-06T13:00Z')
+    station.status.append(status)
+    db_session.add(station)
+    db_session.commit()
+    stations = get_weather_stations(db_session, True, '2014-11-06T13:00Z')
+    assert len(stations) == 0
+    stations = get_weather_stations(db_session, True, '2016-11-06T13:00Z')
+    assert len(stations) == 1
+    stations = get_weather_stations(db_session, True, datetime.datetime(2018, 10, 10, 10, 0, 0))
+    assert len(stations) == 1
+

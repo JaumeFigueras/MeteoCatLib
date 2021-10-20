@@ -1805,3 +1805,565 @@ def meteocat_stations_metadata():
             ]
           }
         ]""")
+
+
+@pytest.fixture(scope='session')
+def meteocat_station_measured_variables():
+    return json.loads("""
+        [
+          {
+            "codi": 1,
+            "nom": "Pressió atmosfèrica màxima",
+            "unitat": "hPa",
+            "acronim": "Px",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 2,
+            "nom": "Pressió atmosfèrica mínima",
+            "unitat": "hPa",
+            "acronim": "Pn",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T22:30Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T22:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 3,
+            "nom": "Humitat relativa màxima",
+            "unitat": "%",
+            "acronim": "HRx",
+            "tipus": "DAT",
+            "decimals": 0,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T22:30Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T22:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 20,
+            "nom": "Velocitat del vent a 10 m (vec.)",
+            "unitat": "m/s",
+            "acronim": "VV10vec",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "2004-01-26T16:30Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "2004-01-26T16:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 21,
+            "nom": "Direcció del vent a 10 m (m. u) ",
+            "unitat": "°",
+            "acronim": "DV10u",
+            "tipus": "DAT",
+            "decimals": 0,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "2004-01-26T16:30Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "2004-01-26T16:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 22,
+            "nom": "Desviació est. de la direcció del vent a 10 m",
+            "unitat": "°",
+            "acronim": "DVdest10",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "2009-05-07T12:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "2009-05-07T12:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 30,
+            "nom": "Velocitat del vent a 10 m (esc.)",
+            "unitat": "m/s",
+            "acronim": "VV10",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": "2004-01-26T16:30Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2004-01-26T16:30Z",
+                "dataFi": "2009-05-07T12:00Z"
+              },
+              {
+                "codi": 2,
+                "dataInici": "2009-05-07T12:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 31,
+            "nom": "Direcció de vent 10 m (m. 1) ",
+            "unitat": "°",
+            "acronim": "DV10",
+            "tipus": "DAT",
+            "decimals": 0,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": "2004-01-26T16:30Z"
+              },
+              {
+                "codi": 1,
+                "dataInici": "2004-01-26T16:30Z",
+                "dataFi": "2009-05-07T12:00Z"
+              },
+              {
+                "codi": 2,
+                "dataInici": "2009-05-07T12:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 32,
+            "nom": "Temperatura",
+            "unitat": "°C",
+            "acronim": "T",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 33,
+            "nom": "Humitat relativa",
+            "unitat": "%",
+            "acronim": "HR",
+            "tipus": "DAT",
+            "decimals": 0,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 34,
+            "nom": "Pressió atmosfèrica",
+            "unitat": "hPa",
+            "acronim": "P",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 35,
+            "nom": "Precipitació",
+            "unitat": "mm",
+            "acronim": "PPT",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 36,
+            "nom": "Irradiància solar global",
+            "unitat": "W/m²",
+            "acronim": "RS",
+            "tipus": "DAT",
+            "decimals": 0,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 37,
+            "nom": "Desviació est. de la irradiància solar global",
+            "unitat": "W/m²",
+            "acronim": "RSdest",
+            "tipus": "DAT",
+            "decimals": 0,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "2009-05-07T12:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "2009-05-07T12:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 40,
+            "nom": "Temperatura màxima",
+            "unitat": "°C",
+            "acronim": "Tx",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T12:30Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T12:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 42,
+            "nom": "Temperatura mínima",
+            "unitat": "°C",
+            "acronim": "Tn",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 44,
+            "nom": "Humitat relativa mínima",
+            "unitat": "%",
+            "acronim": "HRn",
+            "tipus": "DAT",
+            "decimals": 0,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T12:30Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T12:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 50,
+            "nom": "Ratxa màxima del vent a 10 m",
+            "unitat": "m/s",
+            "acronim": "VVx10",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T16:30Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T16:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 51,
+            "nom": "Direcció de la ratxa màxima del vent a 10 m",
+            "unitat": "°",
+            "acronim": "DVVx10",
+            "tipus": "DAT",
+            "decimals": 0,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T16:30Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T16:30Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 71,
+            "nom": "Bateria",
+            "unitat": "V",
+            "acronim": "BAT",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "2007-06-28T11:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "2007-06-28T11:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 72,
+            "nom": "Precipitació màxima en 1 minut",
+            "unitat": "mm",
+            "acronim": "PPTx1min",
+            "tipus": "DAT",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "SH",
+                "dataInici": "1995-11-15T10:00Z",
+                "dataFi": null
+              }
+            ]
+          }
+        ]""")
+
+
+@pytest.fixture(scope='session')
+def meteocat_station_multi_variables():
+    return json.loads("""        
+        [
+          {
+            "codi": 6006,
+            "nom": "Evapotranspiració de referència",
+            "unitat": "mm",
+            "acronim": "ETo",
+            "tipus": "CMV",
+            "decimals": 2,
+            "basesTemporals": [
+              {
+                "codi": "HO",
+                "dataInici": "1995-11-15T11:00Z",
+                "dataFi": null
+              }
+            ]
+          }
+        ]""")
+
+
+@pytest.fixture(scope='session')
+def meteocat_station_auxiliar_variables():
+    return json.loads("""        
+        [
+          {
+            "codi": 900,
+            "nom": "Precipitació acumulada en 10 min",
+            "unitat": "mm",
+            "acronim": "PPT10min",
+            "tipus": "AUX",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "2007-07-01T20:00Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "DM",
+                "dataInici": "2007-07-01T20:00Z",
+                "dataFi": null
+              }
+            ]
+          },
+          {
+            "codi": 901,
+            "nom": "Precipitació acumulada en 1 min",
+            "unitat": "mm",
+            "acronim": "PPT1min",
+            "tipus": "AUX",
+            "decimals": 1,
+            "estats": [
+              {
+                "codi": 2,
+                "dataInici": "2007-07-01T20:06Z",
+                "dataFi": null
+              }
+            ],
+            "basesTemporals": [
+              {
+                "codi": "MI",
+                "dataInici": "2007-07-01T20:06Z",
+                "dataFi": null
+              }
+            ]
+          }
+        ]""")

@@ -38,7 +38,7 @@ def get_variables_auxiliary_metadata(api_token):
     :return: JSON metadata obtained from the API
     :rtype: list of dict or None. Data contained in dicts can be retrieved from:
     """
-    return meteocat_api.get_from_api(api_token, meteocat_urls.AUXILIARY_VARIABLES_METADATA)
+    return meteocat_api.get_from_api(api_token, meteocat_urls.AUXILIAR_VARIABLES_METADATA)
 
 
 def get_weather_stations(api_token):
@@ -53,19 +53,58 @@ def get_weather_stations(api_token):
     return meteocat_api.get_from_api(api_token, meteocat_urls.WEATHER_STATIONS)
 
 
-def get_measured_variables_of_station(api_token, station):
+def get_station_measured_variables(api_token, station_code):
     """
-    Gets the measured variables metadata used in the weather stations of MeteoCat from its public API.
-    Uses the default time-out time and number of retries (in case of error in the comms).
+    Gets the list of measured variables (with its metadata) that are present in a certain station. The data includes
+    the statuses of the variables of MeteoCat from its public API. Uses the default time-out time and number of retries
+    (in case of error in the comms).
 
     :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
-    :param station: WeatherStation object to retrieve the variables from
-    :return: JSON metadata obtained from the API
-    :rtype: list of dict or None. Data contained in dicts can be retrieved from:
+    :type api_token: str
+    :param station_code: Weather station id code
+    :type station_code: str
+    :return: JSON metadata obtained from the API. The data format can be retrieved from:
+    https://apidocs.meteocat.gencat.cat/documentacio/dades-mesurades/#metadades-de-les-variables-duna-estacio
+    :rtype: Union[list[dict], None]
     """
-    station_code = station.code
-    url = meteocat_urls.VARIABLES_METADATA
-    return meteocat_api.get_from_api(api_token, meteocat_urls.VARIABLES_METADATA)
+    url = meteocat_urls.STATION_MEASURED_VARIABLES.format(station_code)
+    return meteocat_api.get_from_api(api_token, url)
+
+
+def get_station_multi_variables(api_token, station_code):
+    """
+    Gets the list of multivariate variables (with its metadata) that are present in a certain station. The data includes
+    the statuses of the variables of MeteoCat from its public API. Uses the default time-out time and number of retries
+    (in case of error in the comms).
+
+    :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
+    :type api_token: str
+    :param station_code: Weather station id code
+    :type station_code: str
+    :return: JSON metadata obtained from the API. The data format can be retrieved from:
+    https://apidocs.meteocat.gencat.cat/documentacio/calcul-multivariable/#metadades-de-les-variables-duna-estacio
+    :rtype: Union[list[dict], None]
+    """
+    url = meteocat_urls.STATION_MULTI_VARIABLES.format(station_code)
+    return meteocat_api.get_from_api(api_token, url)
+
+
+def get_station_auxiliar_variables(api_token, station_code):
+    """
+    Gets the list of auxiliar variables (with its metadata) that are present in a certain station. The data includes
+    the statuses of the variables of MeteoCat from its public API. Uses the default time-out time and number of retries
+    (in case of error in the comms).
+
+    :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
+    :type api_token: str
+    :param station_code: Weather station id code
+    :type station_code: str
+    :return: JSON metadata obtained from the API. The data format can be retrieved from:
+    https://apidocs.meteocat.gencat.cat/documentacio/dades-auxiliars/#metadades-de-les-variables-duna-estacio
+    :rtype: Union[list[dict], None]
+    """
+    url = meteocat_urls.STATION_AUXILIAR_VARIABLES.format(station_code)
+    return meteocat_api.get_from_api(api_token, url)
 
 
 def get_measures_of_station_measured_variables(api_token, variable, date, station=None):
@@ -83,29 +122,4 @@ def get_measures_of_station_measured_variables(api_token, variable, date, statio
     day = "{:02d}".format(date.day)
     url = meteocat_urls.VARIABLES_METADATA
     return meteocat_api.get_from_api(api_token, meteocat_urls.VARIABLES_METADATA)
-
-
-def get_variables_multivariate_metadata(api_token):
-    """
-    Gets the multivariate variables metadata used in the weather stations of MeteoCat from its public API.
-    Uses the default time-out time and number of retries (in case of error in the comms).
-
-    :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
-    :return: JSON metadata obtained from the API
-    :rtype: list of dict or None. Data contained in dicts can be retrieved from:
-    """
-    return meteocat_api.get_from_api(api_token, meteocat_urls.MULTI_VARIABLES_METADATA)
-
-
-def get_variables_auxiliary_metadata(api_token):
-    """
-    Gets the auxiliary variables metadata used in the weather stations of MeteoCat from its public API.
-    Uses the default time-out time and number of retries (in case of error in the comms).
-
-    :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
-    :return: JSON metadata obtained from the API
-    :rtype: list of dict or None. Data contained in dicts can be retrieved from:
-    """
-    return meteocat_api.get_from_api(api_token, meteocat_urls.AUXILIARY_VARIABLES_METADATA)
-
 

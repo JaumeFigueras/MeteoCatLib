@@ -96,7 +96,7 @@ def test_metadata_variables_07(requests_mock, meteocat_invalid_token):
     :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
     :param meteocat_invalid_token: Fixture that simulates the return data from a requests with an invalid token
     """
-    requests_mock.get(meteocat_urls.AUXILIARY_VARIABLES_METADATA, json=meteocat_invalid_token, status_code=403)
+    requests_mock.get(meteocat_urls.AUXILIAR_VARIABLES_METADATA, json=meteocat_invalid_token, status_code=403)
     result = meteocat_xema_api.get_variables_auxiliary_metadata('1234')
     assert result is None
 
@@ -109,7 +109,7 @@ def test_metadata_variables_08(requests_mock):
     """
     # Set small timeout time to save testing execution time
     meteocat_api.TIMEOUT = 0.1
-    requests_mock.get(meteocat_urls.AUXILIARY_VARIABLES_METADATA, exc=requests.exceptions.ConnectTimeout)
+    requests_mock.get(meteocat_urls.AUXILIAR_VARIABLES_METADATA, exc=requests.exceptions.ConnectTimeout)
     result = meteocat_xema_api.get_variables_auxiliary_metadata('2406')
     assert result is None
     # Return to previous state
@@ -125,7 +125,7 @@ def test_metadata_variables_09(requests_mock, meteocat_variables_auxiliary_metad
     :param meteocat_variables_auxiliary_metadata: Fixture that simulates the return data from a real request obtained
     from MeteoCat API
     """
-    requests_mock.get(meteocat_urls.AUXILIARY_VARIABLES_METADATA, json=meteocat_variables_auxiliary_metadata,
+    requests_mock.get(meteocat_urls.AUXILIAR_VARIABLES_METADATA, json=meteocat_variables_auxiliary_metadata,
                       status_code=200)
     result = meteocat_xema_api.get_variables_auxiliary_metadata('2406')
     assert result == meteocat_variables_auxiliary_metadata
@@ -169,3 +169,48 @@ def test_metadata_stations_03(requests_mock, meteocat_stations_metadata):
     requests_mock.get(meteocat_urls.WEATHER_STATIONS, json=meteocat_stations_metadata, status_code=200)
     result = meteocat_xema_api.get_weather_stations('2406')
     assert result == meteocat_stations_metadata
+
+
+def test_station_variables_01(requests_mock, meteocat_station_measured_variables):
+    """
+    Tests a correct response of the measured variables assigned to a station from the MeteoCat api call
+
+    :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
+    :param meteocat_station_measured_variables: Fixture that simulates the return data from a real request obtained from
+    MeteoCat
+    API
+    """
+    requests_mock.get(meteocat_urls.STATION_MEASURED_VARIABLES.format('CC'), json=meteocat_station_measured_variables,
+                      status_code=200)
+    result = meteocat_xema_api.get_station_measured_variables('2406', 'CC')
+    assert result == meteocat_station_measured_variables
+
+
+def test_station_variables_02(requests_mock, meteocat_station_multi_variables):
+    """
+    Tests a correct response of the multivariate variables assigned to a station from the MeteoCat api call
+
+    :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
+    :param meteocat_station_multi_variables: Fixture that simulates the return data from a real request obtained from
+    MeteoCat
+    API
+    """
+    requests_mock.get(meteocat_urls.STATION_MULTI_VARIABLES.format('CC'), json=meteocat_station_multi_variables,
+                      status_code=200)
+    result = meteocat_xema_api.get_station_multi_variables('2406', 'CC')
+    assert result == meteocat_station_multi_variables
+
+
+def test_station_variables_03(requests_mock, meteocat_station_auxiliar_variables):
+    """
+    Tests a correct response of the auxiliar variables assigned to a station from the MeteoCat api call
+
+    :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
+    :param meteocat_station_auxiliar_variables: Fixture that simulates the return data from a real request obtained from
+    MeteoCat
+    API
+    """
+    requests_mock.get(meteocat_urls.STATION_AUXILIAR_VARIABLES.format('CC'), json=meteocat_station_auxiliar_variables,
+                      status_code=200)
+    result = meteocat_xema_api.get_station_auxiliar_variables('2406', 'CC')
+    assert result == meteocat_station_auxiliar_variables
