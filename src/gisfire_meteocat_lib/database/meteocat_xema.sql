@@ -130,3 +130,39 @@ ALTER TABLE public.meteocat_station_variable_status_association
   OWNER TO gisfireuser
 ;
 
+CREATE TABLE public.meteocat_variable_time_basis
+(
+  id bigserial,
+  _codi int NOT NULL,
+  _data_inici timestamp with time zone NOT NULL,
+  _data_fi timestamp with time zone,
+  ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
+  CONSTRAINT pk_meteocat_variable_time_basis PRIMARY KEY (id)
+)
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE public.meteocat_variable_time_basis
+  OWNER TO gisfireuser
+;
+
+CREATE TABLE public.meteocat_station_variable_time_association
+(
+  meteocat_weather_station_id bigint,
+  meteocat_variable_id bigint,
+  meteocat_variable_time_basis_id bigint,
+  ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
+  CONSTRAINT pk_meteocat_station_variable_time_association PRIMARY KEY (meteocat_weather_station_id, meteocat_variable_id, meteocat_variable_time_basis_id),
+  CONSTRAINT fk_meteocat_weather_station_id_station_variable_time_association FOREIGN KEY (meteocat_weather_station_id) REFERENCES meteocat_weather_station(id),
+  CONSTRAINT fk_meteocat_variable_id_station_variable_time_association FOREIGN KEY (meteocat_variable_id) REFERENCES meteocat_variable(id),
+  CONSTRAINT fk_meteocat_variable_time_basis_id_station_variable_time_association FOREIGN KEY (meteocat_variable_time_basis_id) REFERENCES meteocat_variable_time_basis(id)
+)
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE public.meteocat_station_variable_time_association
+  OWNER TO gisfireuser
+;
+

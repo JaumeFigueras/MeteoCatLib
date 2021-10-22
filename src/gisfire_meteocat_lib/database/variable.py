@@ -14,15 +14,15 @@ from sqlalchemy.orm import relationship
 class VariableStatus(db.Base):
     __tablename__ = 'meteocat_variable_status'
     id = Column(Integer, primary_key=True)
-    _codi = Column(Integer, nullable=False)
-    _data_inici = Column(DateTime(timezone=True), nullable=False)
-    _data_fi = Column(DateTime(timezone=True))
+    code = Column('_codi', Integer, nullable=False)
+    from_date = Column('_data_inici', DateTime(timezone=True), nullable=False)
+    to_date = Column('_data_fi', DateTime(timezone=True))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
 
-    def __init__(self, _codi, _data_inici, _data_fi=None):
-        self._codi = _codi
-        self._data_inici = _data_inici
-        self._data_fi = _data_fi
+    def __init__(self, code, from_date, to_date=None):
+        self.code = code
+        self.from_date = from_date
+        self.to_date = to_date
 
 
 class Variable(db.Base):
@@ -44,5 +44,29 @@ class Variable(db.Base):
         self._acronim = _acronim
         self._tipus = _tipus
         self._decimals = _decimals
+
+
+class WeatherStationVariableTimeBasisAssociation(db.Base):
+    __tablename__ = 'meteocat_station_variable_time_association'
+    meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'), primary_key=True)
+    meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'), primary_key=True)
+    meteocat_variable_time_basis_id = Column(Integer, ForeignKey('meteocat_variable_time_basis.id'), primary_key=True)
+    station = relationship('WeatherStation', backref='time_basis')
+    variable = relationship('Variable', backref='time_basis')
+    time_basis = relationship('VariableTimeBasis', backref='time_basis')
+
+
+class VariableTimeBasis(db.Base):
+    __tablename__ = 'meteocat_variable_time_basis'
+    id = Column(Integer, primary_key=True)
+    code = Column('_codi', Integer, nullable=False)
+    from_date = Column('_data_inici', DateTime(timezone=True), nullable=False)
+    to_date = Column('_data_fi', DateTime(timezone=True))
+    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+
+    def __init__(self, code, from_date, to_date=None):
+        self.code = code
+        self.from_date = from_date
+        self.to_date = to_date
 
 
