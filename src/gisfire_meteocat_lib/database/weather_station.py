@@ -12,8 +12,6 @@ from sqlalchemy import ForeignKey
 from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
 
-SRID_WEATHER_STATIONS = 4258
-
 
 class WeatherStationStatus(db.Base):
     __tablename__ = 'meteocat_weather_station_status'
@@ -42,57 +40,51 @@ class WeatherStationVariableStatusAssociation(db.Base):
 
 
 class WeatherStation(db.Base):
+    STATUS_DISMANTLED = 1
+    STATUS_ACTIVE = 2
+    STATUS_REPAIR = 3
+    SRID_WEATHER_STATIONS = 4258
     __tablename__ = 'meteocat_weather_station'
     id = Column(Integer, primary_key=True)
-    _codi = Column(String, nullable=False, unique=True)
-    _nom = Column(String, nullable=False)
-    _tipus = Column(String, nullable=False)
-    _coordenades_latitud = Column(Float, nullable=False)
-    _coordenades_longitud = Column(Float, nullable=False)
-    _emplacament = Column(String, nullable=False)
-    _altitud = Column(Float, nullable=False)
-    _municipi_codi = Column(Integer, nullable=False)
-    _municipi_nom = Column(String, nullable=False)
-    _comarca_codi = Column(Integer, nullable=False)
-    _comarca_nom = Column(String, nullable=False)
-    _provincia_codi = Column(Integer, nullable=False)
-    _provincia_nom = Column(String, nullable=False)
-    _xarxa_codi = Column(Integer, nullable=False)
-    _xarxa_nom = Column(String, nullable=False)
+    code = Column('_codi', String, nullable=False, unique=True)
+    name = Column('_nom', String, nullable=False)
+    category = Column('_tipus', String, nullable=False)
+    coordinates_latitude = Column('_coordenades_latitud', Float, nullable=False)
+    coordinates_longitude = Column('_coordenades_longitud', Float, nullable=False)
+    placement = Column('_emplacament', String, nullable=False)
+    altitude = Column('_altitud', Float, nullable=False)
+    municipality_code = Column('_municipi_codi', Integer, nullable=False)
+    municipality_name = Column('_municipi_nom', String, nullable=False)
+    county_code = Column('_comarca_codi', Integer, nullable=False)
+    county_name = Column('_comarca_nom', String, nullable=False)
+    province_code = Column('_provincia_codi', Integer, nullable=False)
+    province_name = Column('_provincia_nom', String, nullable=False)
+    network_code = Column('_xarxa_codi', Integer, nullable=False)
+    network_name = Column('_xarxa_nom', String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     geom = Column(Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
     status = relationship("WeatherStationStatus", back_populates='station', lazy='joined')
     measures = relationship("Measure", back_populates='station', lazy='select')
-    STATUS_DISMANTLED = 1
-    STATUS_ACTIVE = 2
-    STATUS_REPAIR = 3
 
-    def __init__(self, codi, nom, tipus, coordenades_latitud, coordenades_longitud, emplacament, altitud,
-                 municipi_codi, municipi_nom, comarca_codi, comarca_nom, provincia_codi, provincia_nom,
-                 xarxa_codi, xarxa_nom):
-        self._codi = codi
-        self._nom = nom
-        self._tipus = tipus
-        self._coordenades_latitud = coordenades_latitud
-        self._coordenades_longitud = coordenades_longitud
-        self._emplacament = emplacament
-        self._altitud = altitud
-        self._municipi_codi = municipi_codi
-        self._municipi_nom = municipi_nom
-        self._comarca_codi = comarca_codi
-        self._comarca_nom = comarca_nom
-        self._provincia_codi = provincia_codi
-        self._provincia_nom = provincia_nom
-        self._xarxa_codi = xarxa_codi
-        self._xarxa_nom = xarxa_nom
-        self.geom = "SRID={2:};POINT({0:} {1:})".format(self._coordenades_longitud, self._coordenades_latitud,
-                                                        SRID_WEATHER_STATIONS)
+    def __init__(self, code, name, category, coordinates_latitude, coordinates_longitude, placement, altitude,
+                 municipality_code, municipality_name, county_code, county_name, province_code, province_name,
+                 network_code, network_name):
+        self.code = code
+        self.name = name
+        self.category = category
+        self.coordinates_latitude = coordinates_latitude
+        self.coordinates_longitude = coordinates_longitude
+        self.placement = placement
+        self.altitude = altitude
+        self.municipality_code = municipality_code
+        self.municipality_name = municipality_name
+        self.county_code = county_code
+        self.county_name = county_name
+        self.province_code = province_code
+        self.province_name = province_name
+        self.network_code = network_code
+        self.network_name = network_name
+        self.geom = "SRID={2:};POINT({0:} {1:})".format(self.coordinates_longitude, self.coordinates_latitude,
+                                                        self.SRID_WEATHER_STATIONS)
 
-    @property
-    def code(self):
-        return self._codi
-
-    @code.setter
-    def code(self, code):
-        self._codi = code
 

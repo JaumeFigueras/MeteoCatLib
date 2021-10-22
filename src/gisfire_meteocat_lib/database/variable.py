@@ -28,22 +28,22 @@ class VariableStatus(db.Base):
 class Variable(db.Base):
     __tablename__ = 'meteocat_variable'
     id = Column(Integer, primary_key=True)
-    _codi = Column(String, nullable=False, unique=True)
-    _nom = Column(String, nullable=False)
-    _unitat = Column(String, nullable=False)
-    _acronim = Column(String, nullable=False)
-    _tipus = Column(String, nullable=False)
-    _decimals = Column(String, nullable=False)
+    code = Column('_codi', String, nullable=False, unique=True)
+    name = Column('_nom', String, nullable=False)
+    unit = Column('_unitat', String, nullable=False)
+    acronym = Column('_acronim', String, nullable=False)
+    category = Column('_tipus', String, nullable=False)
+    decimals = Column('_decimals', String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     measures = relationship('Measure', back_populates='variable')
 
-    def __init__(self, _codi, _nom, _unitat, _acronim, _tipus, _decimals):
-        self._codi = _codi
-        self._nom = _nom
-        self._unitat = _unitat
-        self._acronim = _acronim
-        self._tipus = _tipus
-        self._decimals = _decimals
+    def __init__(self, code, name, unit, acronym, category, decimals):
+        self.code = code
+        self.name = name
+        self.unit = unit
+        self.acronym = acronym
+        self.category = category
+        self.decimals = decimals
 
 
 class WeatherStationVariableTimeBasisAssociation(db.Base):

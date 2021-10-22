@@ -15,18 +15,18 @@ from sqlalchemy.orm import relationship
 class Measure(db.Base):
     __tablename__ = 'meteocat_measure'
     id = Column(Integer, primary_key=True)
-    _data = Column(DateTime(timezone=True), nullable=False)
-    _valor = Column(Float, nullable=False)
-    _estat = Column(String, nullable=False)
-    _base_horaria = Column(String, nullable=False)
+    date = Column('_data', DateTime(timezone=True), nullable=False)
+    value = Column('_valor', Float, nullable=False)
+    status = Column('_estat', String, nullable=False)
+    time_basis = Column('_base_horaria', String, nullable=False)
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
     meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     station = relationship('WeatherStation', back_populates='measures')
     variable = relationship('Variable', back_populates='measures')
 
-    def __init__(self, _data, _valor, _estat, _base_horaria):
-        self._data = _data
-        self._valor = _valor
-        self._estat = _estat
-        self._base_horaria = _base_horaria
+    def __init__(self, date, value, status, time_basis):
+        self.date = date
+        self.value = value
+        self.status = status
+        self.time_basis = time_basis
