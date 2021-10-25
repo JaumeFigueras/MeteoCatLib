@@ -59,7 +59,7 @@ class WeatherStationVariableTimeBasisAssociation(db.Base):
 class VariableTimeBasis(db.Base):
     __tablename__ = 'meteocat_variable_time_basis'
     id = Column(Integer, primary_key=True)
-    code = Column('_codi', Integer, nullable=False)
+    code = Column('_codi', String, nullable=False)
     from_date = Column('_data_inici', DateTime(timezone=True), nullable=False)
     to_date = Column('_data_fi', DateTime(timezone=True))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)

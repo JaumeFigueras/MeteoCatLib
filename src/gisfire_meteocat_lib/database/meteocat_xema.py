@@ -3,8 +3,10 @@
 
 from .weather_station import WeatherStation
 from .weather_station import WeatherStationStatus
+from .variable import Variable
 import datetime
 import dateutil.parser
+import sqlalchemy.exc
 
 
 def get_weather_stations(db_session, active_stations=False, active_on_date=datetime.datetime.utcnow()):
@@ -34,3 +36,23 @@ def get_weather_stations(db_session, active_stations=False, active_on_date=datet
                     (WeatherStationStatus.from_date <= active_on_date) &
                     (WeatherStationStatus.to_date == None))\
             .all()  # noqa: E711
+
+
+def get_variable(db_session, variable_code):
+    """
+    Get the Variable object identified by the variable code stored in the database (not the id in the database)
+
+    :param db_session: SQL Alchemy database session to work with
+    :type db_session: sqlalchemy.orm.Session
+    :param variable_code: Identifying code of the variable for the Meteo Cat agency
+    :type variable_code: int
+    :return: The Variable object or None if it was not found in the database
+    :rtype: Union[Variable | None]
+    """
+    try:
+        variable = db_session.query(Variable)\
+            .filter(Variable.code == variable_code)\
+            .one()
+    except sqlalchemy.exc.NoResultFound as e:
+        variable = None
+    return variable

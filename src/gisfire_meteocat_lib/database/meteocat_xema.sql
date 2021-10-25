@@ -133,7 +133,7 @@ ALTER TABLE public.meteocat_station_variable_status_association
 CREATE TABLE public.meteocat_variable_time_basis
 (
   id bigserial,
-  _codi int NOT NULL,
+  _codi varchar NOT NULL,
   _data_inici timestamp with time zone NOT NULL,
   _data_fi timestamp with time zone,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,

@@ -10,6 +10,7 @@ from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStationSt
 from ..src.gisfire_meteocat_lib.database.weather_station import WeatherStationVariableStatusAssociation
 from ..src.gisfire_meteocat_lib.database.measures import Measure
 from ..src.gisfire_meteocat_lib.database.meteocat_xema import get_weather_stations
+from ..src.gisfire_meteocat_lib.database.meteocat_xema import get_variable
 import datetime
 import pytz
 
@@ -183,7 +184,7 @@ def test_add_station_variable_time_basis_01(db_session, postgresql_schema):
     variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
-    time_basis = VariableTimeBasis(2, '2017-03-27T00:00Z')
+    time_basis = VariableTimeBasis('SH', '2017-03-27T00:00Z')
     association = WeatherStationVariableTimeBasisAssociation(variable=variable, station=station, time_basis=time_basis)
     db_session.add(association)
     db_session.commit()
@@ -204,7 +205,7 @@ def test_add_station_variable_time_basis_01(db_session, postgresql_schema):
     variables = db_session.query(WeatherStationVariableTimeBasisAssociation)\
         .filter(WeatherStationVariableTimeBasisAssociation.meteocat_weather_station_id == station.id)\
         .join(WeatherStationVariableTimeBasisAssociation.time_basis)\
-        .filter(VariableTimeBasis.code == 2)\
+        .filter(VariableTimeBasis.code == 'SH')\
         .all()
     assert len(variables) == 1
     assert variables[0].meteocat_variable_id == variable.id
@@ -282,3 +283,18 @@ def test_get_weather_stations_05(db_session):
     stations = get_weather_stations(db_session, True, datetime.datetime(2018, 10, 10, 10, 0, 0))
     assert len(stations) == 1
 
+
+def test_get_variable_01(db_session):
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    db_session.add(variable)
+    db_session.commit()
+    var = get_variable(db_session, variable.code)
+    assert var.code == variable.code
+
+
+def test_get_variable_02(db_session):
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    db_session.add(variable)
+    db_session.commit()
+    var = get_variable(db_session, 42)
+    assert var is None
