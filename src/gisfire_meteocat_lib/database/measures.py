@@ -13,6 +13,9 @@ from sqlalchemy.orm import relationship
 
 
 class Measure(db.Base):
+    """
+    Class container for measures table.  It provides SQL Alchemy access to the measures read from the weather stations
+    """
     __tablename__ = 'meteocat_measure'
     id = Column(Integer, primary_key=True)
     date = Column('_data', DateTime(timezone=True), nullable=False)

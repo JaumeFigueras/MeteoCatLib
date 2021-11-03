@@ -12,6 +12,10 @@ from sqlalchemy.orm import relationship
 
 
 class VariableStatus(db.Base):
+    """
+    Class container for the variable status table.  Provides the SQL Alchemy access to the different status of a
+    variable. A variable status informa of the presence of a certain variable measure in a specific weather station
+    """
     __tablename__ = 'meteocat_variable_status'
     id = Column(Integer, primary_key=True)
     code = Column('_codi', Integer, nullable=False)
@@ -26,6 +30,10 @@ class VariableStatus(db.Base):
 
 
 class Variable(db.Base):
+    """
+    Class container for the variable table.  Provides the SQL Alchemy access to the different variables that can be
+    measured or calculated in the different weather stations.
+    """
     __tablename__ = 'meteocat_variable'
     id = Column(Integer, primary_key=True)
     code = Column('_codi', String, nullable=False, unique=True)
@@ -47,6 +55,11 @@ class Variable(db.Base):
 
 
 class VariableTimeBasis(db.Base):
+    """
+    Class container for the variable time bases table. Provides the SQL Alchemy access to the different measurement
+    intervals of a certain variable in a specific weather station. The different time intervals can be hourly,
+    semi-hourly (30 min.), etc.
+    """
     __tablename__ = 'meteocat_variable_time_basis'
     id = Column(Integer, primary_key=True)
     code = Column('_codi', String, nullable=False)
@@ -61,6 +74,10 @@ class VariableTimeBasis(db.Base):
 
 
 class WeatherStationVariableTimeBasisAssociation(db.Base):
+    """
+    Class container for the association table between weather stations, variables and the time basis of the variable.
+    Provides the SQL Alchemy access to the ternary relation
+    """
     __tablename__ = 'meteocat_station_variable_time_association'
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'), primary_key=True)
     meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'), primary_key=True)

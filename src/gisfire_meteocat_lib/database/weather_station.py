@@ -14,6 +14,11 @@ from sqlalchemy.orm import relationship
 
 
 class WeatherStationStatus(db.Base):
+    """
+    Class container for the weather station status table.  Provides the SQL Alchemy access to the different status of
+    the timeline of a weather station.. A weather station status informs of the presence of a certain weather station in
+    the system.
+    """
     __tablename__ = 'meteocat_weather_station_status'
     id = Column(Integer, primary_key=True)
     code = Column('_codi', Integer, nullable=False)
@@ -30,6 +35,10 @@ class WeatherStationStatus(db.Base):
 
 
 class WeatherStationVariableStatusAssociation(db.Base):
+    """
+    Class container for the association table between weather stations, variables and the status of the variable.
+    Provides the SQL Alchemy access to the ternary relation
+    """
     __tablename__ = 'meteocat_station_variable_status_association'
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'), primary_key=True)
     meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'), primary_key=True)
@@ -40,6 +49,9 @@ class WeatherStationVariableStatusAssociation(db.Base):
 
 
 class WeatherStation(db.Base):
+    """
+    Class container for the weather station table.  Provides the SQL Alchemy access to the different weather stations.
+    """
     STATUS_DISMANTLED = 1
     STATUS_ACTIVE = 2
     STATUS_REPAIR = 3
@@ -86,5 +98,3 @@ class WeatherStation(db.Base):
         self.network_name = network_name
         self.geom = "SRID={2:};POINT({0:} {1:})".format(self.coordinates_longitude, self.coordinates_latitude,
                                                         self.SRID_WEATHER_STATIONS)
-
-

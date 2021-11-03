@@ -119,7 +119,9 @@ def get_measures_of_station_measured_variables(api_token, station_code, variable
     :type variable_code: int
     :param date: Date of the data to be retrieved
     :type date: datetime.date
-    :return:
+    :return: JSON metadata obtained from the API. The data format can be retrieved from:
+    https://apidocs.meteocat.gencat.cat/documentacio/dades-mesurades/#dades-duna-variable-per-a-totes-les-estacions-o-per-una-estacio
+    :rtype: Union[list[dict], None]
     """
     year = str(date.year)
     month = "{:02d}".format(date.month)
@@ -150,7 +152,9 @@ def get_measures_of_station_multi_variables(api_token, station_code, variable_co
     :type variable_code: int
     :param date: Date of the data to be retrieved
     :type date: datetime.date
-    :return:
+    :return: JSON metadata obtained from the API. The data format can be retrieved from:
+    https://apidocs.meteocat.gencat.cat/documentacio/calcul-multivariable/#calcul-multivariable-duna-variable-per-totes-les-estacions-o-per-una-estacio
+    :rtype: Union[list[dict], None]
     """
     year = str(date.year)
     month = "{:02d}".format(date.month)
@@ -181,7 +185,9 @@ def get_measures_of_station_auxiliar_variables(api_token, station_code, variable
     :type variable_code: int
     :param date: Date of the data to be retrieved
     :type date: datetime.date
-    :return:
+    :return: JSON metadata obtained from the API. The data format can be retrieved from:
+    https://apidocs.meteocat.gencat.cat/documentacio/dades-auxiliars/#calcul-auxiliars-duna-variable-a-una-estacio
+    :rtype: Union[list[dict], None]
     """
     year = str(date.year)
     month = "{:02d}".format(date.month)
