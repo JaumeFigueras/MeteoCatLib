@@ -34,9 +34,9 @@ class WeatherStationVariableStatusAssociation(db.Base):
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'), primary_key=True)
     meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'), primary_key=True)
     meteocat_variable_status_id = Column(Integer, ForeignKey('meteocat_variable_status.id'), primary_key=True)
-    station = relationship('WeatherStation', backref='variable_status')
-    variable = relationship('Variable', backref='variable_status')
-    status = relationship('VariableStatus', backref='variable_status')
+    station = relationship('WeatherStation', backref='variable_status', foreign_keys=[meteocat_weather_station_id])
+    variable = relationship('Variable', backref='variable_status', foreign_keys=[meteocat_variable_id])
+    status = relationship('VariableStatus', backref='variable_status', foreign_keys=[meteocat_variable_status_id])
 
 
 class WeatherStation(db.Base):

@@ -46,16 +46,6 @@ class Variable(db.Base):
         self.decimals = decimals
 
 
-class WeatherStationVariableTimeBasisAssociation(db.Base):
-    __tablename__ = 'meteocat_station_variable_time_association'
-    meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'), primary_key=True)
-    meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'), primary_key=True)
-    meteocat_variable_time_basis_id = Column(Integer, ForeignKey('meteocat_variable_time_basis.id'), primary_key=True)
-    station = relationship('WeatherStation', backref='time_basis')
-    variable = relationship('Variable', backref='time_basis')
-    time_basis = relationship('VariableTimeBasis', backref='time_basis')
-
-
 class VariableTimeBasis(db.Base):
     __tablename__ = 'meteocat_variable_time_basis'
     id = Column(Integer, primary_key=True)
@@ -68,5 +58,15 @@ class VariableTimeBasis(db.Base):
         self.code = code
         self.from_date = from_date
         self.to_date = to_date
+
+
+class WeatherStationVariableTimeBasisAssociation(db.Base):
+    __tablename__ = 'meteocat_station_variable_time_association'
+    meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'), primary_key=True)
+    meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'), primary_key=True)
+    meteocat_variable_time_basis_id = Column(Integer, ForeignKey('meteocat_variable_time_basis.id'), primary_key=True)
+    station = relationship('WeatherStation', backref='time_basis')
+    variable = relationship('Variable', backref='time_basis')
+    time_basis = relationship('VariableTimeBasis', backref='time_basis')
 
 

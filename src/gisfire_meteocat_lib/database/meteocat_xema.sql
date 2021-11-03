@@ -75,6 +75,7 @@ CREATE TABLE public.meteocat_measure
 (
   id bigserial,
   _data timestamp with time zone NOT NULL,
+  _data_extrem timestamp with time zone DEFAULT NULL,
   _valor double precision NOT NULL,
   _estat varchar NOT NULL,
   _base_horaria varchar NOT NULL,
@@ -83,13 +84,14 @@ CREATE TABLE public.meteocat_measure
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
   CONSTRAINT pk_meteocat_measure PRIMARY KEY (id),
   CONSTRAINT fk_meteocat_weather_station_id_measure FOREIGN KEY (meteocat_weather_station_id) REFERENCES meteocat_weather_station(id),
-  CONSTRAINT fk_meteocat_variable_id_measure FOREIGN KEY (meteocat_variable_id) REFERENCES meteocat_variable(id)
+  CONSTRAINT fk_meteocat_variable_id_measure FOREIGN KEY (meteocat_variable_id) REFERENCES meteocat_variable(id),
+  CONSTRAINT uq_meteocat_measure_station_variable_date UNIQUE (meteocat_weather_station_id, meteocat_variable_id, _data)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_weather_station_status
+ALTER TABLE public.meteocat_measure
   OWNER TO gisfireuser
 ;
 

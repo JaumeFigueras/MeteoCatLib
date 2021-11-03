@@ -107,19 +107,97 @@ def get_station_auxiliar_variables(api_token, station_code):
     return meteocat_api.get_from_api(api_token, url)
 
 
-def get_measures_of_station_measured_variables(api_token, variable, date, station=None):
+def get_measures_of_station_measured_variables(api_token, station_code, variable_code, date):
     """
-    Gets the measured variables metadata used in the weather stations of MeteoCat from its public API.
-    Uses the default time-out time and number of retries (in case of error in the comms).
+    Gets the list of measures from the selected station and variable.
 
     :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
-    :return: JSON metadata obtained from the API
-    :rtype: list of dict or None. Data contained in dicts can be retrieved from:
+    :type api_token: str
+    :param station_code: Weather station id code
+    :type station_code: str
+    :param variable_code: Variable id code
+    :type variable_code: int
+    :param date: Date of the data to be retrieved
+    :type date: datetime.date
+    :return:
     """
-    variable_id = str(variable.id)
     year = str(date.year)
     month = "{:02d}".format(date.month)
     day = "{:02d}".format(date.day)
-    url = meteocat_urls.VARIABLES_METADATA
-    return meteocat_api.get_from_api(api_token, meteocat_urls.VARIABLES_METADATA)
+    url = meteocat_urls.STATION_MEASURED_DATA.format(variable_code, year, month, day, station_code)
+    data = meteocat_api.get_from_api(api_token, url)
+    if not (data is None):
+        if len(data) > 0:
+            if data['codi'] == variable_code:
+                return data['lectures']
+            else:
+                return list()
+        else:
+            return list()
+    else:
+        return list()
+
+
+def get_measures_of_station_multi_variables(api_token, station_code, variable_code, date):
+    """
+    Gets the list of measures from the selected station and variable.
+
+    :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
+    :type api_token: str
+    :param station_code: Weather station id code
+    :type station_code: str
+    :param variable_code: Variable id code
+    :type variable_code: int
+    :param date: Date of the data to be retrieved
+    :type date: datetime.date
+    :return:
+    """
+    year = str(date.year)
+    month = "{:02d}".format(date.month)
+    day = "{:02d}".format(date.day)
+    url = meteocat_urls.STATION_MULTI_DATA.format(variable_code, year, month, day, station_code)
+    data = meteocat_api.get_from_api(api_token, url)
+    if not (data is None):
+        if len(data) > 0:
+            if data['codi'] == variable_code:
+                return data['lectures']
+            else:
+                return list()
+        else:
+            return list()
+    else:
+        return list()
+
+
+def get_measures_of_station_auxiliar_variables(api_token, station_code, variable_code, date):
+    """
+    Gets the list of measures from the selected station and variable.
+
+    :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
+    :type api_token: str
+    :param station_code: Weather station id code
+    :type station_code: str
+    :param variable_code: Variable id code
+    :type variable_code: int
+    :param date: Date of the data to be retrieved
+    :type date: datetime.date
+    :return:
+    """
+    year = str(date.year)
+    month = "{:02d}".format(date.month)
+    day = "{:02d}".format(date.day)
+    url = meteocat_urls.STATION_AUXILIAR_DATA.format(variable_code, year, month, day, station_code)
+    data = meteocat_api.get_from_api(api_token, url)
+    if not (data is None):
+        if len(data) > 0:
+            if data['codi'] == variable_code:
+                return data['lectures']
+            else:
+                return list()
+        else:
+            return list()
+    else:
+        return list()
+
+
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import datetime
 
 import requests
 from src.gisfire_meteocat_lib.remote_api import meteocat_xema_api
@@ -214,3 +215,51 @@ def test_station_variables_03(requests_mock, meteocat_station_auxiliar_variables
                       status_code=200)
     result = meteocat_xema_api.get_station_auxiliar_variables('2406', 'CC')
     assert result == meteocat_station_auxiliar_variables
+
+
+def test_variable_data_01(requests_mock, meteocat_variables_measured_data):
+    """
+    Tests a correct response of the auxiliar variables assigned to a station from the MeteoCat api call
+
+    :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
+    :param meteocat_variables_measured_data: Fixture that simulates the return data from a real request obtained from
+    MeteoCat
+    API
+    """
+    requests_mock.get(meteocat_urls.STATION_MEASURED_DATA.format('1', '2021', '10', '22', 'YN'),
+                      json=meteocat_variables_measured_data, status_code=200)
+    result = meteocat_xema_api.get_measures_of_station_measured_variables('2406', 'YN', 1,
+                                                                          datetime.date(2021, 10, 22))
+    assert result == meteocat_variables_measured_data['lectures']
+
+
+def test_variable_data_02(requests_mock, meteocat_variables_multi_data):
+    """
+    Tests a correct response of the auxiliar variables assigned to a station from the MeteoCat api call
+
+    :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
+    :param meteocat_variables_multi_data: Fixture that simulates the return data from a real request obtained from
+    MeteoCat
+    API
+    """
+    requests_mock.get(meteocat_urls.STATION_MULTI_DATA.format('6006', '2021', '10', '22', 'YN'),
+                      json=meteocat_variables_multi_data, status_code=200)
+    result = meteocat_xema_api.get_measures_of_station_multi_variables('2406', 'YN', 6006,
+                                                                       datetime.date(2021, 10, 22))
+    assert result == meteocat_variables_multi_data['lectures']
+
+
+def test_variable_data_03(requests_mock, meteocat_variables_auxiliar_data):
+    """
+    Tests a correct response of the auxiliar variables assigned to a station from the MeteoCat api call
+
+    :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
+    :param meteocat_variables_auxiliar_data: Fixture that simulates the return data from a real request obtained from
+    MeteoCat
+    API
+    """
+    requests_mock.get(meteocat_urls.STATION_AUXILIAR_DATA.format('901', '2021', '10', '21', 'CE'),
+                      json=meteocat_variables_auxiliar_data, status_code=200)
+    result = meteocat_xema_api.get_measures_of_station_auxiliar_variables('2406', 'CE', 901,
+                                                                          datetime.date(2021, 10, 21))
+    assert result == meteocat_variables_auxiliar_data['lectures']

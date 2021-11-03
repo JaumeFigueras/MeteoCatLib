@@ -2367,3 +2367,559 @@ def meteocat_station_auxiliar_variables():
             ]
           }
         ]""")
+
+
+@pytest.fixture(scope='session')
+def meteocat_variables_measured_data():
+    return {
+          "codi": 1,
+          "lectures": [
+            {
+              "data": "2021-10-22T00:00Z",
+              "dataExtrem": "2021-10-22T00:00Z",
+              "valor": 903.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T00:30Z",
+              "dataExtrem": "2021-10-22T00:30Z",
+              "valor": 903.3,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T01:00Z",
+              "dataExtrem": "2021-10-22T01:00Z",
+              "valor": 903.2,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T01:30Z",
+              "dataExtrem": "2021-10-22T01:30Z",
+              "valor": 903.1,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T02:00Z",
+              "dataExtrem": "2021-10-22T02:00Z",
+              "valor": 903.1,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T02:30Z",
+              "dataExtrem": "2021-10-22T02:32Z",
+              "valor": 903.1,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T03:00Z",
+              "dataExtrem": "2021-10-22T03:11Z",
+              "valor": 903,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T03:30Z",
+              "dataExtrem": "2021-10-22T03:32Z",
+              "valor": 902.9,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T04:00Z",
+              "dataExtrem": "2021-10-22T04:14Z",
+              "valor": 903.1,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T04:30Z",
+              "dataExtrem": "2021-10-22T04:58Z",
+              "valor": 903.2,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T05:00Z",
+              "dataExtrem": "2021-10-22T05:27Z",
+              "valor": 903.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T05:30Z",
+              "dataExtrem": "2021-10-22T05:30Z",
+              "valor": 903.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T06:00Z",
+              "dataExtrem": "2021-10-22T06:29Z",
+              "valor": 903.6,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T06:30Z",
+              "dataExtrem": "2021-10-22T06:55Z",
+              "valor": 903.7,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T07:00Z",
+              "dataExtrem": "2021-10-22T07:25Z",
+              "valor": 904.1,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T07:30Z",
+              "dataExtrem": "2021-10-22T07:59Z",
+              "valor": 904.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T08:00Z",
+              "dataExtrem": "2021-10-22T08:18Z",
+              "valor": 904.5,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T08:30Z",
+              "dataExtrem": "2021-10-22T08:42Z",
+              "valor": 904.6,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T09:00Z",
+              "dataExtrem": "2021-10-22T09:00Z",
+              "valor": 904.5,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T09:30Z",
+              "dataExtrem": "2021-10-22T09:30Z",
+              "valor": 904.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T10:00Z",
+              "dataExtrem": "2021-10-22T10:00Z",
+              "valor": 904.3,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T10:30Z",
+              "dataExtrem": "2021-10-22T10:30Z",
+              "valor": 904.2,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T11:00Z",
+              "dataExtrem": "2021-10-22T11:04Z",
+              "valor": 904.1,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T11:30Z",
+              "dataExtrem": "2021-10-22T11:30Z",
+              "valor": 903.8,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T12:00Z",
+              "dataExtrem": "2021-10-22T12:00Z",
+              "valor": 903.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T12:30Z",
+              "dataExtrem": "2021-10-22T12:55Z",
+              "valor": 903.2,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T13:00Z",
+              "dataExtrem": "2021-10-22T13:00Z",
+              "valor": 903.2,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T13:30Z",
+              "dataExtrem": "2021-10-22T13:57Z",
+              "valor": 903.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T14:00Z",
+              "dataExtrem": "2021-10-22T14:29Z",
+              "valor": 903.6,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T14:30Z",
+              "dataExtrem": "2021-10-22T14:54Z",
+              "valor": 903.7,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T15:00Z",
+              "dataExtrem": "2021-10-22T15:29Z",
+              "valor": 903.9,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T15:30Z",
+              "dataExtrem": "2021-10-22T15:58Z",
+              "valor": 904.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T16:00Z",
+              "dataExtrem": "2021-10-22T16:04Z",
+              "valor": 904.5,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T16:30Z",
+              "dataExtrem": "2021-10-22T16:53Z",
+              "valor": 904.7,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T17:00Z",
+              "dataExtrem": "2021-10-22T17:27Z",
+              "valor": 905.1,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T17:30Z",
+              "dataExtrem": "2021-10-22T17:59Z",
+              "valor": 905.5,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T18:00Z",
+              "dataExtrem": "2021-10-22T18:28Z",
+              "valor": 905.8,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T18:30Z",
+              "dataExtrem": "2021-10-22T18:46Z",
+              "valor": 905.9,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T19:00Z",
+              "dataExtrem": "2021-10-22T19:11Z",
+              "valor": 906,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T19:30Z",
+              "dataExtrem": "2021-10-22T19:59Z",
+              "valor": 906.1,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T20:00Z",
+              "dataExtrem": "2021-10-22T20:29Z",
+              "valor": 906.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T20:30Z",
+              "dataExtrem": "2021-10-22T20:46Z",
+              "valor": 906.5,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T21:00Z",
+              "dataExtrem": "2021-10-22T21:29Z",
+              "valor": 906.5,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T21:30Z",
+              "dataExtrem": "2021-10-22T21:45Z",
+              "valor": 906.6,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T22:00Z",
+              "dataExtrem": "2021-10-22T22:00Z",
+              "valor": 906.5,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T22:30Z",
+              "dataExtrem": "2021-10-22T22:38Z",
+              "valor": 906.6,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T23:00Z",
+              "dataExtrem": "2021-10-22T23:00Z",
+              "valor": 906.5,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T23:30Z",
+              "dataExtrem": "2021-10-22T23:33Z",
+              "valor": 906.3,
+              "estat": "T",
+              "baseHoraria": "SH"
+            }
+          ]
+        }
+
+
+@pytest.fixture(scope='session')
+def meteocat_variables_multi_data():
+    return {
+          "codi": 6006,
+          "lectures": [
+            {
+              "data": "2021-10-22T00:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T01:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T02:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T03:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T04:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T05:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T06:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T07:00Z",
+              "valor": 0.02,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T08:00Z",
+              "valor": 0.15,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T09:00Z",
+              "valor": 0.24,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T10:00Z",
+              "valor": 0.31,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T11:00Z",
+              "valor": 0.36,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T12:00Z",
+              "valor": 0.33,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T13:00Z",
+              "valor": 0.17,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T14:00Z",
+              "valor": 0.13,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T15:00Z",
+              "valor": 0.07,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T16:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T17:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T18:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T19:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T20:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T21:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            },
+            {
+              "data": "2021-10-22T22:00Z",
+              "valor": 0,
+              "estat": " ",
+              "baseHoraria": "HO"
+            }
+          ]
+        }
+
+
+@pytest.fixture(scope='session')
+def meteocat_variables_auxiliar_data():
+    return {
+          "codi": 901,
+          "lectures": [
+            {
+              "data": "2021-10-21T13:46Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            },
+            {
+              "data": "2021-10-21T13:48Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            },
+            {
+              "data": "2021-10-21T13:51Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            },
+            {
+              "data": "2021-10-21T13:53Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            },
+            {
+              "data": "2021-10-21T13:54Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            },
+            {
+              "data": "2021-10-21T13:56Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            },
+            {
+              "data": "2021-10-21T14:01Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            },
+            {
+              "data": "2021-10-21T14:02Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            },
+            {
+              "data": "2021-10-21T14:03Z",
+              "valor": 0.1,
+              "estat": " ",
+              "baseHoraria": "MI"
+            }
+          ]
+        }
+
