@@ -5,4 +5,4 @@ from ..database import db
 from ..database import measures
 from ..database import variable
 from ..database import weather_station
-
+from ..database import lightnings

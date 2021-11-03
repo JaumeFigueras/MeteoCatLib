@@ -1,4 +1,4 @@
-CREATE TABLE public.meteocat_xdde_requests
+CREATE TABLE public.meteocat_xdde_request
 (
    year integer,
    month integer,
@@ -13,23 +13,23 @@ WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_xdde_requests
+ALTER TABLE public.meteocat_xdde_request
   OWNER TO gisfireuser
 ;
 
-CREATE TABLE public.meteocat_lightnings
+CREATE TABLE public.meteocat_lightning
 (
   id bigserial,
   _id bigint,
   _data timestamp with time zone NOT NULL,
-  _correntPic double precision NOT NULL,
+  _corrent_pic double precision NOT NULL,
   _chi2 double precision NOT NULL,
-  _ellipse_eixMajor double precision NOT NULL,
-  _ellipse_eixMenor double precision NOT NULL,
+  _ellipse_eix_major double precision NOT NULL,
+  _ellipse_eix_menor double precision NOT NULL,
   _ellipse_angle double precision NOT NULL,
-  _numSensors integer NOT NULL,
-  _nuvolTerra boolean NOT NULL,
-  _idMunicipi integer,
+  _num_sensors integer NOT NULL,
+  _nuvol_terra boolean NOT NULL,
+  _id_municipi integer,
   _coordenades_latitud double precision NOT NULL,
   _coordenades_longitud double precision NOT NULL,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc'),
@@ -39,8 +39,8 @@ WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_lightnings
+ALTER TABLE public.meteocat_lightning
   OWNER TO gisfireuser
 ;
-SELECT AddGeometryColumn ('public', 'meteocat_lightnings', 'geom', 4258, 'POINT', 2)
+SELECT AddGeometryColumn ('public', 'meteocat_lightning', 'geom', 4258, 'POINT', 2)
 ;
