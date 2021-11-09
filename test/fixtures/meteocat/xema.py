@@ -2370,7 +2370,7 @@ def meteocat_station_auxiliar_variables():
 
 
 @pytest.fixture(scope='session')
-def meteocat_variables_measured_data():
+def meteocat_variables_data():
     return {
           "codi": 1,
           "lectures": [
@@ -2715,211 +2715,28 @@ def meteocat_variables_measured_data():
 
 
 @pytest.fixture(scope='session')
-def meteocat_variables_multi_data():
+def meteocat_variables_data_code_error():
     return {
-          "codi": 6006,
+          "codi": 2,
           "lectures": [
             {
               "data": "2021-10-22T00:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
+              "dataExtrem": "2021-10-22T00:00Z",
+              "valor": 903.4,
+              "estat": "T",
+              "baseHoraria": "SH"
+            },
+            {
+              "data": "2021-10-22T00:30Z",
+              "dataExtrem": "2021-10-22T00:30Z",
+              "valor": 903.3,
+              "estat": "T",
+              "baseHoraria": "SH"
             },
             {
               "data": "2021-10-22T01:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T02:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T03:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T04:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T05:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T06:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T07:00Z",
-              "valor": 0.02,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T08:00Z",
-              "valor": 0.15,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T09:00Z",
-              "valor": 0.24,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T10:00Z",
-              "valor": 0.31,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T11:00Z",
-              "valor": 0.36,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T12:00Z",
-              "valor": 0.33,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T13:00Z",
-              "valor": 0.17,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T14:00Z",
-              "valor": 0.13,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T15:00Z",
-              "valor": 0.07,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T16:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T17:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T18:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T19:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T20:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T21:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            },
-            {
-              "data": "2021-10-22T22:00Z",
-              "valor": 0,
-              "estat": " ",
-              "baseHoraria": "HO"
-            }
-          ]
-        }
-
-
-@pytest.fixture(scope='session')
-def meteocat_variables_auxiliar_data():
-    return {
-          "codi": 901,
-          "lectures": [
-            {
-              "data": "2021-10-21T13:46Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            },
-            {
-              "data": "2021-10-21T13:48Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            },
-            {
-              "data": "2021-10-21T13:51Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            },
-            {
-              "data": "2021-10-21T13:53Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            },
-            {
-              "data": "2021-10-21T13:54Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            },
-            {
-              "data": "2021-10-21T13:56Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            },
-            {
-              "data": "2021-10-21T14:01Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            },
-            {
-              "data": "2021-10-21T14:02Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            },
-            {
-              "data": "2021-10-21T14:03Z",
-              "valor": 0.1,
-              "estat": " ",
-              "baseHoraria": "MI"
-            }
-          ]
-        }
-
+              "dataExtrem": "2021-10-22T01:00Z",
+              "valor": 903.2,
+              "estat": "T",
+              "baseHoraria": "SH"
+            }]}

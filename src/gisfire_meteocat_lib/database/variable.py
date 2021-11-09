@@ -44,6 +44,9 @@ class Variable(db.Base):
     decimals = Column('_decimals', String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     measures = relationship('Measure', back_populates='variable')
+    CATEGORY_MEASURED = 'DAT'
+    CATEGORY_AUXILIAR = 'AUX'
+    CATEGORY_MULTIVARIATE = 'CMV'
 
     def __init__(self, code, name, unit, acronym, category, decimals):
         self.code = code

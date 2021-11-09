@@ -3,6 +3,7 @@
 
 from . import meteocat_urls
 from . import meteocat_api
+from ..database.variable import Variable
 
 
 def get_variables_measured_metadata(api_token):
@@ -107,7 +108,7 @@ def get_station_auxiliar_variables(api_token, station_code):
     return meteocat_api.get_from_api(api_token, url)
 
 
-def get_measures_of_station_measured_variables(api_token, station_code, variable_code, date):
+def get_measures_of_station_variable(api_token, station_code, variable_code, variable_category, date):
     """
     Gets the list of measures from the selected station and variable.
 
@@ -126,84 +127,25 @@ def get_measures_of_station_measured_variables(api_token, station_code, variable
     year = str(date.year)
     month = "{:02d}".format(date.month)
     day = "{:02d}".format(date.day)
-    url = meteocat_urls.STATION_MEASURED_DATA.format(variable_code, year, month, day, station_code)
+    url = ''
+    if variable_category == Variable.CATEGORY_MEASURED:
+        url = meteocat_urls.STATION_MEASURED_DATA.format(variable_code, year, month, day, station_code)
+    elif variable_category == Variable.CATEGORY_AUXILIAR:
+        url = meteocat_urls.STATION_AUXILIAR_DATA.format(variable_code, year, month, day, station_code)
+    elif variable_category == Variable.CATEGORY_MULTIVARIATE:
+        url = meteocat_urls.STATION_MULTI_DATA.format(variable_code, year, month, day, station_code)
     data = meteocat_api.get_from_api(api_token, url)
     if not (data is None):
         if len(data) > 0:
-            if data['codi'] == variable_code:
-                return data['lectures']
+            if 'codi' in data:
+                if data['codi'] == variable_code:
+                    return data['lectures']
+                else:
+                    return list()
             else:
                 return list()
         else:
             return list()
     else:
         return list()
-
-
-def get_measures_of_station_multi_variables(api_token, station_code, variable_code, date):
-    """
-    Gets the list of measures from the selected station and variable.
-
-    :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
-    :type api_token: str
-    :param station_code: Weather station id code
-    :type station_code: str
-    :param variable_code: Variable id code
-    :type variable_code: int
-    :param date: Date of the data to be retrieved
-    :type date: datetime.date
-    :return: JSON metadata obtained from the API. The data format can be retrieved from:
-    https://apidocs.meteocat.gencat.cat/documentacio/calcul-multivariable/#calcul-multivariable-duna-variable-per-totes-les-estacions-o-per-una-estacio
-    :rtype: Union[list[dict], None]
-    """
-    year = str(date.year)
-    month = "{:02d}".format(date.month)
-    day = "{:02d}".format(date.day)
-    url = meteocat_urls.STATION_MULTI_DATA.format(variable_code, year, month, day, station_code)
-    data = meteocat_api.get_from_api(api_token, url)
-    if not (data is None):
-        if len(data) > 0:
-            if data['codi'] == variable_code:
-                return data['lectures']
-            else:
-                return list()
-        else:
-            return list()
-    else:
-        return list()
-
-
-def get_measures_of_station_auxiliar_variables(api_token, station_code, variable_code, date):
-    """
-    Gets the list of measures from the selected station and variable.
-
-    :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
-    :type api_token: str
-    :param station_code: Weather station id code
-    :type station_code: str
-    :param variable_code: Variable id code
-    :type variable_code: int
-    :param date: Date of the data to be retrieved
-    :type date: datetime.date
-    :return: JSON metadata obtained from the API. The data format can be retrieved from:
-    https://apidocs.meteocat.gencat.cat/documentacio/dades-auxiliars/#calcul-auxiliars-duna-variable-a-una-estacio
-    :rtype: Union[list[dict], None]
-    """
-    year = str(date.year)
-    month = "{:02d}".format(date.month)
-    day = "{:02d}".format(date.day)
-    url = meteocat_urls.STATION_AUXILIAR_DATA.format(variable_code, year, month, day, station_code)
-    data = meteocat_api.get_from_api(api_token, url)
-    if not (data is None):
-        if len(data) > 0:
-            if data['codi'] == variable_code:
-                return data['lectures']
-            else:
-                return list()
-        else:
-            return list()
-    else:
-        return list()
-
-
 

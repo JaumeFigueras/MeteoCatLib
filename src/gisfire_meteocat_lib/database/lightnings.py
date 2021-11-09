@@ -7,8 +7,10 @@ from sqlalchemy import Integer
 from sqlalchemy import Float
 from sqlalchemy import Boolean
 from sqlalchemy import DateTime
+from sqlalchemy import Date
 from sqlalchemy import func
 from geoalchemy2 import Geometry
+import dateutil.parser
 
 
 class Lightning(db.Base):
@@ -37,7 +39,10 @@ class Lightning(db.Base):
                  ellipse_angle, number_of_sensors, hit_ground, municipality_code, coordinates_latitude,
                  coordinates_longitude):
         self.meteocat_id = meteocat_id
-        self.date = date
+        if type(date) is str:
+            self.date = dateutil.parser.isoparse(date)
+        else:
+            self.date = date
         self.peak_current = peak_current
         self.chi_squared = chi_squared
         self.ellipse_major_axis = ellipse_major_axis
@@ -58,18 +63,23 @@ class LightningAPIRequest(db.Base):
     remote API. As data is event driven it is not possible to know if there were lightnings at a certain time
     """
     __tablename__ = 'meteocat_xdde_request'
-    year = Column(Integer, primary_key=True)
-    month = Column(Integer, primary_key=True)
-    day = Column(Integer, primary_key=True)
-    hour = Column(Integer, primary_key=True)
+    date = Column('request_date', DateTime(timezone=True), primary_key=True)
     result_code = Column(Integer, nullable=False, default=200)
     number_of_lightnings = Column(Integer, nullable=True, default=None)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
 
-    def __init__(self, year, month, day, hour, result_code, number_of_lightnings):
-        self.year = year
-        self.month = month
-        self.day = day
-        self.hour = hour
+    def __init__(self, date, result_code, number_of_lightnings=None):
+        """
+
+        :param date: Date of the close value, if it is passed as string must be ISO compliant: YYYY-MM-DD or
+        YYYYMMDD
+        :type date: Union[datetime.date, str]
+        :param result_code:
+        :param number_of_lightnings:
+        """
+        if type(date) is str:
+            self.date = dateutil.parser.isoparse(date).replace(minute=0, second=0)
+        else:
+            self.date = date.replace(minute=0, second=0)
         self.result_code = result_code
         self.number_of_lightnings = number_of_lightnings

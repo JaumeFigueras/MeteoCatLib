@@ -1,13 +1,10 @@
 CREATE TABLE public.meteocat_xdde_request
 (
-   year integer,
-   month integer,
-   day integer,
-   hour integer,
+   request_date timestamp with time zone NOT NULL,
    result_code integer NOT NULL DEFAULT 200,
    number_of_lightnings integer DEFAULT NULL,
    ts timestamp with time zone DEFAULT (now() at time zone 'utc'),
-   CONSTRAINT pk_xdde_requests PRIMARY KEY (year, month, day, hour)
+   CONSTRAINT pk_xdde_requests PRIMARY KEY (request_date)
 )
 WITH (
   OIDS = FALSE
@@ -20,7 +17,7 @@ ALTER TABLE public.meteocat_xdde_request
 CREATE TABLE public.meteocat_lightning
 (
   id bigserial,
-  _id bigint,
+  _id bigint NOT NULL,
   _data timestamp with time zone NOT NULL,
   _corrent_pic double precision NOT NULL,
   _chi2 double precision NOT NULL,
@@ -33,7 +30,8 @@ CREATE TABLE public.meteocat_lightning
   _coordenades_latitud double precision NOT NULL,
   _coordenades_longitud double precision NOT NULL,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc'),
-  CONSTRAINT pk_lightnings PRIMARY KEY (id)
+  CONSTRAINT pk_lightnings PRIMARY KEY (id),
+  CONSTRAINT uq_lightnings UNIQUE (_id)
 )
 WITH (
   OIDS = FALSE

@@ -18,7 +18,7 @@ import pytz
 
 
 def test_add_variable_01(db_session, postgresql_schema):
-    var = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    var = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     db_session.add(var)
     db_session.commit()
     cursor = postgresql_schema.cursor()
@@ -31,7 +31,7 @@ def test_add_variable_01(db_session, postgresql_schema):
     assert record[2] == 'Pressió atmosfèrica màxima'
     assert record[3] == 'hPa'
     assert record[4] == 'Px'
-    assert record[5] == 'DAT'
+    assert record[5] == Variable.CATEGORY_MEASURED
     assert record[6] == 1
 
 
@@ -126,7 +126,7 @@ def test_add_weather_station_03(db_session, postgresql_schema):
 
 
 def test_add_measure_01(db_session, postgresql_schema):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     db_session.add(variable)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
@@ -153,7 +153,7 @@ def test_add_measure_01(db_session, postgresql_schema):
 
 
 def test_add_measure_02(db_session, postgresql_schema):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     db_session.add(variable)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
@@ -180,7 +180,7 @@ def test_add_measure_02(db_session, postgresql_schema):
 
 
 def test_add_measure_03(db_session, postgresql_schema):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     db_session.add(variable)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
@@ -208,7 +208,7 @@ def test_add_measure_03(db_session, postgresql_schema):
 
 
 def test_add_station_variable_status_01(db_session, postgresql_schema):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
     status = VariableStatus(2, '2017-03-27T00:00Z')
@@ -239,7 +239,7 @@ def test_add_station_variable_status_01(db_session, postgresql_schema):
 
 
 def test_add_station_variable_time_basis_01(db_session, postgresql_schema):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
     time_basis = VariableTimeBasis('SH', '2017-03-27T00:00Z')
@@ -285,7 +285,7 @@ def test_get_station_02(db_session):
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
     db_session.add(station)
     db_session.commit()
-    st = get_variable(db_session, 42)
+    st = get_weather_station(db_session, 'CCC')
     assert st is None
 
 
@@ -363,7 +363,7 @@ def test_get_weather_stations_05(db_session):
 
 
 def test_get_variable_01(db_session):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     db_session.add(variable)
     db_session.commit()
     var = get_variable(db_session, variable.code)
@@ -371,7 +371,7 @@ def test_get_variable_01(db_session):
 
 
 def test_get_variable_02(db_session):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     db_session.add(variable)
     db_session.commit()
     var = get_variable(db_session, 42)
@@ -379,20 +379,20 @@ def test_get_variable_02(db_session):
 
 
 def test_get_variables_01(db_session):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
     status = VariableStatus(2, '2017-03-27T00:00Z')
     association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
     db_session.add(association)
-    variable = Variable(2, 'Pressió atmosfèrica mínima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(2, 'Pressió atmosfèrica mínima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     status = VariableStatus(2, '2017-03-27T00:00Z', '2019-03-27T00:00Z')
     association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
     db_session.add(association)
     status = VariableStatus(1, '2019-03-27T00:00Z')
     association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
     db_session.add(association)
-    variable = Variable(3, 'Pressió atmosfèrica mitjana', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(3, 'Pressió atmosfèrica mitjana', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     status = VariableStatus(2, '2017-03-27T00:00Z')
     association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
     db_session.add(association)
@@ -408,20 +408,20 @@ def test_get_variables_01(db_session):
 
 
 def test_get_variables_02(db_session):
-    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
                              24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
     status = VariableStatus(2, '2017-03-27T00:00Z')
     association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
     db_session.add(association)
-    variable = Variable(2, 'Pressió atmosfèrica mínima', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(2, 'Pressió atmosfèrica mínima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     status = VariableStatus(2, '2017-03-27T00:00Z', '2019-03-27T00:00Z')
     association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
     db_session.add(association)
     status = VariableStatus(1, '2019-03-27T00:00Z')
     association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
     db_session.add(association)
-    variable = Variable(3, 'Pressió atmosfèrica mitjana', 'hPa', 'Px', 'DAT', 1)
+    variable = Variable(3, 'Pressió atmosfèrica mitjana', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
     status = VariableStatus(2, '2017-03-27T00:00Z')
     association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
     db_session.add(association)
@@ -435,3 +435,39 @@ def test_get_variables_02(db_session):
     for var in variables:
         assert type(var) == Variable
 
+
+def test_get_variables_03(db_session):
+    """
+    Tests the return of all variables when there is no station passed as argument to the get_variables_function
+
+    :param db_session:
+    :return:
+    """
+    variable = Variable(1, 'Pressió atmosfèrica màxima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
+    station = WeatherStation('CC', 'Orís', 'A', 42.075052799, 2.20980884646, 'Abocador comarcal', 626, 81509, 'Orís',
+                             24, 'Osona', 8, 'Barcelona', 1, 'XEMA')
+    status = VariableStatus(2, '2017-03-27T00:00Z')
+    association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
+    db_session.add(association)
+    variable = Variable(2, 'Pressió atmosfèrica mínima', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
+    status = VariableStatus(2, '2017-03-27T00:00Z', '2019-03-27T00:00Z')
+    association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
+    db_session.add(association)
+    status = VariableStatus(1, '2019-03-27T00:00Z')
+    association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
+    db_session.add(association)
+    variable = Variable(3, 'Pressió atmosfèrica mitjana', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
+    status = VariableStatus(2, '2017-03-27T00:00Z')
+    association = WeatherStationVariableStatusAssociation(variable=variable, station=station, status=status)
+    db_session.add(association)
+    variable = Variable(4, 'Pressió atmosfèrica de la lluna', 'hPa', 'Px', Variable.CATEGORY_MEASURED, 1)
+    db_session.add(variable)
+    db_session.commit()
+    assert len(db_session.query(WeatherStation).all()) == 1
+    assert len(db_session.query(Variable).all()) == 4
+    assert len(db_session.query(VariableStatus).all()) == 4
+    assert len(db_session.query(WeatherStationVariableStatusAssociation).all()) == 4
+    variables = get_variables(db_session)
+    assert len(variables) == 4
+    for var in variables:
+        assert type(var) == Variable
