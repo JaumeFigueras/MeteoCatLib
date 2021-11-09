@@ -23,10 +23,10 @@ CREATE TABLE public.meteocat_lightning
   _chi2 double precision NOT NULL,
   _ellipse_eix_major double precision NOT NULL,
   _ellipse_eix_menor double precision NOT NULL,
-  _ellipse_angle double precision NOT NULL,
+  _ellipse_angle double precision DEFAULT NULL,
   _num_sensors integer NOT NULL,
   _nuvol_terra boolean NOT NULL,
-  _id_municipi integer,
+  _id_municipi integer DEFAULT NULL,
   _coordenades_latitud double precision NOT NULL,
   _coordenades_longitud double precision NOT NULL,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc'),
@@ -42,3 +42,4 @@ ALTER TABLE public.meteocat_lightning
 ;
 SELECT AddGeometryColumn ('public', 'meteocat_lightning', 'geom', 4258, 'POINT', 2)
 ;
+CREATE INDEX ON public.meteocat_lightning (_data);
