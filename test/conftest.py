@@ -13,7 +13,8 @@ postgresql_schema = factories.postgresql('postgresql_proc', dbname='test', load=
     str(test_folder) + '/database_populate.sql'])
 
 pytest_plugins = [
-   'test.fixtures.sqlalchemy',
-   'test.fixtures.meteocat.meteocat',
-   'test.fixtures.meteocat.xema',
+    'test.fixtures.sqlalchemy',
+    'test.fixtures.meteocat.meteocat',
+    'test.fixtures.meteocat.xdde',
+    'test.fixtures.meteocat.xema',
 ]

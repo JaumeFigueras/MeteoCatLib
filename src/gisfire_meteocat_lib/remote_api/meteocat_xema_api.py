@@ -15,7 +15,7 @@ def get_variables_measured_metadata(api_token):
     :return: JSON metadata obtained from the API
     :rtype: list of dict or None. Data contained in dicts can be retrieved from:
     """
-    return meteocat_api.get_from_api(api_token, meteocat_urls.VARIABLES_METADATA)
+    return meteocat_api.get_from_api(api_token, meteocat_urls.VARIABLES_METADATA)['data']
 
 
 def get_variables_multivariate_metadata(api_token):
@@ -27,7 +27,7 @@ def get_variables_multivariate_metadata(api_token):
     :return: JSON metadata obtained from the API
     :rtype: list of dict or None. Data contained in dicts can be retrieved from:
     """
-    return meteocat_api.get_from_api(api_token, meteocat_urls.MULTI_VARIABLES_METADATA)
+    return meteocat_api.get_from_api(api_token, meteocat_urls.MULTI_VARIABLES_METADATA)['data']
 
 
 def get_variables_auxiliary_metadata(api_token):
@@ -39,7 +39,7 @@ def get_variables_auxiliary_metadata(api_token):
     :return: JSON metadata obtained from the API
     :rtype: list of dict or None. Data contained in dicts can be retrieved from:
     """
-    return meteocat_api.get_from_api(api_token, meteocat_urls.AUXILIAR_VARIABLES_METADATA)
+    return meteocat_api.get_from_api(api_token, meteocat_urls.AUXILIAR_VARIABLES_METADATA)['data']
 
 
 def get_weather_stations(api_token):
@@ -51,7 +51,7 @@ def get_weather_stations(api_token):
     :return: JSON metadata obtained from the API
     :rtype: list of dict or None. Data contained in dicts can be retrieved from:
     """
-    return meteocat_api.get_from_api(api_token, meteocat_urls.WEATHER_STATIONS)
+    return meteocat_api.get_from_api(api_token, meteocat_urls.WEATHER_STATIONS)['data']
 
 
 def get_station_measured_variables(api_token, station_code):
@@ -69,7 +69,7 @@ def get_station_measured_variables(api_token, station_code):
     :rtype: Union[list[dict], None]
     """
     url = meteocat_urls.STATION_MEASURED_VARIABLES.format(station_code)
-    return meteocat_api.get_from_api(api_token, url)
+    return meteocat_api.get_from_api(api_token, url)['data']
 
 
 def get_station_multi_variables(api_token, station_code):
@@ -87,7 +87,7 @@ def get_station_multi_variables(api_token, station_code):
     :rtype: Union[list[dict], None]
     """
     url = meteocat_urls.STATION_MULTI_VARIABLES.format(station_code)
-    return meteocat_api.get_from_api(api_token, url)
+    return meteocat_api.get_from_api(api_token, url)['data']
 
 
 def get_station_auxiliar_variables(api_token, station_code):
@@ -105,7 +105,7 @@ def get_station_auxiliar_variables(api_token, station_code):
     :rtype: Union[list[dict], None]
     """
     url = meteocat_urls.STATION_AUXILIAR_VARIABLES.format(station_code)
-    return meteocat_api.get_from_api(api_token, url)
+    return meteocat_api.get_from_api(api_token, url)['data']
 
 
 def get_measures_of_station_variable(api_token, station_code, variable_code, variable_category, date):
@@ -134,7 +134,7 @@ def get_measures_of_station_variable(api_token, station_code, variable_code, var
         url = meteocat_urls.STATION_AUXILIAR_DATA.format(variable_code, year, month, day, station_code)
     elif variable_category == Variable.CATEGORY_MULTIVARIATE:
         url = meteocat_urls.STATION_MULTI_DATA.format(variable_code, year, month, day, station_code)
-    data = meteocat_api.get_from_api(api_token, url)
+    data = meteocat_api.get_from_api(api_token, url)['data']
     if not (data is None):
         if len(data) > 0:
             if 'codi' in data:

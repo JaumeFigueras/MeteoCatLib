@@ -21,9 +21,9 @@ def get_from_api(api_token, api_url):
             response = requests.get(api_url, headers=headers, timeout=TIMEOUT)
             data = response.json()
             if response.status_code == 200:
-                return data
+                return {'status_code': response.status_code, 'data': data}
             else:
-                return None
+                return {'status_code': response.status_code, 'data': None}
         except Exception:
             retries += 1
-    return None
+    return {'status_code': None, 'data': None}
