@@ -13,6 +13,8 @@ WITH (
 ALTER TABLE public.meteocat_xdde_request
   OWNER TO gisfireuser
 ;
+CREATE INDEX ON public.meteocat_xdde_request (request_date)
+;
 
 CREATE TABLE public.meteocat_lightning
 (
@@ -30,8 +32,7 @@ CREATE TABLE public.meteocat_lightning
   _coordenades_latitud double precision NOT NULL,
   _coordenades_longitud double precision NOT NULL,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc'),
-  CONSTRAINT pk_lightnings PRIMARY KEY (id),
-  CONSTRAINT uq_lightnings UNIQUE (_id)
+  CONSTRAINT pk_lightnings PRIMARY KEY (id)
 )
 WITH (
   OIDS = FALSE
@@ -42,4 +43,5 @@ ALTER TABLE public.meteocat_lightning
 ;
 SELECT AddGeometryColumn ('public', 'meteocat_lightning', 'geom', 4258, 'POINT', 2)
 ;
-CREATE INDEX ON public.meteocat_lightning (_data);
+CREATE INDEX ON public.meteocat_lightning (_data)
+;
