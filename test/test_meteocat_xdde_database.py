@@ -94,13 +94,13 @@ def test_add_lightning_api_request_01(db_session, postgresql_schema):
 
 def test_get_lightning_api_requests_01(db_session):
     requests = get_lightning_api_requests(db_session, '2021-11-01 00:10:00Z')
-    assert len(requests) == 0
+    assert len(requests) == 5
     requests = get_lightning_api_requests(db_session, '2021-11-02 00:00:10Z')
-    assert len(requests) == 1
+    assert len(requests) == 3
     requests = get_lightning_api_requests(db_session, datetime.datetime(2021, 11, 1, 0, 59, 0, tzinfo=pytz.UTC))
-    assert len(requests) == 0
+    assert len(requests) == 5
     requests = get_lightning_api_requests(db_session, datetime.datetime(2021, 11, 2, 0, 0, 59, tzinfo=pytz.UTC))
-    assert len(requests) == 1
+    assert len(requests) == 3
     requests = get_lightning_api_requests(db_session, '2021-11-01 00:00:00Z', '2021-11-02 00:00:00Z')
     assert len(requests) == 2
     requests = get_lightning_api_requests(db_session, '2021-11-02 00:00:00Z', '2021-11-03 00:00:00Z')
