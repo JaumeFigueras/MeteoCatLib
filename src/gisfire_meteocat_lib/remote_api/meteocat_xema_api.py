@@ -3,7 +3,7 @@
 
 from . import meteocat_urls
 from . import meteocat_api
-from ..database.variable import Variable
+from src.gisfire_meteocat_lib.classes.variable import Variable
 
 
 def get_variables_measured_metadata(api_token):

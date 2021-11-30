@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import RequestException
 
 TIMEOUT = 5
 RETRIES = 3
@@ -12,18 +13,17 @@ def get_from_api(api_token, api_url):
     :param api_token: Token string to identify who is doing the request. The token is provided by the MeteoCat agency
     :param api_url: The URL string to make the API call. Can be obtained from MeteoCat website
     :return: JSON metadata obtained from the API
-    :rtype: list of dict or None. Dicts contain the data from the requested element
+    :rtype: (requests.Response, RequestException)
     """
     retries = 0
-    headers = {'x-api-key': '{0:}'.format(api_token)}
+    headers = {'X-Api-Key': '{0:}'.format(api_token)}
+    response = None
+    xcpt = None
     while retries != RETRIES:
         try:
             response = requests.get(api_url, headers=headers, timeout=TIMEOUT)
-            data = response.json()
-            if response.status_code == 200:
-                return {'status_code': response.status_code, 'data': data}
-            else:
-                return {'status_code': response.status_code, 'data': None}
-        except Exception:
+            break
+        except RequestException as e:
             retries += 1
-    return {'status_code': None, 'data': None}
+            xcpt = e
+    return response, xcpt

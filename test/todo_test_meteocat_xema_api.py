@@ -6,7 +6,7 @@ import requests
 from src.gisfire_meteocat_lib.remote_api import meteocat_xema_api
 from src.gisfire_meteocat_lib.remote_api import meteocat_urls
 from src.gisfire_meteocat_lib.remote_api import meteocat_api
-from src.gisfire_meteocat_lib.database.variable import Variable
+from src.gisfire_meteocat_lib.classes.variable import Variable
 
 
 def test_metadata_variables_01(requests_mock, meteocat_invalid_token):

@@ -3,6 +3,8 @@
 
 from . import meteocat_urls
 from . import meteocat_api
+from ..classes.lightning import Lightning
+import json
 
 
 def get_lightnings(api_token, date, hour):
@@ -19,4 +21,15 @@ def get_lightnings(api_token, date, hour):
     :rtype: list of dict or None. Data contained in dicts can be retrieved from:
     """
     url = meteocat_urls.LIGHTNINGS_DATA.format(date.year, date.month, date.day, hour)
-    return meteocat_api.get_from_api(api_token, url)
+    response, xcpt = meteocat_api.get_from_api(api_token, url)
+    if response is None:
+        return {'status_code': -1, 'message': str(xcpt) if not (xcpt is None) else None, 'data': None}
+    else:
+        if response.status_code != 200:
+            return {'status_code': response.status_code, 'message': None, 'data': None}
+        else:
+            return {
+                'status_code': response.status_code,
+                'message': None,
+                'data': json.loads(response.text, object_hook=Lightning.object_hook)
+            }

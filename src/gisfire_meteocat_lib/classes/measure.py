@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from ..database import db
+from . import Base
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import Float
@@ -12,7 +12,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
 
-class Measure(db.Base):
+class Measure(Base):
     """
     Class container for measures table.  It provides SQL Alchemy access to the measures read from the weather stations
     """

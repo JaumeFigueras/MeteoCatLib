@@ -1,7 +1,7 @@
 CREATE TABLE public.meteocat_xdde_request
 (
    request_date timestamp with time zone NOT NULL,
-   result_code integer NOT NULL DEFAULT 200,
+   http_status_code integer NOT NULL DEFAULT 200,
    number_of_lightnings integer DEFAULT NULL,
    ts timestamp with time zone DEFAULT (now() at time zone 'utc'),
    CONSTRAINT pk_xdde_requests PRIMARY KEY (request_date)
