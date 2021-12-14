@@ -61,7 +61,7 @@ def test_add_weather_station_01(db_session, postgresql_schema):
     assert record[13] == 'Barcelona'
     assert record[14] == 1
     assert record[15] == 'XEMA'
-    cursor.execute('SELECT ST_X(geom), ST_Y(geom) FROM meteocat_weather_station')
+    cursor.execute('SELECT ST_X(__geom), ST_Y(__geom) FROM meteocat_weather_station')
     record = cursor.fetchone()
     assert record[0] == 2.20980884646
     assert record[1] == 42.075052799

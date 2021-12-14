@@ -34,11 +34,11 @@ def test_json_parse_lightning_01(meteocat_lightning_meteocat_api_string, meteoca
     assert lightning.ellipse_angle == meteocat_lightning_meteocat_api_json['ellipse']['angle']
     assert lightning.number_of_sensors == meteocat_lightning_meteocat_api_json['numSensors']
     assert lightning.hit_ground == meteocat_lightning_meteocat_api_json['nuvolTerra']
-    assert lightning.coordinates_latitude == meteocat_lightning_meteocat_api_json['coordenades']['latitud']
-    assert lightning.coordinates_longitude == meteocat_lightning_meteocat_api_json['coordenades']['longitud']
+    assert lightning._coordinates_latitude == meteocat_lightning_meteocat_api_json['coordenades']['latitud']
+    assert lightning._coordinates_longitude == meteocat_lightning_meteocat_api_json['coordenades']['longitud']
     assert lightning.municipality_code == int(meteocat_lightning_meteocat_api_json['idMunicipi'])
-    assert lightning.geom == "SRID={2:};POINT({0:} {1:})".format(lightning.coordinates_longitude,
-                                                                 lightning.coordinates_latitude,
+    assert lightning.geom == "SRID={2:};POINT({0:} {1:})".format(lightning._coordinates_longitude,
+                                                                 lightning._coordinates_latitude,
                                                                  Lightning.SRID_LIGHTNINGS)
 
 
@@ -59,7 +59,7 @@ def test_json_parse_lightning_02(meteocat_lightning_meteocat_api_string_list,
     lightnings = json.loads(meteocat_lightning_meteocat_api_string_list, object_hook=Lightning.object_hook)
     assert len(lightnings) == len(meteocat_lightning_meteocat_api_json_list)
     for i in range(len(lightnings)):
-        assert not(lightnings[i] is None)
+        assert lightnings[i] is not None
         assert type(lightnings[i]) is Lightning
         assert lightnings[i].meteocat_id == meteocat_lightning_meteocat_api_json_list[i]['id']
         assert lightnings[i].date == datetime.datetime.strptime(meteocat_lightning_meteocat_api_json_list[i]['data'],
@@ -71,16 +71,16 @@ def test_json_parse_lightning_02(meteocat_lightning_meteocat_api_string_list,
         assert lightnings[i].ellipse_angle == meteocat_lightning_meteocat_api_json_list[i]['ellipse']['angle']
         assert lightnings[i].number_of_sensors == meteocat_lightning_meteocat_api_json_list[i]['numSensors']
         assert lightnings[i].hit_ground == meteocat_lightning_meteocat_api_json_list[i]['nuvolTerra']
-        assert lightnings[i].coordinates_latitude == \
+        assert lightnings[i]._coordinates_latitude == \
                meteocat_lightning_meteocat_api_json_list[i]['coordenades']['latitud']
-        assert lightnings[i].coordinates_longitude == \
+        assert lightnings[i]._coordinates_longitude == \
                meteocat_lightning_meteocat_api_json_list[i]['coordenades']['longitud']
         if 'idMunicipi' in meteocat_lightning_meteocat_api_json_list[i]:
             assert lightnings[i].municipality_code == int(meteocat_lightning_meteocat_api_json_list[i]['idMunicipi'])
         else:
             assert lightnings[i].municipality_code is None
-        assert lightnings[i].geom == "SRID={2:};POINT({0:} {1:})".format(lightnings[i].coordinates_longitude,
-                                                                         lightnings[i].coordinates_latitude,
+        assert lightnings[i].geom == "SRID={2:};POINT({0:} {1:})".format(lightnings[i]._coordinates_longitude,
+                                                                         lightnings[i]._coordinates_latitude,
                                                                          Lightning.SRID_LIGHTNINGS)
 
 
@@ -138,6 +138,138 @@ def test_date_parse_lightning_01():
     assert lightning.date == datetime.datetime(2021, 11, 11, 8, 45, 0, 868454, tzinfo=pytz.UTC)
     with pytest.raises(ValueError):
         _ = Lightning(date="2021-11-1108:45:00.868454")
+
+
+def test_latitude_getter_01():
+    """
+    Test the lightning lat property getter
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    assert lightning.lat == 42.407753
+
+
+def test_longitude_getter_01():
+    """
+    Test the lightning lon property getter
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    assert lightning.lon == 2.7945485
+
+
+def test_latitude_setter_01():
+    """
+    Test the lightning lat property setter with a value higher than the upper bound
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    with pytest.raises(ValueError):
+        lightning.lat = 1234
+
+
+def test_latitude_setter_02():
+    """
+    Test the lightning lat property setter with a value smaller than the lower bound
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    with pytest.raises(ValueError):
+        lightning.lat = -1234
+
+
+def test_latitude_setter_03():
+    """
+    Test the lightning lat property setter with a valid value
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    lightning.lat = -34
+    assert lightning._coordinates_latitude == -34
+    assert lightning.geom == "SRID={0:};POINT(2.7945485 -34)".format(Lightning.SRID_LIGHTNINGS)
+    lightning.lat = 19
+    assert lightning._coordinates_latitude == 19
+    assert lightning.geom == "SRID={0:};POINT(2.7945485 19)".format(Lightning.SRID_LIGHTNINGS)
+
+
+def test_latitude_setter_04():
+    """
+    Test the lightning lat property setter with a valid value
+
+    :return: None
+    """
+    lightning = Lightning()
+    lightning.lat = -34
+    assert lightning._coordinates_latitude == -34
+    assert lightning.geom is None
+    lightning.lat = 19
+    assert lightning._coordinates_latitude == 19
+    assert lightning.geom is None
+
+
+def test_longitude_setter_01():
+    """
+    Test the lightning lon property setter with a value higher than the upper bound
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    with pytest.raises(ValueError):
+        lightning.lon = 1234
+
+
+def test_longitude_setter_02():
+    """
+    Test the lightning lon property setter with a value smaller than the lower bound
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    with pytest.raises(ValueError):
+        lightning.lon = -1234
+
+
+def test_longitude_setter_03():
+    """
+    Test the lightning lon property setter with a valid value
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    lightning.lon = -34
+    assert lightning._coordinates_longitude == -34
+    assert lightning.geom == "SRID={0:};POINT(-34 42.407753)".format(Lightning.SRID_LIGHTNINGS)
+    lightning.lon = 19
+    assert lightning._coordinates_longitude == 19
+    assert lightning.geom == "SRID={0:};POINT(19 42.407753)".format(Lightning.SRID_LIGHTNINGS)
+
+
+def test_longitude_setter_04():
+    """
+    Test the lightning lat property setter with a valid value
+
+    :return: None
+    """
+    lightning = Lightning()
+    lightning.lon = -34
+    assert lightning._coordinates_longitude == -34
+    assert lightning.geom is None
+    lightning.lon = 19
+    assert lightning._coordinates_longitude == 19
+    assert lightning.geom is None
 
 
 def test_date_parse_lightning_api_request_01():

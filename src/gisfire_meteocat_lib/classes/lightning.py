@@ -34,10 +34,10 @@ class Lightning(Base):
     number_of_sensors = Column('_num_sensors', Integer, nullable=False)
     hit_ground = Column('_nuvol_terra', Boolean, nullable=False)
     municipality_code = Column('_id_municipi', Integer, default=None)
-    coordinates_latitude = Column('_coordenades_latitud', Float, nullable=False)
-    coordinates_longitude = Column('_coordenades_longitud', Float, nullable=False)
+    _coordinates_latitude = Column('_coordenades_latitud', Float, nullable=False)
+    _coordinates_longitude = Column('_coordenades_longitud', Float, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    geom = Column(Geometry(geometry_type='POINT', srid=SRID_LIGHTNINGS))
+    __geom = Column('geom', Geometry(geometry_type='POINT', srid=SRID_LIGHTNINGS))
 
     def __init__(self, meteocat_id=None, date=None, peak_current=None, chi_squared=None, ellipse_major_axis=None,
                  ellipse_minor_axis=None, ellipse_angle=None, number_of_sensors=None, hit_ground=None,
@@ -83,10 +83,87 @@ class Lightning(Base):
         self.number_of_sensors = number_of_sensors
         self.hit_ground = hit_ground
         self.municipality_code = municipality_code
-        self.coordinates_latitude = coordinates_latitude
-        self.coordinates_longitude = coordinates_longitude
-        self.geom = "SRID={2:};POINT({0:} {1:})".format(self.coordinates_longitude, self.coordinates_latitude,
-                                                        self.SRID_LIGHTNINGS)
+        self._coordinates_latitude = coordinates_latitude
+        self._coordinates_longitude = coordinates_longitude
+        self.__format_geom()
+
+    def __format_geom(self):
+        """
+        Unique procedure to convert the member attributes coordinate_latitude and coordinate longitude to a OSGeo WKT
+        standard format
+
+        :return: None
+        """
+        if (self._coordinates_latitude is not None) and (self._coordinates_longitude is not None):
+            self.__geom = "SRID={2:};POINT({0:} {1:})".format(self._coordinates_longitude, self._coordinates_latitude,
+                                                              self.SRID_LIGHTNINGS)
+        else:
+            self.__geom = None
+
+    @property
+    def geom(self):
+        """
+        Latitude getter
+
+        :return: Lightning latitude
+        :rtype: float
+        """
+        return self.__geom
+
+
+    @property
+    def lat(self):
+        """
+        Latitude getter
+
+        :return: Lightning latitude
+        :rtype: float
+        """
+        return self._coordinates_latitude
+
+    @lat.setter
+    def lat(self, value):
+        """
+        Latitude setter. Value must be between -90 and 90 degrees
+
+        :param value: Latitude value
+        :type value: float
+        :raise: ValueError
+        :return: None
+        """
+        if -90 <= value <= 90:
+            self._coordinates_latitude = value
+            if self._coordinates_longitude is not None:
+                self.__format_geom()
+        else:
+            raise ValueError("Latitude value must be between -90 and 90 degrees")
+
+    @property
+    def lon(self):
+        """
+        Longitude getter
+
+        :return: Lightning longitude
+        :rtype: float
+        """
+        return self._coordinates_longitude
+
+    @lon.setter
+    def lon(self, value):
+        """
+        Longitude setter. Value must be between -180 and 180 degrees
+
+        :param value: Longitude value
+        :type value: float
+        :raise: ValueError
+        :return: None
+        """
+        if -180 <= value <= 180:
+            self._coordinates_longitude = value
+            if self._coordinates_latitude is not None:
+                self.__format_geom()
+        else:
+            raise ValueError("Longitude value must be between -180 and 180 degrees")
 
     @staticmethod
     def object_hook(dct):
@@ -119,15 +196,16 @@ class Lightning(Base):
         lightning.ellipse_angle = float(dct['ellipse']['angle'])
         lightning.number_of_sensors = float(dct['numSensors'])
         lightning.hit_ground = bool(dct['nuvolTerra'])
-        lightning.coordinates_latitude = float(dct['coordenades']['latitud'])
-        lightning.coordinates_longitude = float(dct['coordenades']['longitud'])
+        lightning._coordinates_latitude = float(dct['coordenades']['latitud'])
+        lightning._coordinates_longitude = float(dct['coordenades']['longitud'])
         if 'idMunicipi' in dct:
             lightning.municipality_code = int(dct['idMunicipi'])
         else:
             lightning.municipality_code = None
-        lightning.geom = "SRID={2:};POINT({0:} {1:})".format(lightning.coordinates_longitude,
-                                                             lightning.coordinates_latitude,
-                                                             Lightning.SRID_LIGHTNINGS)
+        lightning.__format_geom()
+        # lightning.__geom = "SRID={2:};POINT({0:} {1:})".format(lightning._coordinates_longitude,
+        #                                                       lightning._coordinates_latitude,
+        #                                                       Lightning.SRID_LIGHTNINGS)
         return lightning
 
     class JSONEncoder(json.JSONEncoder):
@@ -155,8 +233,8 @@ class Lightning(Base):
                 dct['number_of_sensors'] = obj.number_of_sensors
                 dct['hit_ground'] = obj.hit_ground
                 dct['municipality_code'] = obj.municipality_code
-                dct['coordinates_latitude'] = obj.coordinates_latitude
-                dct['coordinates_longitude'] = obj.coordinates_longitude
+                dct['coordinates_latitude'] = obj._coordinates_latitude
+                dct['coordinates_longitude'] = obj._coordinates_longitude
                 dct['coordinates_epsg'] = Lightning.SRID_LIGHTNINGS
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover

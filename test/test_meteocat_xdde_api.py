@@ -34,7 +34,7 @@ def test_lightnings_02(requests_mock):
     url = meteocat_urls.LIGHTNINGS_DATA.format(2021, 11, 11, 2)
     requests_mock.get(url, exc=requests.exceptions.ConnectTimeout)
     result = meteocat_xdde_api.get_lightnings('1234', datetime.date(2021, 11, 11), 2)
-    assert result['status_code'] == -1
+    assert result['status_code'] is None
     assert type(result['message']) == str
     assert result['data'] is None
     meteocat_api.TIMEOUT = 5
