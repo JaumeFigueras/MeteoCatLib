@@ -23,7 +23,7 @@ def get_lightnings(api_token, date, hour):
     url = meteocat_urls.LIGHTNINGS_DATA.format(date.year, date.month, date.day, hour)
     response, xcpt = meteocat_api.get_from_api(api_token, url)
     if response is None:
-        return {'status_code': -1, 'message': str(xcpt) if not (xcpt is None) else None, 'data': None}
+        return {'status_code': None, 'message': str(xcpt) if not (xcpt is None) else None, 'data': None}
     else:
         if response.status_code != 200:
             return {'status_code': response.status_code, 'message': None, 'data': None}
