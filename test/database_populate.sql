@@ -1,13 +1,13 @@
 
-INSERT INTO meteocat_xdde_request (request_date, result_code, number_of_lightnings)
+INSERT INTO meteocat_xdde_request (request_date, http_status_code, number_of_lightnings)
     VALUES ('2021-11-01 22:00:00Z', 200, 0);
-INSERT INTO meteocat_xdde_request (request_date, result_code, number_of_lightnings)
+INSERT INTO meteocat_xdde_request (request_date, http_status_code, number_of_lightnings)
     VALUES ('2021-11-01 23:00:00Z', 200, 0);
-INSERT INTO meteocat_xdde_request (request_date, result_code, number_of_lightnings)
+INSERT INTO meteocat_xdde_request (request_date, http_status_code, number_of_lightnings)
     VALUES ('2021-11-02 00:00:00Z', 200, 20);
-INSERT INTO meteocat_xdde_request (request_date, result_code, number_of_lightnings)
+INSERT INTO meteocat_xdde_request (request_date, http_status_code, number_of_lightnings)
     VALUES ('2021-11-02 01:00:00Z', 200, 250);
-INSERT INTO meteocat_xdde_request (request_date, result_code)
+INSERT INTO meteocat_xdde_request (request_date, http_status_code)
     VALUES ('2021-11-02 02:00:00Z', 404);
 
 INSERT INTO meteocat_lightning (_id, _data, _corrent_pic, _chi2, _ellipse_eix_major, _ellipse_eix_menor, _ellipse_angle,

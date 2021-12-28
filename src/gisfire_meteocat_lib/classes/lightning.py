@@ -110,7 +110,6 @@ class Lightning(Base):
         """
         return self.__geom
 
-
     @property
     def lat(self):
         """

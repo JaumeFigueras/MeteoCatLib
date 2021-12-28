@@ -1,43 +1,40 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import pytz
 
 from src.gisfire_meteocat_lib.remote_api import meteocat_xdde_api
 from src.gisfire_meteocat_lib.remote_api import meteocat_urls
-from src.gisfire_meteocat_lib.remote_api import meteocat_api
 from src.gisfire_meteocat_lib.classes.lightning import Lightning
+from src.gisfire_meteocat_lib.classes.lightning import LightningAPIRequest
 import datetime
 import requests
+import pytest
 
 
 def test_lightnings_01(requests_mock, meteocat_lightnings_meteocat_api_invalid_date):
     """
-    Tests the lightning api with an invalid date
+    Tests an exception to a lightning request
 
     :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
-    :param meteocat_lightnings_meteocat_api_invalid_date: Fixture that simulates the return data from a requests with an invalid date
+    :param meteocat_lightnings_meteocat_api_invalid_date: Fixture that simulates the return data from a requests with
+    an invalid date
     """
-    url = meteocat_urls.LIGHTNINGS_DATA.format(2021, 11, 11, 258)
-    print(url)
-    requests_mock.get(url, json=meteocat_lightnings_meteocat_api_invalid_date, status_code=400)
-    result = meteocat_xdde_api.get_lightnings('1234', datetime.date(2021, 11, 11), 258)
-    assert result['status_code'] == 400
-    assert result['data'] is None
+    url = meteocat_urls.LIGHTNINGS_DATA.format(2021, 11, 11, 10)
+    requests_mock.get(url, exc=requests.exceptions.HTTPError)
+    with pytest.raises(requests.exceptions.RequestException):
+        _ = meteocat_xdde_api.get_lightnings('1234', datetime.datetime(2021, 11, 11, 10, 0, 0, tzinfo=pytz.UTC))
 
 
 def test_lightnings_02(requests_mock):
     """
-    TODO:
+    Tests a timeout exception to a lightning request
 
     :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
     """
-    meteocat_api.TIMEOUT = 0.1
     url = meteocat_urls.LIGHTNINGS_DATA.format(2021, 11, 11, 2)
     requests_mock.get(url, exc=requests.exceptions.ConnectTimeout)
-    result = meteocat_xdde_api.get_lightnings('1234', datetime.date(2021, 11, 11), 2)
-    assert result['status_code'] is None
-    assert type(result['message']) == str
-    assert result['data'] is None
-    meteocat_api.TIMEOUT = 5
+    with pytest.raises(requests.exceptions.RequestException):
+        _ = meteocat_xdde_api.get_lightnings('1234', datetime.datetime(2021, 11, 11, 2, 0, 0, tzinfo=pytz.UTC))
 
 
 def test_lightnings_03(requests_mock, meteocat_lightning_meteocat_api_json_list):
@@ -45,15 +42,36 @@ def test_lightnings_03(requests_mock, meteocat_lightning_meteocat_api_json_list)
     TODO:
 
     :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
-    :param meteocat_lightning_meteocat_api_json_list: Fixture that simulates the return data from a requests with an invalid date
+    :param meteocat_lightning_meteocat_api_json_list: Fixture that simulates the return data from a lightning request
     """
     url = meteocat_urls.LIGHTNINGS_DATA.format(2021, 11, 11, 7)
     requests_mock.get(url, json=meteocat_lightning_meteocat_api_json_list, status_code=200)
-    result = meteocat_xdde_api.get_lightnings('1234', datetime.date(2021, 11, 11), 7)
-    assert result['status_code'] == 200
-    assert result['message'] is None
-    assert len(result['data']) == 3
-    for light in result['data']:
-        assert type(light) == Lightning
+    result = meteocat_xdde_api.get_lightnings('1234', datetime.datetime(2021, 11, 11, 7, 0, 0, tzinfo=pytz.UTC))
+    assert type(result['lightning_api_request']) == LightningAPIRequest
+    for lightning in result['lightnings']:
+        assert type(lightning) == Lightning
+    lightning_api_request: LightningAPIRequest = result['lightning_api_request']
+    lightnings: [Lightning] = result['lightnings']
+    assert lightning_api_request.date == datetime.datetime(2021, 11, 11, 7, 0, 0, tzinfo=pytz.UTC)
+    assert lightning_api_request.http_status_code == 200
+    assert lightning_api_request.number_of_lightnings == len(lightnings)
+    assert len(lightnings) == len(meteocat_lightning_meteocat_api_json_list)
 
 
+def test_lightnings_04(requests_mock, meteocat_lightnings_meteocat_api_invalid_date):
+    """
+    Tests a response error
+
+    :param requests_mock: Requests mock for pytest. Allows change behaviour change of HTTP requests
+    :param meteocat_lightnings_meteocat_api_invalid_date: Fixture that simulates the return data from a requests with
+    an invalid date
+    """
+    url = meteocat_urls.LIGHTNINGS_DATA.format(2021, 11, 11, 10)
+    requests_mock.get(url, json=meteocat_lightnings_meteocat_api_invalid_date, status_code=500)
+    result = meteocat_xdde_api.get_lightnings('1234', datetime.datetime(2021, 11, 11, 10, 0, 0, tzinfo=pytz.UTC))
+    assert type(result['lightning_api_request']) == LightningAPIRequest
+    assert result['lightnings'] == []
+    lightning_api_request: LightningAPIRequest = result['lightning_api_request']
+    assert lightning_api_request.date == datetime.datetime(2021, 11, 11, 10, 0, 0, tzinfo=pytz.UTC)
+    assert lightning_api_request.http_status_code == 500
+    assert lightning_api_request.number_of_lightnings is None

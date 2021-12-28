@@ -143,5 +143,3 @@ def meteocat_lightning_meteocat_api_string_error_date():
                   "longitud": 2.7945485
                 }
               }"""
-
-

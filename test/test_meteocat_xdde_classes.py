@@ -162,6 +162,7 @@ def test_longitude_getter_01():
     assert lightning.lon == 2.7945485
 
 
+# noinspection DuplicatedCode
 def test_latitude_setter_01():
     """
     Test the lightning lat property setter with a value higher than the upper bound
@@ -217,6 +218,7 @@ def test_latitude_setter_04():
     assert lightning.geom is None
 
 
+# noinspection DuplicatedCode
 def test_longitude_setter_01():
     """
     Test the lightning lon property setter with a value higher than the upper bound
@@ -294,5 +296,3 @@ def test_date_replace_lightning_api_request_01():
     assert lightning_api_request.date == datetime.datetime(2021, 11, 11, 8, 0, 0, 0, tzinfo=pytz.UTC)
     lightning_api_request = LightningAPIRequest(date="2021-11-11T08:45:00.868454Z")
     assert lightning_api_request.date == datetime.datetime(2021, 11, 11, 8, 0, 0, 0, tzinfo=pytz.UTC)
-
-
