@@ -20,6 +20,7 @@ class Lightning(Base):
     JSON coding and decoding
 
     :type date: datetime.datetime
+    TODO: Document all properties
     """
     __tablename__ = 'meteocat_lightning'
     SRID_LIGHTNINGS = 4258
