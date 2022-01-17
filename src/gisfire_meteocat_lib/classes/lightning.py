@@ -19,8 +19,21 @@ class Lightning(Base):
     Class container for lightnings table.  It provides SQL Alchemy access to the registered lightnings. It also provides
     JSON coding and decoding
 
+    :type id: int
+    :type meteocat_id: int
     :type date: datetime.datetime
-    TODO: Document all properties
+    :type peak_current: float
+    :type chi_squared: float
+    :type ellipse_major_axis: float
+    :type ellipse_minor_axis: float
+    :type ellipse_angle: float
+    :type number_of_sensors: float
+    :type hit_ground: float
+    :type municipality_code: float
+    :type _coordinates_latitude: float
+    :type _coordinates_longitude: float
+    :type ts: datetime.datetime
+    :type __geom: str or None
     """
     __tablename__ = 'meteocat_lightning'
     SRID_LIGHTNINGS = 4258
@@ -203,23 +216,20 @@ class Lightning(Base):
         else:
             lightning.municipality_code = None
         lightning.__format_geom()
-        # lightning.__geom = "SRID={2:};POINT({0:} {1:})".format(lightning._coordinates_longitude,
-        #                                                       lightning._coordinates_latitude,
-        #                                                       Lightning.SRID_LIGHTNINGS)
         return lightning
 
     class JSONEncoder(json.JSONEncoder):
         """
-        TODO:
+        JSON Encoder to convert a database lightning to JSON
         """
 
         def default(self, obj):
             """
-            TODO:
+            Default procedure to create a dictionary with the Lightning data
 
             :param obj:
             :type obj: Lightning
-            :return:
+            :return: dict
             """
             if isinstance(obj, Lightning):
                 dct = dict()
@@ -239,11 +249,54 @@ class Lightning(Base):
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
+    class GeoJSONEncoder(json.JSONEncoder):
+        """
+        Geo JSON Encoder to convert a database lightning to JSON
+        """
+
+        def default(self, obj):
+            """
+            Default procedure to create a dictionary with the Lightning data
+
+            :param obj:
+            :type obj: Lightning
+            :return: dict
+            """
+            if isinstance(obj, Lightning):
+                dct = dict()
+                dct['type'] = 'Feature'
+                dct['id'] = obj.id
+                dct['geometry'] = dict()
+                dct['geometry']['type'] = 'Point'
+                dct['geometry']['coordinates'] = '[' + str(obj._coordinates_longitude) + ' ' + \
+                                                 str(obj._coordinates_latitude) + ']'
+                dct['properties'] = dict()
+                dct['properties']['meteocat_id'] = obj.meteocat_id
+                dct['properties']['date'] = obj.date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                dct['properties']['peak_current'] = obj.peak_current
+                dct['properties']['chi_squared'] = obj.chi_squared
+                dct['properties']['ellipse_major_axis'] = obj.ellipse_major_axis
+                dct['properties']['ellipse_minor_axis'] = obj.ellipse_minor_axis
+                dct['properties']['ellipse_angle'] = obj.ellipse_angle
+                dct['properties']['number_of_sensors'] = obj.number_of_sensors
+                dct['properties']['hit_ground'] = obj.hit_ground
+                dct['properties']['municipality_code'] = obj.municipality_code
+                dct['properties']['coordinates_latitude'] = obj._coordinates_latitude
+                dct['properties']['coordinates_longitude'] = obj._coordinates_longitude
+                dct['properties']['coordinates_epsg'] = Lightning.SRID_LIGHTNINGS
+                return dct
+            return json.JSONEncoder.default(self, obj)  # pragma: no cover
+
 
 class LightningAPIRequest(Base):
     """
     Class container for the lightnings requests table.  It provides SQL Alchemy access to the performed requests to the
     remote API. As data is event driven it is not possible to know if there were lightnings at a certain time
+
+    :type date: datetime.datetime
+    :type http_status_code: int
+    :type number_of_lightnings: int
+    :type ts: datetime.datetime
     """
     __tablename__ = 'meteocat_xdde_request'
     date = Column('request_date', DateTime(timezone=True), primary_key=True)
@@ -261,7 +314,7 @@ class LightningAPIRequest(Base):
         :param http_status_code: HTTP status code of the request
         :type http_status_code: int
         :param number_of_lightnings: Number of lightnings obtained from the Meteocat API call
-        :type number_of_lightnings:
+        :type number_of_lightnings: int
         """
         if type(date) is str:
             self.date = dateutil.parser.isoparse(date).replace(minute=0, second=0, microsecond=0, tzinfo=pytz.UTC)
