@@ -1,3 +1,5 @@
+CREATE TYPE variable_type AS ENUM('DAT', 'AUX', 'CMV');
+
 CREATE TABLE public.meteocat_variable
 (
   id bigserial,
@@ -5,7 +7,7 @@ CREATE TABLE public.meteocat_variable
   _nom varchar NOT NULL,
   _unitat varchar NOT NULL,
   _acronim varchar NOT NULL,
-  _tipus varchar NOT NULL,
+  _tipus variable_type NOT NULL,
   _decimals int NOT NULL,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
   UNIQUE (_codi),
