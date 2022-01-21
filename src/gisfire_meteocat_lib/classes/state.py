@@ -19,13 +19,8 @@ from typing import Any
 
 class State(Base):
     """
-    TODO
-    Class container for the weather station status table.  Provides the SQL Alchemy access to the different status of
-    the timeline of a weather station. A weather station status informs of the presence of a certain weather station in
-    the system.
-
-    The weather station status information is obtained from the MeteoCat API call described in:
-    https://apidocs.meteocat.gencat.cat/documentacio/metadades-estacions/#metadades-de-totes-les-estacions
+    Class container for a state. Implements a base abstract class with common properties between states. Will be used in
+    variables and weather stations
 
     :type id: int or Column
     :type from_date: datetime.datetime or Column or None
@@ -40,20 +35,26 @@ class State(Base):
 
     def __init__(self, from_date: Optional[datetime.datetime, None] = None,
                  to_date: Optional[datetime.datetime, None] = None) -> None:
+        """
+        Class constructor
+
+        :param from_date: Date the state begins to be valid
+        :type from_date: datetime
+        :param to_date: Date when the state finishes its validity
+        :type to_date: datetime
+        """
         self.from_date = from_date
         self.to_date = to_date
 
     @staticmethod
     def object_hook_abstract(dct: Dict[str, Any], dest: State) -> None:
         """
-        TODO
-        Decodes a JSON originated dict from the Meteocat API to a WeatherStationStatus object
+        Decodes a JSON originated dict from the Meteocat API and stores in the destination object
 
         :param dct: Dictionary with the standard parsing of the json library
         :type dct: Dict[str, Any]
-        TODO
-        :param dest:
-        :type dest:
+        :param dest: Destination object were the data wil be stored. Must be a subclass of State
+        :type dest: State
         :return: None
         """
         try:
@@ -70,15 +71,15 @@ class State(Base):
 
     class JSONEncoder(json.JSONEncoder):
         """
-        JSON Encoder to convert a database WeatherStationStatus to JSON
+        JSON Encoder to convert a States to JSON
         """
 
         def default(self, obj: object) -> Dict[str, Any]:
             """
             Default procedure to create a dictionary with the Lightning data
 
-            :param obj:
-            :type obj: Lightning
+            :param obj: Object to encode to JSON
+            :type obj: State
             :return: dict
             """
             if isinstance(obj, State):

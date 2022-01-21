@@ -170,6 +170,58 @@ def test_geojson_encode_weather_station_01():
     assert json.loads(string) == json.loads(json.dumps(station, cls=WeatherStation.GeoJSONEncoder, ensure_ascii=False))
 
 
+def test_geojson_encode_weather_station_02():
+    # noinspection DuplicatedCode
+    state = WeatherStationState(code=WeatherStationStateCategory.ACTIVE,
+                                from_date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC))
+    station = WeatherStation(code='VL', name='Seròs - la Creu', category=WeatherStationCategory.AUTO,
+                             coordinates_latitude=41.46014, coordinates_longitude=0.40562,
+                             placement='Crta. de Seròs a la Granja d\'Escarp', altitude=100, municipality_code=252043,
+                             municipality_name='Seròs', county_code=33, county_name='Segrià', province_code=25,
+                             province_name='Lleida', network_code=1, network_name='XEMA')
+    station.states.append(state)
+    string = ('{"type": "Feature", "id": null, "crs": {"type": "link", '
+              '"properties": {"href": "https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, '
+              '"geometry": {"type": "Point", "coordinates": [0.40562, 41.46014]}, "properties": {'
+              '"code": "VL", "name": "Seròs - la Creu", "category": 0, '
+              '"placement": "Crta. de Seròs a la Granja d\'Escarp", "altitude": 100, "coordinates_latitude": 41.46014, '
+              '"coordinates_longitude": 0.40562, "coordinates_epsg": 4258, "municipality_code": 252043, '
+              '"municipality_name": "Seròs", "county_code": 33, "county_name": "Segrià", "province_code": 25, '
+              '"province_name": "Lleida", "network_code": 1, "network_name": "XEMA", "states": [{'
+              '"code": 2, "from_date":"2020-01-01T10:30Z", "to_date": null'
+              '}]}}')
+    assert json.loads(string) == json.loads(json.dumps(station, cls=WeatherStation.GeoJSONEncoder, ensure_ascii=False))
+
+
+def test_geojson_encode_weather_station_03():
+    state_01 = WeatherStationState(code=WeatherStationStateCategory.REPAIR,
+                                   from_date=datetime.datetime(2018, 1, 1, 10, 30, tzinfo=pytz.UTC),
+                                   to_date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC))
+    # noinspection DuplicatedCode
+    state_02 = WeatherStationState(code=WeatherStationStateCategory.ACTIVE,
+                                   from_date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC))
+    station = WeatherStation(code='VL', name='Seròs - la Creu', category=WeatherStationCategory.AUTO,
+                             coordinates_latitude=41.46014, coordinates_longitude=0.40562,
+                             placement='Crta. de Seròs a la Granja d\'Escarp', altitude=100, municipality_code=252043,
+                             municipality_name='Seròs', county_code=33, county_name='Segrià', province_code=25,
+                             province_name='Lleida', network_code=1, network_name='XEMA')
+    station.states.append(state_01)
+    station.states.append(state_02)
+    string = ('{"type": "Feature", "id": null, "crs": {"type": "link", '
+              '"properties": {"href": "https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, '
+              '"geometry": {"type": "Point", "coordinates": [0.40562, 41.46014]}, "properties": {'
+              '"code": "VL", "name": "Seròs - la Creu", "category": 0, '
+              '"placement": "Crta. de Seròs a la Granja d\'Escarp", "altitude": 100, "coordinates_latitude": 41.46014, '
+              '"coordinates_longitude": 0.40562, "coordinates_epsg": 4258, "municipality_code": 252043, '
+              '"municipality_name": "Seròs", "county_code": 33, "county_name": "Segrià", "province_code": 25, '
+              '"province_name": "Lleida", "network_code": 1, "network_name": "XEMA", "states": [{'
+              '"code": 3, "from_date": "2018-01-01T10:30Z", "to_date": "2020-01-01T10:30Z"'
+              '},{'
+              '"code": 2, "from_date":"2020-01-01T10:30Z", "to_date": null'
+              '}]}}')
+    assert json.loads(string) == json.loads(json.dumps(station, cls=WeatherStation.GeoJSONEncoder, ensure_ascii=False))
+
+
 def test_latitude_and_longitude_getter_weather_station_01():
     """
     Test the weather station location getters

@@ -389,7 +389,7 @@ class WeatherStation(Base):
 
     class GeoJSONEncoder(json.JSONEncoder):
         """
-        Geo JSON Encoder to convert a database lightning to JSON
+        Geo JSON Encoder to convert a database weather station to JSON
         """
 
         def default(self, obj: object) -> Dict[str, Any]:
