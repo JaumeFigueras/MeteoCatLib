@@ -17,5 +17,5 @@ pytest_plugins = [
     'test.fixtures.meteocat.meteocat',
     'test.fixtures.meteocat.xdde',
     'test.fixtures.meteocat.xema.weather_station',
-    'test.fixtures.meteocat.xema.old_xema',
+    # 'test.fixtures.meteocat.xema.old_xema',
 ]

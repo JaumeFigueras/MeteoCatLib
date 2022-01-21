@@ -44,8 +44,8 @@ class WeatherStationStatusCategory(enum.Enum):
     ACTIVE for active station
     REPAIR for station under some type of repair or temporal inactivity
     """
-    ACTIVE = 1
-    DISMANTLED = 2
+    ACTIVE = 2
+    DISMANTLED = 1
     REPAIR = 3
 
 
@@ -124,8 +124,8 @@ class WeatherStationStatus(Base):
                 obj: WeatherStationStatus
                 dct = dict()
                 dct['code'] = int(obj.code.value)
-                dct['from_date'] = obj.from_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-                dct['to_date'] = obj.to_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                dct['from_date'] = obj.from_date.strftime("%Y-%m-%dT%H:%MZ")
+                dct['to_date'] = obj.to_date.strftime("%Y-%m-%dT%H:%MZ") if obj.to_date is not None else None
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
@@ -329,23 +329,23 @@ class WeatherStation(Base):
         :return: Lightning
         """
         # 'municipi', 'comarca', 'provincia' or 'xarxa' dict of the Meteocat API JSON
-        if all(k in dct for k in ('codi', 'nom')):
+        if all(k in dct for k in ('codi', 'nom')) and len(dct) == 2:
             return dct
         # weather station status dict of the Meteocat API JSON
-        if all(k in dct for k in ('codi', 'dataInici', 'dataFi')):
+        if all(k in dct for k in ('codi', 'dataInici', 'dataFi')) and 2 <= len(dct) <= 3:
             status = WeatherStationStatus.object_hook(dct)
             return status
         # Lat-lon coordinates dict of the Meteocat API JSON
         if all(k in dct for k in ('latitud', 'longitud')):
             return dct
-        if not (all(k in dct for k in ('id', 'data', 'correntPic', 'chi2', 'ellipse', 'numSensors', 'nuvolTerra',
-                                       'coordenades'))):
+        if not (all(k in dct for k in ('codi', 'nom', 'tipus', 'coordenades', 'emplacament', 'altitud', 'municipi',
+                                       'comarca', 'provincia', 'xarxa', 'estats'))):
             return None
         station = WeatherStation()
         station.code = str(dct['codi'])
-        station.name = str(dct['name'])
-        station.category = WeatherStationCategory.AUTO if str(dict['tipus']) == 'A' else WeatherStationCategory.OTHER
-        station.placement = str(dict['emplacament'])
+        station.name = str(dct['nom'])
+        station.category = WeatherStationCategory.AUTO if str(dct['tipus']) == 'A' else WeatherStationCategory.OTHER
+        station.placement = str(dct['emplacament'])
         station.altitude = float(dct['altitud'])
         station._coordinates_latitude = float(dct['coordenades']['latitud'])
         station._coordinates_longitude = float(dct['coordenades']['longitud'])
@@ -357,6 +357,9 @@ class WeatherStation(Base):
         station.province_name = str(dct['provincia']['nom'])
         station.network_code = int(dct['xarxa']['codi'])
         station.network_name = str(dct['xarxa']['nom'])
+        for state in dct['estats']:
+            state: WeatherStationStatus
+            station.status.append(state)
         station.__format_geom()
         return station
 
@@ -378,7 +381,7 @@ class WeatherStation(Base):
                 dct = dict()
                 dct['code'] = obj.code
                 dct['name'] = obj.name
-                dct['category'] = obj.category
+                dct['category'] = obj.category.value
                 dct['placement'] = obj.placement
                 dct['altitude'] = obj.altitude
                 dct['coordinates_latitude'] = obj._coordinates_latitude
@@ -417,12 +420,12 @@ class WeatherStation(Base):
                 dct['crs'] = dict()
                 dct['crs']['type'] = 'link'
                 dct['crs']['properties'] = dict()
-                dct['crs']['properties']['href'] = 'https://spatialreference.org/ref/epsg/4258/proj4/'
+                dct['crs']['properties']['href'] = 'https://spatialreference.org/ref/epsg/' + \
+                                                   str(WeatherStation.SRID_WEATHER_STATIONS) + '/proj4/'
                 dct['crs']['properties']['type'] = 'proj4'
                 dct['geometry'] = dict()
                 dct['geometry']['type'] = 'Point'
-                dct['geometry']['coordinates'] = '[' + str(obj._coordinates_longitude) + ' ' + \
-                                                 str(obj._coordinates_latitude) + ']'
+                dct['geometry']['coordinates'] = [obj._coordinates_longitude, obj._coordinates_latitude]
                 dct['properties'] = WeatherStation.JSONEncoder().default(obj)
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
