@@ -24,6 +24,8 @@ from typing import Dict
 from typing import Optional
 from typing import Any
 
+from .state import State
+
 
 class WeatherStationCategory(enum.Enum):
     """
@@ -36,7 +38,7 @@ class WeatherStationCategory(enum.Enum):
     OTHER = 1
 
 
-class WeatherStationStatusCategory(enum.Enum):
+class WeatherStationStateCategory(enum.Enum):
     """
     Defines the three types os statuses
 
@@ -49,7 +51,7 @@ class WeatherStationStatusCategory(enum.Enum):
     REPAIR = 3
 
 
-class WeatherStationStatus(Base):
+class WeatherStationState(State):
     """
     Class container for the weather station status table.  Provides the SQL Alchemy access to the different status of
     the timeline of a weather station. A weather station status informs of the presence of a certain weather station in
@@ -68,23 +70,19 @@ class WeatherStationStatus(Base):
     :type station: relationship
     """
     __tablename__ = 'meteocat_weather_station_status'
-    id = Column(Integer, primary_key=True)
-    code = Column('_codi', Enum(WeatherStationStatusCategory), nullable=False)
-    from_date = Column('_data_inici', DateTime(timezone=True), nullable=False)
-    to_date = Column('_data_fi', DateTime(timezone=True))
+    code = Column('_codi', Enum(WeatherStationStateCategory), nullable=False)
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    station = relationship('WeatherStation', back_populates='status')
+    station = relationship('WeatherStation', back_populates='states')
 
-    def __init__(self, code: Optional[WeatherStationStatusCategory, None] = None,
+    def __init__(self, code: Optional[WeatherStationStateCategory, None] = None,
                  from_date: Optional[datetime.datetime, None] = None,
                  to_date: Optional[datetime.datetime, None] = None) -> None:
+        super().__init__(from_date, to_date)
         self.code = code
-        self.from_date = from_date
-        self.to_date = to_date
 
     @staticmethod
-    def object_hook(dct: Dict[str, Any]) -> WeatherStationStatus:
+    def object_hook(dct: Dict[str, Any]) -> WeatherStationState:
         """
         Decodes a JSON originated dict from the Meteocat API to a WeatherStationStatus object
 
@@ -92,19 +90,9 @@ class WeatherStationStatus(Base):
         :type dct: Dict[str, Any]
         :return: WeatherStationStatus
         """
-        status = WeatherStationStatus()
-        status.code = WeatherStationStatusCategory(dct['codi'])
-        try:
-            status.from_date = dateutil.parser.isoparse(dct['dataInici'])
-        except ValueError as e:
-            raise e
-        if dct['dataFi'] is None:
-            status.to_date = None
-        else:
-            try:
-                status.to_date = dateutil.parser.isoparse(dct['dataFi'])
-            except ValueError as e:
-                raise e
+        status = WeatherStationState()
+        status.code = WeatherStationStateCategory(dct['codi'])
+        State.object_hook_abstract(dct, status)
         return status
 
     class JSONEncoder(json.JSONEncoder):
@@ -120,13 +108,13 @@ class WeatherStationStatus(Base):
             :type obj: Lightning
             :return: dict
             """
-            if isinstance(obj, WeatherStationStatus):
-                obj: WeatherStationStatus
-                dct = dict()
-                dct['code'] = int(obj.code.value)
-                dct['from_date'] = obj.from_date.strftime("%Y-%m-%dT%H:%MZ")
-                dct['to_date'] = obj.to_date.strftime("%Y-%m-%dT%H:%MZ") if obj.to_date is not None else None
-                return dct
+            if isinstance(obj, WeatherStationState):
+                obj: WeatherStationState
+                dct_weather_station_state = dict()
+                dct_weather_station_state['code'] = int(obj.code.value)
+                dct_state = State.JSONEncoder().default(obj)
+                # Merges the two dicts with values from dct_weather_station_state replacing those from dct_state
+                return {**dct_state, **dct_weather_station_state}
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
 
@@ -156,7 +144,7 @@ class WeatherStation(Base):
     :type network_name: str
     :type ts: datetime
     :type __geom = str or Column
-    :type status: relationship
+    :type states: relationship
     :type measures: relationship
     :type SRID_WEATHER_STATIONS: int
     """
@@ -180,7 +168,7 @@ class WeatherStation(Base):
     network_name = Column('_xarxa_nom', String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     __geom = Column(Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
-    status = relationship("WeatherStationStatus", back_populates='station', lazy='joined')
+    states = relationship("WeatherStationState", back_populates='station', lazy='joined')
     # TODO: Finish the relation
     # measures = relationship("Measure", back_populates='station', lazy='select')
 
@@ -333,8 +321,8 @@ class WeatherStation(Base):
             return dct
         # weather station status dict of the Meteocat API JSON
         if all(k in dct for k in ('codi', 'dataInici', 'dataFi')) and 2 <= len(dct) <= 3:
-            status = WeatherStationStatus.object_hook(dct)
-            return status
+            state = WeatherStationState.object_hook(dct)
+            return state
         # Lat-lon coordinates dict of the Meteocat API JSON
         if all(k in dct for k in ('latitud', 'longitud')):
             return dct
@@ -358,8 +346,8 @@ class WeatherStation(Base):
         station.network_code = int(dct['xarxa']['codi'])
         station.network_name = str(dct['xarxa']['nom'])
         for state in dct['estats']:
-            state: WeatherStationStatus
-            station.status.append(state)
+            state: WeatherStationState
+            station.states.append(state)
         station.__format_geom()
         return station
 
@@ -395,7 +383,7 @@ class WeatherStation(Base):
                 dct['province_name'] = obj.province_name
                 dct['network_code'] = obj.network_code
                 dct['network_name'] = obj.network_name
-                dct['status'] = [WeatherStationStatus.JSONEncoder().default(state) for state in obj.status]
+                dct['states'] = [WeatherStationState.JSONEncoder().default(state) for state in obj.states]
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
 

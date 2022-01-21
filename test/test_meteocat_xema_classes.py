@@ -3,8 +3,8 @@
 
 from src.gisfire_meteocat_lib.classes.weather_station import WeatherStation
 from src.gisfire_meteocat_lib.classes.weather_station import WeatherStationCategory
-from src.gisfire_meteocat_lib.classes.weather_station import WeatherStationStatus
-from src.gisfire_meteocat_lib.classes.weather_station import WeatherStationStatusCategory
+from src.gisfire_meteocat_lib.classes.weather_station import WeatherStationState
+from src.gisfire_meteocat_lib.classes.weather_station import WeatherStationStateCategory
 import pytest
 import json
 import datetime
@@ -24,8 +24,8 @@ def test_json_parse_weather_station_status_01(weather_station_status_str_closed:
     :param weather_station_status_json_closed: Same string but json parser to compare with the result
     :type weather_station_status_json_closed: dict(str, *)
     """
-    state: WeatherStationStatus = json.loads(weather_station_status_str_closed,
-                                             object_hook=WeatherStationStatus.object_hook)
+    state: WeatherStationState = json.loads(weather_station_status_str_closed,
+                                            object_hook=WeatherStationState.object_hook)
     assert state.code.value == weather_station_status_json_closed['codi']
     assert state.from_date == datetime.datetime.strptime(weather_station_status_json_closed['dataInici'],
                                                          "%Y-%m-%dT%H:%M%z")
@@ -42,8 +42,8 @@ def test_json_parse_weather_station_status_02(weather_station_status_str_open, w
     :param weather_station_status_json_open: Same string but json parser to compare with the result
     :type weather_station_status_json_open: dict(str, *)
     """
-    state: WeatherStationStatus = json.loads(weather_station_status_str_open,
-                                             object_hook=WeatherStationStatus.object_hook)
+    state: WeatherStationState = json.loads(weather_station_status_str_open,
+                                            object_hook=WeatherStationState.object_hook)
     assert state.code.value == weather_station_status_json_open['codi']
     assert state.from_date == datetime.datetime.strptime(weather_station_status_json_open['dataInici'],
                                                          "%Y-%m-%dT%H:%M%z")
@@ -59,8 +59,8 @@ def test_json_parse_weather_station_status_03(weather_station_status_str_error_f
     :type weather_station_status_str_error_from_date: str
     """
     with pytest.raises(ValueError):
-        state: WeatherStationStatus = json.loads(weather_station_status_str_error_from_date,
-                                                 object_hook=WeatherStationStatus.object_hook)
+        state: WeatherStationState = json.loads(weather_station_status_str_error_from_date,
+                                                object_hook=WeatherStationState.object_hook)
 
 
 def test_json_parse_weather_station_status_04(weather_station_status_str_error_to_date):
@@ -71,23 +71,23 @@ def test_json_parse_weather_station_status_04(weather_station_status_str_error_t
     :type weather_station_status_str_error_to_date: str
     """
     with pytest.raises(ValueError):
-        state: WeatherStationStatus = json.loads(weather_station_status_str_error_to_date,
-                                                 object_hook=WeatherStationStatus.object_hook)
+        state: WeatherStationState = json.loads(weather_station_status_str_error_to_date,
+                                                object_hook=WeatherStationState.object_hook)
 
 
 def test_json_encode_weather_station_status_01():
-    state = WeatherStationStatus(WeatherStationStatusCategory.ACTIVE,
-                                 datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
-                                 datetime.datetime(2021, 1, 1, 10, 30, tzinfo=pytz.UTC))
-    string = json.dumps(state, cls=WeatherStationStatus.JSONEncoder)
-    assert string == '{"code": 2, "from_date": "2020-01-01T10:30Z", "to_date": "2021-01-01T10:30Z"}'
+    state = WeatherStationState(WeatherStationStateCategory.ACTIVE,
+                                datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
+                                datetime.datetime(2021, 1, 1, 10, 30, tzinfo=pytz.UTC))
+    string = '{"code": 2, "from_date": "2020-01-01T10:30Z", "to_date": "2021-01-01T10:30Z"}'
+    assert json.loads(string) == json.loads(json.dumps(state, cls=WeatherStationState.JSONEncoder))
 
 
 def test_json_encode_weather_station_status_02():
-    state = WeatherStationStatus(WeatherStationStatusCategory.DISMANTLED,
-                                 datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC), None)
-    string = json.dumps(state, cls=WeatherStationStatus.JSONEncoder)
-    assert string == '{"code": 1, "from_date": "2020-01-01T10:30Z", "to_date": null}'
+    state = WeatherStationState(WeatherStationStateCategory.DISMANTLED,
+                                datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC), None)
+    string = '{"code": 1, "from_date": "2020-01-01T10:30Z", "to_date": null}'
+    assert json.loads(string) == json.loads(json.dumps(state, cls=WeatherStationState.JSONEncoder))
 
 
 def test_json_parse_weather_station_01(weather_station_str: str, weather_station_json: Dict[str, Any]) -> None:
@@ -116,9 +116,9 @@ def test_json_parse_weather_station_01(weather_station_str: str, weather_station
     assert station.province_name == weather_station_json['provincia']['nom']
     assert station.network_code == int(weather_station_json['xarxa']['codi'])
     assert station.network_name == weather_station_json['xarxa']['nom']
-    assert len(station.status) == len(weather_station_json['estats'])
+    assert len(station.states) == len(weather_station_json['estats'])
     for idx in range(len(weather_station_json['estats'])):
-        elem: WeatherStationStatus = station.status[idx]
+        elem: WeatherStationState = station.states[idx]
         assert elem.code.value == weather_station_json['estats'][idx]['codi']
         assert elem.from_date == datetime.datetime.strptime(weather_station_json['estats'][idx]['dataInici'],
                                                             "%Y-%m-%dT%H:%M%z")
@@ -145,13 +145,12 @@ def test_json_encode_weather_station_01():
                              placement='Crta. de Seròs a la Granja d\'Escarp', altitude=100, municipality_code=252043,
                              municipality_name='Seròs', county_code=33, county_name='Segrià', province_code=25,
                              province_name='Lleida', network_code=1, network_name='XEMA')
-    json_str = json.dumps(station, cls=WeatherStation.JSONEncoder, ensure_ascii=False)
     string = ('{"code": "VL", "name": "Seròs - la Creu", "category": 0, '
               '"placement": "Crta. de Seròs a la Granja d\'Escarp", "altitude": 100, "coordinates_latitude": 41.46014, '
               '"coordinates_longitude": 0.40562, "coordinates_epsg": 4258, "municipality_code": 252043, '
               '"municipality_name": "Seròs", "county_code": 33, "county_name": "Segrià", "province_code": 25, '
-              '"province_name": "Lleida", "network_code": 1, "network_name": "XEMA", "status": []}')
-    assert json_str == string
+              '"province_name": "Lleida", "network_code": 1, "network_name": "XEMA", "states": []}')
+    assert json.loads(string) == json.loads(json.dumps(station, cls=WeatherStation.JSONEncoder, ensure_ascii=False))
 
 
 def test_geojson_encode_weather_station_01():
@@ -160,7 +159,6 @@ def test_geojson_encode_weather_station_01():
                              placement='Crta. de Seròs a la Granja d\'Escarp', altitude=100, municipality_code=252043,
                              municipality_name='Seròs', county_code=33, county_name='Segrià', province_code=25,
                              province_name='Lleida', network_code=1, network_name='XEMA')
-    geojson_str = json.dumps(station, cls=WeatherStation.GeoJSONEncoder, ensure_ascii=False)
     string = ('{"type": "Feature", "id": null, "crs": {"type": "link", '
               '"properties": {"href": "https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, '
               '"geometry": {"type": "Point", "coordinates": [0.40562, 41.46014]}, "properties": {'
@@ -168,8 +166,8 @@ def test_geojson_encode_weather_station_01():
               '"placement": "Crta. de Seròs a la Granja d\'Escarp", "altitude": 100, "coordinates_latitude": 41.46014, '
               '"coordinates_longitude": 0.40562, "coordinates_epsg": 4258, "municipality_code": 252043, '
               '"municipality_name": "Seròs", "county_code": 33, "county_name": "Segrià", "province_code": 25, '
-              '"province_name": "Lleida", "network_code": 1, "network_name": "XEMA", "status": []}}')
-    assert geojson_str == string
+              '"province_name": "Lleida", "network_code": 1, "network_name": "XEMA", "states": []}}')
+    assert json.loads(string) == json.loads(json.dumps(station, cls=WeatherStation.GeoJSONEncoder, ensure_ascii=False))
 
 
 def test_latitude_and_longitude_getter_weather_station_01():
