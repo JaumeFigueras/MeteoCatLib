@@ -61,18 +61,15 @@ class WeatherStationState(State):
     https://apidocs.meteocat.gencat.cat/documentacio/metadades-estacions/#metadades-de-totes-les-estacions
 
     :type __tablename__: str
-    :type id: int or Column
-    :type code: WeatherStationStatusCategory or Column or None
-    :type from_date: datetime.datetime or Column or None
-    :type to_date: datetime.datetime or Column or None
+    :type code: WeatherStationStateCategory or Column or None
     :type meteocat_weather_station_id: int or Column
     :type ts: datetime.datetime or Column
     :type station: relationship
     """
     __tablename__ = 'meteocat_weather_station_status'
     code = Column('_codi', Enum(WeatherStationStateCategory), nullable=False)
-    meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+    meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
     station = relationship('WeatherStation', back_populates='states')
 
     def __init__(self, code: Optional[WeatherStationStateCategory, None] = None,
@@ -169,8 +166,10 @@ class WeatherStation(Base):
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     __geom = Column(Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
     states = relationship("WeatherStationState", back_populates='station', lazy='joined')
+    # assoc_variable_time_base = relationship('WeatherStationVariableTimeBaseAssociation', back_populates='station', lazy='dynamic')
+    # assoc_variable_state = relationship('WeatherStationVariableStateAssociation', back_populates='station', lazy='dynamic')
     # TODO: Finish the relation
-    # measures = relationship("Measure", back_populates='station', lazy='select')
+    measures = relationship("Measure", back_populates='station', lazy='select')
 
     def __init__(self, code: Union[str, None] = None, name: Union[str, None] = None, 
                  category: Union[WeatherStationCategory, None] = None, coordinates_latitude: Union[float, None] = None,
@@ -320,7 +319,7 @@ class WeatherStation(Base):
         if all(k in dct for k in ('codi', 'nom')) and len(dct) == 2:
             return dct
         # weather station status dict of the Meteocat API JSON
-        if all(k in dct for k in ('codi', 'dataInici', 'dataFi')) and 2 <= len(dct) <= 3:
+        if all(k in dct for k in ('codi', 'dataInici', 'dataFi')):
             state = WeatherStationState.object_hook(dct)
             return state
         # Lat-lon coordinates dict of the Meteocat API JSON

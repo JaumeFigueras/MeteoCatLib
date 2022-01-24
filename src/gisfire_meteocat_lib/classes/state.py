@@ -46,6 +46,20 @@ class State(Base):
         self.from_date = from_date
         self.to_date = to_date
 
+    def __eq__(self, other: State) -> bool:
+        """
+        Equality comparison, necessary to solve an error in the MeteoCat API
+
+        :param other: The other State to compare
+        :type other: State
+        :return: Self == Other
+        :rtype: bool
+        """
+        if isinstance(other, State):
+            return (self.to_date == other.to_date) and (self.from_date == other.from_date)
+        else:
+            return False  # pragma: no cover
+
     @staticmethod
     def object_hook_abstract(dct: Dict[str, Any], dest: State) -> None:
         """

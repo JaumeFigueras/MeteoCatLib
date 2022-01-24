@@ -47,16 +47,6 @@ def weather_station_status_str_error_to_date():
 
 
 @pytest.fixture(scope='function')
-def weather_station_status_json_closed(weather_station_status_str_closed):
-    return json.loads(weather_station_status_str_closed)
-
-
-@pytest.fixture(scope='function')
-def weather_station_status_json_open(weather_station_status_str_open):
-    return json.loads(weather_station_status_str_open)
-
-
-@pytest.fixture(scope='function')
 def weather_station_str():
     return """
     {
@@ -104,11 +94,6 @@ def weather_station_str():
         ]
     }
     """
-
-
-@pytest.fixture(scope='function')
-def weather_station_json(weather_station_str):
-    return json.loads(weather_station_str)
 
 
 @pytest.fixture(scope='function')
