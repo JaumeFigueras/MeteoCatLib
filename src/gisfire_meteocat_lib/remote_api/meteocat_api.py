@@ -5,7 +5,7 @@ TIMEOUT = 5
 RETRIES = 3
 
 
-def get_from_api(api_token, api_url):
+def get_from_api(api_token: str, api_url: str) -> requests.Response:
     """
     Gets the data returned by an API call to the MeteoCat service selected by the URL provided. Uses the default
     time-out time and retries (in case of error in the communications).

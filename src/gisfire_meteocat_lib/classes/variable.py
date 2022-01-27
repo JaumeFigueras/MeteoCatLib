@@ -241,9 +241,6 @@ class Variable(Base):
     category = Column('_tipus', Enum(VariableCategory), nullable=False)
     decimal_positions = Column('_decimals', Integer, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    # assoc_variable_state = relationship('WeatherStationVariableStateAssociation', back_populates='variable', lazy='dynamic')
-    # assoc_variable_time_base = relationship('WeatherStationVariableTimeBaseAssociation', back_populates='variable', lazy='dynamic')
-    # TODO: Finish the relation
     measures = relationship('Measure', back_populates='variable')
 
     def __init__(self, code: Optional[int, None] = None, name: Optional[str, None] = None,

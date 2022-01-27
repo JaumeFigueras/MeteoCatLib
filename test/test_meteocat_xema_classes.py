@@ -470,9 +470,9 @@ def no_test_json_encode_variable_02() -> None:
 
 def test_json_parse_measure_01(measure_str: str) -> None:
     """
-    TODO Test parsing a string to JSON of a weather station status without errors
+    Tests the parsing of a JSON string of a set of measures with errors
 
-    :param measure_str: String fixture with the text of a state with both dates
+    :param measure_str: String fixture with the text of a set of measures
     :type measure_str: str
     """
     measures: List[Measure] = json.loads(measure_str, object_hook=Measure.object_hook)
@@ -487,9 +487,9 @@ def test_json_parse_measure_01(measure_str: str) -> None:
 
 def test_json_parse_measure_02(measure_error_str: str) -> None:
     """
-    TODO Test parsing a string to JSON of a weather station status without errors
+    Tests the parsing of a JSON string of a set of measures with errors
 
-    :param measure_error_str: String fixture with the text of a state with both dates
+    :param measure_error_str: String fixture with a set of measures with missing parameters
     :type measure_error_str: str
     """
     measures: List[Measure] = json.loads(measure_error_str, object_hook=Measure.object_hook)
@@ -498,7 +498,7 @@ def test_json_parse_measure_02(measure_error_str: str) -> None:
 
 def test_json_encode_measure_01() -> None:
     """
-    Tests the encoding into JSON of a Variable (without state and time_base)
+    Tests the encoding into JSON of a Measure
     """
     measure = Measure(value=12.34, date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
                       validity_state=MeasureValidityCategory.VALID, time_base=MeasureTimeBaseCategory.SH)
@@ -508,7 +508,7 @@ def test_json_encode_measure_01() -> None:
 
 def test_geojson_encode_measure_01() -> None:
     """
-    Tests the encoding into JSON of a Variable (without state and time_base)
+    Tests the encoding into a GeoJSON of a Measure without a station (and therefore without a location)
     """
     measure = Measure(value=12.34, date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
                       validity_state=MeasureValidityCategory.VALID, time_base=MeasureTimeBaseCategory.SH)
@@ -518,7 +518,7 @@ def test_geojson_encode_measure_01() -> None:
 
 def test_geojson_encode_measure_02() -> None:
     """
-    Tests the encoding into JSON of a Variable (without state and time_base)
+    Tests the encoding into a GeoJSON of a Measure with a valid station
     """
     measure = Measure(value=12.34, date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
                       validity_state=MeasureValidityCategory.VALID, time_base=MeasureTimeBaseCategory.SH)

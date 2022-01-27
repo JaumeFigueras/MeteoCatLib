@@ -36,10 +36,16 @@ class Lightning(Base):
     :type __geom: str or None
     """
     __tablename__ = 'meteocat_lightning'
+    """SQL Alchemy database table mapping"""
     SRID_LIGHTNINGS = 4258
+    """EPSG code for the used SRS in the locations"""
     id = Column(Integer, primary_key=True)
+    """Unique ID in the table for a lightning. Differs from the meteocat ID because it is used as a Feature id in 
+    geospatial formats"""
     meteocat_id = Column('_id', Integer, unique=True, nullable=False)
+    """Meteocat ID for the lightning"""
     date = Column('_data', DateTime(timezone=True), nullable=False)
+    """Date when the lighting struck"""
     peak_current = Column('_corrent_pic', Float, nullable=False)
     chi_squared = Column('_chi2', Float, default=None)
     ellipse_major_axis = Column('_ellipse_eix_major', Float, nullable=False)
@@ -117,17 +123,17 @@ class Lightning(Base):
     @property
     def geom(self):
         """
-        Latitude getter
+        POSTGIS geometry text of the lightning location
 
-        :return: Lightning latitude
-        :rtype: float
+        :return: Lightning location and SRS ID
+        :rtype: str
         """
         return self.__geom
 
     @property
     def lat(self):
         """
-        Latitude getter
+        Latitude of the lightning location
 
         :return: Lightning latitude
         :rtype: float
@@ -154,7 +160,7 @@ class Lightning(Base):
     @property
     def lon(self):
         """
-        Longitude getter
+        Longitude of the lightning location
 
         :return: Lightning longitude
         :rtype: float

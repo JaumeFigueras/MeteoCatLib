@@ -6,7 +6,6 @@ from . import Base
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import Float
-from sqlalchemy import String
 from sqlalchemy import DateTime
 from sqlalchemy import func
 from sqlalchemy import ForeignKey
@@ -30,7 +29,7 @@ from typing import List
 
 class MeasureValidityCategory(str, enum.Enum):
     """
-    TODO
+    Defines the three types of measure validity
     """
     PENDING = ' '
     VALID = 'V'
@@ -77,15 +76,17 @@ class Measure(Base):
                  validity_state: Optional[MeasureValidityCategory, None] = None,
                  time_base: Optional[VariableTimeBaseCategory, None] = None) -> None:
         """
-        TODO
-        :param date:
-        :type date:
-        :param value:
-        :type value:
-        :param validity_state:
-        :type validity_state:
-        :param time_base:
-        :type time_base:
+        Class constructor
+
+        :param date: Date of the measure
+        :type date: datetime.datetime
+        :param value: Value of the measure
+        :type value: float
+        :param validity_state: Validation state. The data read can have different validation stages (pending,
+        validating or validated)
+        :type validity_state: MeasureValidityCategory
+        :param time_base: Data sampling period. The period can be every hour (HO) or every 30 min. (SH)
+        :type time_base: MeasureTimeBaseCategory
         """
         self.date = date
         self.value = value
@@ -98,7 +99,7 @@ class Measure(Base):
         Decodes a JSON originated dict from the Meteocat API to a Measure object
 
         :param dct: Dictionary with the standard parsing of the json library
-        :type dct: dict
+        :type dct: dict(str, Any)
         :return: Lightning
         """
         # 'data', 'valor', 'estat', 'baseHoraria' dict of the Meteocat API JSON
@@ -118,7 +119,7 @@ class Measure(Base):
 
     class JSONEncoder(json.JSONEncoder):
         """
-        JSON Encoder to convert a database measure to JSON
+        JSON Encoder to convert a Measure object to JSON string
         """
 
         def default(self, obj: object) -> Dict[str, Any]:
@@ -141,7 +142,7 @@ class Measure(Base):
 
     class GeoJSONEncoder(json.JSONEncoder):
         """
-        Geo JSON Encoder to convert a database weather station to JSON
+        Geo JSON Encoder to convert a Measure object to a GeoJSON string
         """
 
         def default(self, obj: object) -> Dict[str, Any]:
@@ -154,10 +155,11 @@ class Measure(Base):
             """
             if isinstance(obj, Measure):
                 obj: Measure
-                dct = dict()
+                dct: Dict[str, Any] = dict()
                 if obj.station is None:
                     dct['error'] = 'No Weather Station linked with the Measure'
                 else:
+                    # noinspection DuplicatedCode
                     dct['type'] = 'Feature'
                     dct['id'] = obj.id
                     dct['crs'] = dict()

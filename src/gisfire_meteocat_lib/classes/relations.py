@@ -31,8 +31,10 @@ class WeatherStationVariableTimeBaseAssociation(Base):
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'), primary_key=True)
     meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'), primary_key=True)
     meteocat_variable_time_base_id = Column(Integer, ForeignKey('meteocat_variable_time_base.id'), primary_key=True)
-    station = relationship('WeatherStation', backref='assoc_variable_time_base', foreign_keys=[meteocat_weather_station_id])
+    station = relationship('WeatherStation', backref='assoc_variable_time_base',
+                           foreign_keys=[meteocat_weather_station_id])
     variable = relationship('Variable', backref='assoc_variable_time_base', foreign_keys=[meteocat_variable_id])
-    time_base = relationship('VariableTimeBase', backref='assoc_variable_time_base', foreign_keys=[meteocat_variable_time_base_id])
+    time_base = relationship('VariableTimeBase', backref='assoc_variable_time_base',
+                             foreign_keys=[meteocat_variable_time_base_id])
 
 

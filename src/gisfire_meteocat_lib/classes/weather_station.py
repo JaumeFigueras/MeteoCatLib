@@ -66,7 +66,7 @@ class WeatherStationState(State):
     :type ts: datetime.datetime or Column
     :type station: relationship
     """
-    __tablename__ = 'meteocat_weather_station_status'
+    __tablename__ = 'meteocat_weather_station_state'
     code = Column('_codi', Enum(WeatherStationStateCategory), nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
@@ -164,11 +164,8 @@ class WeatherStation(Base):
     network_code = Column('_xarxa_codi', Integer, nullable=False)
     network_name = Column('_xarxa_nom', String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    __geom = Column(Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
+    __geom = Column('geom', Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
     states = relationship("WeatherStationState", back_populates='station', lazy='joined')
-    # assoc_variable_time_base = relationship('WeatherStationVariableTimeBaseAssociation', back_populates='station', lazy='dynamic')
-    # assoc_variable_state = relationship('WeatherStationVariableStateAssociation', back_populates='station', lazy='dynamic')
-    # TODO: Finish the relation
     measures = relationship("Measure", back_populates='station', lazy='select')
 
     def __init__(self, code: Union[str, None] = None, name: Union[str, None] = None, 

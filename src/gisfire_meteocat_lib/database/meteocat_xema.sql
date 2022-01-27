@@ -1,25 +1,3 @@
-CREATE TYPE meteocat_weather_station_state_type AS ENUM('ACTIVE', 'DISMANTLED', 'REPAIR')
-
-CREATE TABLE public.meteocat_weather_station_state
-(
-  id bigserial,
-  _codi meteocat_weather_station_state_type NOT NULL,
-  _data_inici timestamp with time zone NOT NULL,
-  _data_fi timestamp with time zone DEFAULT NULL,
-  meteocat_weather_station_id bigint,
-  ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
-  UNIQUE (meteocat_weather_station_id, _data_inici),
-  CONSTRAINT pk_meteocat_weather_station_state PRIMARY KEY (id),
-  CONSTRAINT fk_meteocat_weather_station_id_weather_stations_state FOREIGN KEY (meteocat_weather_station_id) REFERENCES meteocat_weather_station(id)
-)
-WITH (
-  OIDS = FALSE
-)
-;
-ALTER TABLE public.meteocat_weather_station_state
-  OWNER TO gisfireuser
-;
-
 CREATE TABLE public.meteocat_weather_station
 (
   id bigserial,
@@ -50,6 +28,28 @@ ALTER TABLE public.meteocat_weather_station
   OWNER TO gisfireuser
 ;
 SELECT AddGeometryColumn ('public', 'meteocat_weather_station', 'geom', 4258, 'POINT', 2)
+;
+
+CREATE TYPE meteocat_weather_station_state_type AS ENUM('ACTIVE', 'DISMANTLED', 'REPAIR');
+
+CREATE TABLE public.meteocat_weather_station_state
+(
+  id bigserial,
+  _codi meteocat_weather_station_state_type NOT NULL,
+  _data_inici timestamp with time zone NOT NULL,
+  _data_fi timestamp with time zone DEFAULT NULL,
+  meteocat_weather_station_id bigint,
+  ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
+  UNIQUE (meteocat_weather_station_id, _data_inici),
+  CONSTRAINT pk_meteocat_weather_station_state PRIMARY KEY (id),
+  CONSTRAINT fk_meteocat_weather_station_id_weather_stations_state FOREIGN KEY (meteocat_weather_station_id) REFERENCES meteocat_weather_station(id)
+)
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE public.meteocat_weather_station_state
+  OWNER TO gisfireuser
 ;
 
 CREATE TYPE variable_type AS ENUM('DAT', 'AUX', 'CMV');
