@@ -54,7 +54,7 @@ ALTER TABLE public.meteocat_weather_station_state
 
 CREATE TYPE variable_type AS ENUM('DAT', 'AUX', 'CMV');
 CREATE TYPE variable_state_type AS ENUM('DISMANTLED', 'ACTIVE', 'REPAIR');
-CREATE TYPE variable_time_base_type AS ENUM('HO', 'SH');
+CREATE TYPE variable_time_base_type AS ENUM('HO', 'SH', 'DM', 'MI');
 
 CREATE TABLE public.meteocat_variable
 (
@@ -80,7 +80,7 @@ ALTER TABLE public.meteocat_variable
 CREATE TABLE public.meteocat_variable_state
 (
   id bigserial,
-  _codi int NOT NULL,
+  _codi variable_state_type NOT NULL,
   _data_inici timestamp with time zone NOT NULL,
   _data_fi timestamp with time zone,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
@@ -94,20 +94,20 @@ ALTER TABLE public.meteocat_variable_state
   OWNER TO gisfireuser
 ;
 
-CREATE TABLE public.meteocat_variable_time_basis
+CREATE TABLE public.meteocat_variable_time_base
 (
   id bigserial,
-  _codi varchar NOT NULL,
+  _codi variable_time_base_type NOT NULL,
   _data_inici timestamp with time zone NOT NULL,
   _data_fi timestamp with time zone,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
-  CONSTRAINT pk_meteocat_variable_time_basis PRIMARY KEY (id)
+  CONSTRAINT pk_meteocat_variable_time_base PRIMARY KEY (id)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_variable_time_basis
+ALTER TABLE public.meteocat_variable_time_base
   OWNER TO gisfireuser
 ;
 
@@ -134,12 +134,12 @@ CREATE TABLE public.meteocat_station_variable_time_assoc
 (
   meteocat_weather_station_id bigint,
   meteocat_variable_id bigint,
-  meteocat_variable_time_basis_id bigint,
+  meteocat_variable_time_base_id bigint,
   ts timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL,
-  CONSTRAINT pk_meteocat_station_variable_time_assoc PRIMARY KEY (meteocat_weather_station_id, meteocat_variable_id, meteocat_variable_time_basis_id),
+  CONSTRAINT pk_meteocat_station_variable_time_assoc PRIMARY KEY (meteocat_weather_station_id, meteocat_variable_id, meteocat_variable_time_base_id),
   CONSTRAINT fk_meteocat_weather_station_id_station_variable_time_assoc FOREIGN KEY (meteocat_weather_station_id) REFERENCES meteocat_weather_station(id),
   CONSTRAINT fk_meteocat_variable_id_station_variable_time_assoc FOREIGN KEY (meteocat_variable_id) REFERENCES meteocat_variable(id),
-  CONSTRAINT fk_meteocat_variable_time_basis_id_station_variable_time_assoc FOREIGN KEY (meteocat_variable_time_basis_id) REFERENCES meteocat_variable_time_basis(id)
+  CONSTRAINT fk_meteocat_variable_time_base_id_station_variable_time_assoc FOREIGN KEY (meteocat_variable_time_base_id) REFERENCES meteocat_variable_time_base(id)
 )
 WITH (
   OIDS = FALSE
@@ -149,7 +149,7 @@ ALTER TABLE public.meteocat_station_variable_time_assoc
   OWNER TO gisfireuser
 ;
 
-CREATE TYPE measure_time_base_type AS ENUM('HO', 'SH');
+CREATE TYPE measure_time_base_type AS ENUM('HO', 'SH', 'DM', 'MI');
 CREATE TYPE measure_validity_type AS ENUM(' ', 'V', 'T');
 
 CREATE TABLE public.meteocat_measure

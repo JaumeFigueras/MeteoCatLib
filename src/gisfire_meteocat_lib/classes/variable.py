@@ -38,7 +38,7 @@ class VariableCategory(str, enum.Enum):
 
 class VariableStateCategory(enum.Enum):
     """
-    Defines the three types of statuses for a variable
+    Defines the three types of states for a variable
 
     DISMANTLED for dismantled stations
     ACTIVE for active station
@@ -55,14 +55,16 @@ class VariableTimeBaseCategory(str, enum.Enum):
     """
     HO = 'HO'
     SH = 'SH'
+    DM = 'DM'
+    MI = 'MI'
 
 
 class VariableState(State):
     """
     Class container for the variable state table. Provides the SQL Alchemy access to the different states of a
-    variable. A variable status informs of the presence of a certain variable measure in a specific weather station
+    variable. A variable state informs of the presence of a certain variable measure in a specific weather station
 
-    The Variable status is part of a ternary relation with a Variable and a Station.
+    The Variable state is part of a ternary relation with a Variable and a Station.
 
     The variable information is obtained from the MeteoCat API call described in:
     https://apidocs.meteocat.gencat.cat/documentacio/dades-mesurades/#metadades-de-les-variables-duna-estacio
@@ -71,10 +73,10 @@ class VariableState(State):
     :type code: VariableStateCategory or Column or None
     :type ts: datetime.datetime or Column
     """
-    __tablename__ = 'meteocat_variable_status'
+    __tablename__ = 'meteocat_variable_state'
     code = Column('_codi', Enum(VariableStateCategory), nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    # assoc = relationship('WeatherStationVariableStatusAssociation', back_populates='state', lazy='dynamic')
+    # assoc = relationship('WeatherStationVariableStateAssociation', back_populates='state', lazy='dynamic')
 
     def __init__(self, code: Optional[VariableStateCategory, None] = None,
                  from_date: Optional[datetime.datetime, None] = None,
@@ -95,20 +97,20 @@ class VariableState(State):
     @staticmethod
     def object_hook(dct: Dict[str, Any]) -> VariableState:
         """
-        Decodes a JSON originated dict from the Meteocat API to a VariableStatus object
+        Decodes a JSON originated dict from the Meteocat API to a VariableState object
 
         :param dct: Dictionary with the standard parsing of the json library
         :type dct: Dict[str, Any]
-        :return: VariableStatus
+        :return: VariableState
         """
-        status = VariableState()
-        status.code = VariableStateCategory(dct['codi'])
-        State.object_hook_abstract(dct, status)
-        return status
+        state = VariableState()
+        state.code = VariableStateCategory(dct['codi'])
+        State.object_hook_abstract(dct, state)
+        return state
 
     class JSONEncoder(json.JSONEncoder):
         """
-        JSON Encoder to convert a database VariableStatus to JSON
+        JSON Encoder to convert a database VariableState to JSON
         """
 
         def default(self, obj: object) -> Dict[str, Any]:
@@ -219,7 +221,7 @@ class Variable(Base):
     measured or calculated in the different weather stations.
 
     The variable information is obtained from the MeteoCat API call described in:
-    https://apidocs.meteocat.gencat.cat/documentacio/dades-mesurades/#metadades-de-les-variables-duna-estacio
+    https://apidocs.meteocat.gencat.cat/documentacio/dades-mesurades/#metadades-de-totes-les-variables
 
     :type __tablename__: str
     :type id: int
@@ -258,7 +260,7 @@ class Variable(Base):
         :type unit: str
         :param acronym: Acronym of the variable
         :type acronym: str
-        :param category: Variable type. Can be DAT (real measured DATa), AUX (AUXiliary data) or CMV (Compound
+        :param category: Variable type. Can be DAT (real measured DATa), AUX (Auxiliary data) or CMV (Compound
         MultiVariate)
         :type category: VariableCategory
         :param decimal_positions: Number of significant decimals of the measures
@@ -282,7 +284,7 @@ class Variable(Base):
         :type dct: dict
         :return: Variable
         """
-        # weather station status dict of the Meteocat API JSON
+        # weather station state dict of the Meteocat API JSON
         if all(k in dct for k in ('codi', 'dataInici', 'dataFi')):
             if isinstance(dct['codi'], str):
                 time_base = VariableTimeBase.object_hook(dct)
@@ -290,8 +292,7 @@ class Variable(Base):
             else:
                 state = VariableState.object_hook(dct)
                 return state
-        if not (all(k in dct for k in ('codi', 'nom', 'unitat', 'acronim', 'tipus', 'decimals', 'estats',
-                                       'basesTemporals'))):
+        if not (all(k in dct for k in ('codi', 'nom', 'unitat', 'acronim', 'tipus', 'decimals', 'basesTemporals'))):
             return None
         variable = Variable()
         variable.code = int(dct['codi'])
@@ -300,9 +301,14 @@ class Variable(Base):
         variable.acronym = str(dct['acronim'])
         variable.category = VariableCategory(str(dct['tipus']))
         variable.decimal_positions = int(dct['decimals'])
-        for state in dct['estats']:
-            state: VariableState
-            variable.states.append(state)
+        if variable.category != VariableCategory.CMV:
+            if 'estats' not in dct:
+                return None
+            for state in dct['estats']:
+                state: VariableState
+                variable.states.append(state)
+        else:
+            variable.states = None
         for time_base in dct['basesTemporals']:
             time_base: VariableTimeBase
             if time_base not in variable.time_bases:

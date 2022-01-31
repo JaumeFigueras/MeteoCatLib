@@ -168,14 +168,15 @@ class WeatherStation(Base):
     states = relationship("WeatherStationState", back_populates='station', lazy='joined')
     measures = relationship("Measure", back_populates='station', lazy='select')
 
-    def __init__(self, code: Union[str, None] = None, name: Union[str, None] = None, 
-                 category: Union[WeatherStationCategory, None] = None, coordinates_latitude: Union[float, None] = None,
-                 coordinates_longitude: Union[float, None] = None, placement: Union[str, None] = None, 
-                 altitude: Union[float, None] = None, municipality_code: Union[int, None] = None, 
-                 municipality_name: Union[str, None] = None, county_code: Union[int, None] = None, 
-                 county_name: Union[str, None] = None, province_code: Union[int, None] = None, 
-                 province_name: Union[str, None] = None, network_code: Union[int, None] = None, 
-                 network_name: Union[str, None] = None) -> None:
+    def __init__(self, code: Optional[str, None] = None, name: Optional[str, None] = None,
+                 category: Optional[WeatherStationCategory, None] = None,
+                 coordinates_latitude: Optional[float, None] = None,
+                 coordinates_longitude: Optional[float, None] = None, placement: Optional[str, None] = None,
+                 altitude: Optional[float, None] = None, municipality_code: Optional[int, None] = None,
+                 municipality_name: Optional[str, None] = None, county_code: Optional[int, None] = None,
+                 county_name: Optional[str, None] = None, province_code: Optional[int, None] = None,
+                 province_name: Optional[str, None] = None, network_code: Optional[int, None] = None,
+                 network_name: Optional[str, None] = None) -> None:
         """
 
         :param code: Station code provided by the Meteocat API
