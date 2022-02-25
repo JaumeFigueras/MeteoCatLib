@@ -1,3 +1,8 @@
+CREATE TYPE meteocat_weather_station_state_type AS ENUM('ACTIVE', 'DISMANTLED', 'REPAIR');
+ALTER TYPE meteocat_weather_station_state_type
+  OWNER TO gisfireuser
+;
+
 CREATE TABLE public.meteocat_weather_station
 (
   id bigserial,
@@ -30,8 +35,6 @@ ALTER TABLE public.meteocat_weather_station
 SELECT AddGeometryColumn ('public', 'meteocat_weather_station', 'geom', 4258, 'POINT', 2)
 ;
 
-CREATE TYPE meteocat_weather_station_state_type AS ENUM('ACTIVE', 'DISMANTLED', 'REPAIR');
-
 CREATE TABLE public.meteocat_weather_station_state
 (
   id bigserial,
@@ -53,8 +56,17 @@ ALTER TABLE public.meteocat_weather_station_state
 ;
 
 CREATE TYPE variable_type AS ENUM('DAT', 'AUX', 'CMV');
+ALTER TYPE variable_type
+  OWNER TO gisfireuser
+;
 CREATE TYPE variable_state_type AS ENUM('DISMANTLED', 'ACTIVE', 'REPAIR');
-CREATE TYPE variable_time_base_type AS ENUM('HO', 'SH', 'DM', 'MI');
+ALTER TYPE variable_state_type
+  OWNER TO gisfireuser
+;
+CREATE TYPE variable_time_base_type AS ENUM('HO', 'SH', 'DM', 'MI', 'D5');
+ALTER TYPE variable_time_base_type
+  OWNER TO gisfireuser
+;
 
 CREATE TABLE public.meteocat_variable
 (
@@ -149,8 +161,14 @@ ALTER TABLE public.meteocat_station_variable_time_assoc
   OWNER TO gisfireuser
 ;
 
-CREATE TYPE measure_time_base_type AS ENUM('HO', 'SH', 'DM', 'MI');
+CREATE TYPE measure_time_base_type AS ENUM('HO', 'SH', 'DM', 'MI', 'D5');
+ALTER TYPE measure_time_base_type
+  OWNER TO gisfireuser
+;
 CREATE TYPE measure_validity_type AS ENUM(' ', 'V', 'T');
+ALTER TYPE measure_validity_type
+  OWNER TO gisfireuser
+;
 
 CREATE TABLE public.meteocat_measure
 (

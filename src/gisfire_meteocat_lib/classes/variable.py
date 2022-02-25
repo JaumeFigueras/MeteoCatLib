@@ -57,6 +57,7 @@ class VariableTimeBaseCategory(str, enum.Enum):
     SH = 'SH'
     DM = 'DM'
     MI = 'MI'
+    D5 = 'D5'
 
 
 class VariableState(State):
