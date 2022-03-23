@@ -299,7 +299,7 @@ class Lightning(Base):
                 dct['crs']['properties'] = dict()
                 if obj.srid is None or obj.srid == Lightning.DEFAULT_SRID_LIGHTNINGS:
                     dct['crs']['properties']['href'] = 'https://spatialreference.org/ref/epsg/' + \
-                                                       str(Lightning.SRID_WEATHER_STATIONS) + '/proj4/'
+                                                       str(Lightning.DEFAULT_SRID_LIGHTNINGS) + '/proj4/'
                 else:
                     dct['crs']['properties']['href'] = 'https://spatialreference.org/ref/epsg/' + \
                                                        str(obj.srid) + '/proj4/'
