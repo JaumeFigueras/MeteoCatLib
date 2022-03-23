@@ -38,11 +38,13 @@ class Lightning(Base):
     :type _coordinates_latitude: float
     :type _coordinates_longitude: float
     :type ts: datetime.datetime
-    :type __geom: str or None
+    :type geometry: str or None
+
+    TODO Testing for custom SRID
     """
     __tablename__ = 'meteocat_lightning'
     """SQL Alchemy database table mapping"""
-    SRID_LIGHTNINGS = 4258
+    DEFAULT_SRID_LIGHTNINGS = 4258
     """EPSG code for the used SRS in the locations"""
     id = Column(Integer, primary_key=True)
     """Unique ID in the table for a lightning. Differs from the meteocat ID because it is used as a Feature id in 
@@ -62,7 +64,7 @@ class Lightning(Base):
     _coordinates_latitude = Column('_coordenades_latitud', Float, nullable=False)
     _coordinates_longitude = Column('_coordenades_longitud', Float, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    __geom = Column('geom', Geometry(geometry_type='POINT', srid=SRID_LIGHTNINGS))
+    geometry = Column('geom', Geometry(geometry_type='POINT', srid=DEFAULT_SRID_LIGHTNINGS))
 
     def __init__(self, meteocat_id: Union[int, None] = None, date: Union[str, datetime.datetime, None] = None,
                  peak_current: Union[float, None] = None, chi_squared: Union[float, None] = None,
@@ -115,6 +117,7 @@ class Lightning(Base):
         self._coordinates_latitude = coordinates_latitude
         self._coordinates_longitude = coordinates_longitude
         self.__format_geom()
+        self.srid = None
 
     def __format_geom(self) -> None:
         """
@@ -124,10 +127,10 @@ class Lightning(Base):
         :return: None
         """
         if (self._coordinates_latitude is not None) and (self._coordinates_longitude is not None):
-            self.__geom = "SRID={2:};POINT({0:} {1:})".format(self._coordinates_longitude, self._coordinates_latitude,
-                                                              self.SRID_LIGHTNINGS)
+            self.geometry = "SRID={2:};POINT({0:} {1:})".format(self._coordinates_longitude, self._coordinates_latitude,
+                                                                Lightning.DEFAULT_SRID_LIGHTNINGS)
         else:
-            self.__geom = None
+            self.geometry = None
 
     @property
     def geom(self) -> str:
@@ -137,7 +140,7 @@ class Lightning(Base):
         :return: Lightning location and SRS ID
         :rtype: str
         """
-        return self.__geom
+        return self.geometry
 
     @property
     def lat(self) -> float:
@@ -258,9 +261,14 @@ class Lightning(Base):
                 dct['number_of_sensors'] = obj.number_of_sensors
                 dct['hit_ground'] = obj.hit_ground
                 dct['municipality_code'] = obj.municipality_code
-                dct['coordinates_latitude'] = obj._coordinates_latitude
-                dct['coordinates_longitude'] = obj._coordinates_longitude
-                dct['coordinates_epsg'] = Lightning.SRID_LIGHTNINGS
+                if obj.srid is None or obj.srid == Lightning.DEFAULT_SRID_LIGHTNINGS:
+                    dct['coordinates_latitude'] = obj._coordinates_latitude
+                    dct['coordinates_longitude'] = obj._coordinates_longitude
+                    dct['coordinates_epsg'] = Lightning.DEFAULT_SRID_LIGHTNINGS
+                else:
+                    dct['coordinates_y'] = obj._coordinates_latitude
+                    dct['coordinates_x'] = obj._coordinates_longitude
+                    dct['coordinates_epsg'] = obj.srid
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
@@ -285,6 +293,16 @@ class Lightning(Base):
                 dct['geometry']['type'] = 'Point'
                 dct['geometry']['coordinates'] = '[' + str(obj._coordinates_longitude) + ' ' + \
                                                  str(obj._coordinates_latitude) + ']'
+                dct['crs'] = dict()
+                dct['crs']['type'] = 'link'
+                dct['crs']['properties'] = dict()
+                if obj.srid is None or obj.srid == Lightning.DEFAULT_SRID_LIGHTNINGS:
+                    dct['crs']['properties']['href'] = 'https://spatialreference.org/ref/epsg/' + \
+                                                       str(Lightning.SRID_WEATHER_STATIONS) + '/proj4/'
+                else:
+                    dct['crs']['properties']['href'] = 'https://spatialreference.org/ref/epsg/' + \
+                                                       str(obj.srid) + '/proj4/'
+                dct['crs']['properties']['type'] = 'proj4'
                 dct['properties'] = dict()
                 dct['properties']['meteocat_id'] = obj.meteocat_id
                 dct['properties']['date'] = obj.date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
@@ -296,9 +314,14 @@ class Lightning(Base):
                 dct['properties']['number_of_sensors'] = obj.number_of_sensors
                 dct['properties']['hit_ground'] = obj.hit_ground
                 dct['properties']['municipality_code'] = obj.municipality_code
-                dct['properties']['coordinates_latitude'] = obj._coordinates_latitude
-                dct['properties']['coordinates_longitude'] = obj._coordinates_longitude
-                dct['properties']['coordinates_epsg'] = Lightning.SRID_LIGHTNINGS
+                if obj.srid is None or obj.srid == Lightning.DEFAULT_SRID_LIGHTNINGS:
+                    dct['properties']['coordinates_latitude'] = obj._coordinates_latitude
+                    dct['properties']['coordinates_longitude'] = obj._coordinates_longitude
+                    dct['properties']['coordinates_epsg'] = Lightning.DEFAULT_SRID_LIGHTNINGS
+                else:
+                    dct['properties']['coordinates_y'] = obj._coordinates_latitude
+                    dct['properties']['coordinates_x'] = obj._coordinates_longitude
+                    dct['properties']['coordinates_epsg'] = obj.srid
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
 

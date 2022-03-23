@@ -7,7 +7,7 @@ import pytest
 import json
 import datetime
 import pytz
-
+from sqlalchemy import func
 
 def test_json_parse_lightning_01(meteocat_lightning_meteocat_api_string, meteocat_lightning_meteocat_api_json):
     """
@@ -39,7 +39,7 @@ def test_json_parse_lightning_01(meteocat_lightning_meteocat_api_string, meteoca
     assert lightning.municipality_code == int(meteocat_lightning_meteocat_api_json['idMunicipi'])
     assert lightning.geom == "SRID={2:};POINT({0:} {1:})".format(lightning._coordinates_longitude,
                                                                  lightning._coordinates_latitude,
-                                                                 Lightning.SRID_LIGHTNINGS)
+                                                                 Lightning.DEFAULT_SRID_LIGHTNINGS)
 
 
 def test_json_parse_lightning_02(meteocat_lightning_meteocat_api_string_list,
@@ -81,7 +81,7 @@ def test_json_parse_lightning_02(meteocat_lightning_meteocat_api_string_list,
             assert lightnings[i].municipality_code is None
         assert lightnings[i].geom == "SRID={2:};POINT({0:} {1:})".format(lightnings[i]._coordinates_longitude,
                                                                          lightnings[i]._coordinates_latitude,
-                                                                         Lightning.SRID_LIGHTNINGS)
+                                                                         Lightning.DEFAULT_SRID_LIGHTNINGS)
 
 
 def test_json_parse_lightning_03(meteocat_lightning_meteocat_api_string_error_ellipse):
@@ -197,10 +197,10 @@ def test_latitude_setter_03():
                           42.407753, 2.7945485)
     lightning.lat = -34
     assert lightning._coordinates_latitude == -34
-    assert lightning.geom == "SRID={0:};POINT(2.7945485 -34)".format(Lightning.SRID_LIGHTNINGS)
+    assert lightning.geom == "SRID={0:};POINT(2.7945485 -34)".format(Lightning.DEFAULT_SRID_LIGHTNINGS)
     lightning.lat = 19
     assert lightning._coordinates_latitude == 19
-    assert lightning.geom == "SRID={0:};POINT(2.7945485 19)".format(Lightning.SRID_LIGHTNINGS)
+    assert lightning.geom == "SRID={0:};POINT(2.7945485 19)".format(Lightning.DEFAULT_SRID_LIGHTNINGS)
 
 
 def test_latitude_setter_04():
@@ -253,10 +253,10 @@ def test_longitude_setter_03():
                           42.407753, 2.7945485)
     lightning.lon = -34
     assert lightning._coordinates_longitude == -34
-    assert lightning.geom == "SRID={0:};POINT(-34 42.407753)".format(Lightning.SRID_LIGHTNINGS)
+    assert lightning.geom == "SRID={0:};POINT(-34 42.407753)".format(Lightning.DEFAULT_SRID_LIGHTNINGS)
     lightning.lon = 19
     assert lightning._coordinates_longitude == 19
-    assert lightning.geom == "SRID={0:};POINT(19 42.407753)".format(Lightning.SRID_LIGHTNINGS)
+    assert lightning.geom == "SRID={0:};POINT(19 42.407753)".format(Lightning.DEFAULT_SRID_LIGHTNINGS)
 
 
 def test_longitude_setter_04():
@@ -296,3 +296,23 @@ def test_date_replace_lightning_api_request_01():
     assert lightning_api_request.date == datetime.datetime(2021, 11, 11, 8, 0, 0, 0, tzinfo=pytz.UTC)
     lightning_api_request = LightningAPIRequest(date="2021-11-11T08:45:00.868454Z")
     assert lightning_api_request.date == datetime.datetime(2021, 11, 11, 8, 0, 0, 0, tzinfo=pytz.UTC)
+
+
+def test_st_transform(db_session):
+    """
+    TODO Testing for custom SRID
+    :param db_session:
+    :type db_session:
+    :return:
+    :rtype:
+    """
+    # lightnings = db_session.query(Lightning.__geom.ST_Transform(25831)).all()
+    mixed = db_session.query(Lightning, func.ST_X(Lightning.geometry.ST_Transform(25831)), func.ST_Y(Lightning.geometry.ST_Transform(25831))).all()
+    lightnings = list()
+    for lightning, x, y in mixed:
+        lightning._coordinates_latitude = y
+        lightning._coordinates_longitude = x
+        lightning.srid = 25831
+        lightnings.append(lightning)
+    string = json.dumps(lightnings, cls=Lightning.JSONEncoder)
+    print(string)
