@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations  # Needed to allow returning type of enclosing class PEP 563
 from . import Base
 from sqlalchemy import Column
 from sqlalchemy import Integer
@@ -12,6 +13,10 @@ from geoalchemy2 import Geometry
 import dateutil.parser
 import pytz
 import json
+from typing import Union
+from typing import Dict
+from typing import Any
+import datetime
 
 
 class Lightning(Base):
@@ -59,9 +64,13 @@ class Lightning(Base):
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     __geom = Column('geom', Geometry(geometry_type='POINT', srid=SRID_LIGHTNINGS))
 
-    def __init__(self, meteocat_id=None, date=None, peak_current=None, chi_squared=None, ellipse_major_axis=None,
-                 ellipse_minor_axis=None, ellipse_angle=None, number_of_sensors=None, hit_ground=None,
-                 municipality_code=None, coordinates_latitude=None, coordinates_longitude=None):
+    def __init__(self, meteocat_id: Union[int, None] = None, date: Union[str, datetime.datetime, None] = None,
+                 peak_current: Union[float, None] = None, chi_squared: Union[float, None] = None,
+                 ellipse_major_axis: Union[float, None] = None, ellipse_minor_axis: Union[float, None] = None,
+                 ellipse_angle: Union[float, None] = None, number_of_sensors: Union[int, None] = None,
+                 hit_ground: Union[bool, None] = None, municipality_code: Union[int, None] = None,
+                 coordinates_latitude: Union[float, None] = None, coordinates_longitude: Union[float, None] = None) \
+            -> None:
         """
         Lightning constructor
 
@@ -107,7 +116,7 @@ class Lightning(Base):
         self._coordinates_longitude = coordinates_longitude
         self.__format_geom()
 
-    def __format_geom(self):
+    def __format_geom(self) -> None:
         """
         Unique procedure to convert the member attributes coordinate_latitude and coordinate longitude to a OSGeo WKT
         standard format
@@ -121,7 +130,7 @@ class Lightning(Base):
             self.__geom = None
 
     @property
-    def geom(self):
+    def geom(self) -> str:
         """
         POSTGIS geometry text of the lightning location
 
@@ -131,7 +140,7 @@ class Lightning(Base):
         return self.__geom
 
     @property
-    def lat(self):
+    def lat(self) -> float:
         """
         Latitude of the lightning location
 
@@ -141,7 +150,7 @@ class Lightning(Base):
         return self._coordinates_latitude
 
     @lat.setter
-    def lat(self, value):
+    def lat(self, value: float) -> None:
         """
         Latitude setter. Value must be between -90 and 90 degrees
 
@@ -158,7 +167,7 @@ class Lightning(Base):
             raise ValueError("Latitude value must be between -90 and 90 degrees")
 
     @property
-    def lon(self):
+    def lon(self) -> float:
         """
         Longitude of the lightning location
 
@@ -168,7 +177,7 @@ class Lightning(Base):
         return self._coordinates_longitude
 
     @lon.setter
-    def lon(self, value):
+    def lon(self, value: float) -> None:
         """
         Longitude setter. Value must be between -180 and 180 degrees
 
@@ -185,7 +194,7 @@ class Lightning(Base):
             raise ValueError("Longitude value must be between -180 and 180 degrees")
 
     @staticmethod
-    def object_hook(dct):
+    def object_hook(dct: Dict[Any]) -> Union[Dict[Any], Lightning, None]:
         """
         Decodes a JSON originated dict from the Meteocat API to a Lightning object
 
@@ -229,7 +238,7 @@ class Lightning(Base):
         JSON Encoder to convert a database lightning to JSON
         """
 
-        def default(self, obj):
+        def default(self, obj: Lightning) -> Union[Dict[str, Any], Any]:
             """
             Default procedure to create a dictionary with the Lightning data
 
@@ -260,7 +269,7 @@ class Lightning(Base):
         Geo JSON Encoder to convert a database lightning to JSON
         """
 
-        def default(self, obj):
+        def default(self, obj: Lightning) -> Union[Dict[str, Any], Any]:
             """
             Default procedure to create a dictionary with the Lightning data
 
@@ -310,7 +319,8 @@ class LightningAPIRequest(Base):
     number_of_lightnings = Column(Integer, nullable=True, default=None)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
 
-    def __init__(self, date=None, http_status_code=None, number_of_lightnings=None):
+    def __init__(self, date: Union[str, datetime.datetime, None] = None, http_status_code: Union[int, None] = None,
+                 number_of_lightnings: Union[int, None] = None):
         """
         Lightning API Request Constructor
 

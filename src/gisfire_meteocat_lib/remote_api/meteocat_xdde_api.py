@@ -6,9 +6,12 @@ from . import meteocat_api
 from ..classes.lightning import Lightning
 from ..classes.lightning import LightningAPIRequest
 import json
+import datetime
+from typing import Dict
+from typing import Any
 
 
-def get_lightnings(api_token, date):
+def get_lightnings(api_token: str, date: datetime.datetime) -> Dict[str, Any]:
     """
     Gets the lightnings registered in the MeteoCat agency for the date and hour provided Uses the default time-out time
     and number of retries (in case of error in the communications).
