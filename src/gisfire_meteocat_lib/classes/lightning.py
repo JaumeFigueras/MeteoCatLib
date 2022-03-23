@@ -197,6 +197,50 @@ class Lightning(Base):
         else:
             raise ValueError("Longitude value must be between -180 and 180 degrees")
 
+    @property
+    def x(self) -> float:
+        """
+        Longitude of the lightning location
+
+        :return: Lightning latitude
+        :rtype: float
+        """
+        return self._coordinates_longitude
+
+    @x.setter
+    def x(self, value: float) -> None:
+        """
+        X setter.
+
+        :param value: Latitude value
+        :type value: float
+        :raise: ValueError
+        :return: None
+        """
+        self._coordinates_longitude = value
+
+    @property
+    def y(self) -> float:
+        """
+        Latitude of the lightning location
+
+        :return: Lightning latitude
+        :rtype: float
+        """
+        return self._coordinates_latitude
+
+    @y.setter
+    def y(self, value: float) -> None:
+        """
+        Y setter.
+
+        :param value: Latitude value
+        :type value: float
+        :raise: ValueError
+        :return: None
+        """
+        self._coordinates_latitude = value
+
     @staticmethod
     def object_hook(dct: Dict[Any]) -> Union[Dict[Any], Lightning, None]:
         """
