@@ -310,8 +310,8 @@ def test_st_transform(db_session):
     mixed = db_session.query(Lightning, func.ST_X(Lightning.geometry.ST_Transform(25831)), func.ST_Y(Lightning.geometry.ST_Transform(25831))).all()
     lightnings = list()
     for lightning, x, y in mixed:
-        lightning._coordinates_latitude = y
-        lightning._coordinates_longitude = x
+        lightning.y = y
+        lightning.x = x
         lightning.srid = 25831
         lightnings.append(lightning)
     string = json.dumps(lightnings, cls=Lightning.JSONEncoder)
