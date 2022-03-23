@@ -65,6 +65,7 @@ class Lightning(Base):
     _coordinates_longitude = Column('_coordenades_longitud', Float, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     geometry = Column('geom', Geometry(geometry_type='POINT', srid=DEFAULT_SRID_LIGHTNINGS))
+    srid = None
 
     def __init__(self, meteocat_id: Union[int, None] = None, date: Union[str, datetime.datetime, None] = None,
                  peak_current: Union[float, None] = None, chi_squared: Union[float, None] = None,
