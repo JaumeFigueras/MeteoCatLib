@@ -336,8 +336,7 @@ class Lightning(Base):
                 dct['id'] = obj.id
                 dct['geometry'] = dict()
                 dct['geometry']['type'] = 'Point'
-                dct['geometry']['coordinates'] = '[' + str(obj._coordinates_longitude) + ' ' + \
-                                                 str(obj._coordinates_latitude) + ']'
+                dct['geometry']['coordinates'] = [obj._coordinates_longitude, obj._coordinates_latitude]
                 dct['crs'] = dict()
                 dct['crs']['type'] = 'link'
                 dct['crs']['properties'] = dict()
@@ -367,6 +366,11 @@ class Lightning(Base):
                     dct['properties']['coordinates_y'] = obj._coordinates_latitude
                     dct['properties']['coordinates_x'] = obj._coordinates_longitude
                     dct['properties']['coordinates_epsg'] = obj.srid
+                return dct
+            elif isinstance(obj, list) and len(obj) > 0 and isinstance(obj[0], Lightning):
+                dct = dict()
+                dct['type'] = "FeatureCollection"
+                dct['features'] = obj
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
