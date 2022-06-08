@@ -59,5 +59,3 @@ def get_variables_from_station(api_token: str, station: WeatherStation) -> List[
     if None in variables:
         return list()
     return variables
-
-

@@ -36,5 +36,3 @@ class WeatherStationVariableTimeBaseAssociation(Base):
     variable = relationship('Variable', backref='assoc_variable_time_base', foreign_keys=[meteocat_variable_id])
     time_base = relationship('VariableTimeBase', backref='assoc_variable_time_base',
                              foreign_keys=[meteocat_variable_time_base_id])
-
-

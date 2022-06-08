@@ -342,6 +342,3 @@ class Variable(Base):
                 dct['time_bases'] = [VariableTimeBase.JSONEncoder().default(time_base) for time_base in obj.time_bases]
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
-
-
-

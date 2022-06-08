@@ -333,7 +333,7 @@ class Lightning(Base):
             if isinstance(obj, Lightning):
                 dct = dict()
                 dct['type'] = 'Feature'
-                dct['id'] = obj.id
+                dct['id'] = obj.meteocat_id
                 dct['geometry'] = dict()
                 dct['geometry']['type'] = 'Point'
                 dct['geometry']['coordinates'] = [obj._coordinates_longitude, obj._coordinates_latitude]
@@ -366,11 +366,6 @@ class Lightning(Base):
                     dct['properties']['coordinates_y'] = obj._coordinates_latitude
                     dct['properties']['coordinates_x'] = obj._coordinates_longitude
                     dct['properties']['coordinates_epsg'] = obj.srid
-                return dct
-            elif isinstance(obj, list) and len(obj) > 0 and isinstance(obj[0], Lightning):
-                dct = dict()
-                dct['type'] = "FeatureCollection"
-                dct['features'] = obj
                 return dct
             return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
