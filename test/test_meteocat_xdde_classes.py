@@ -316,3 +316,35 @@ def test_st_transform(db_session):
         lightnings.append(lightning)
     string = json.dumps(lightnings, cls=Lightning.JSONEncoder)
     print(string)
+
+
+def test_geojson_encoder_lightning_00():
+    """
+    Tests the JSON encoding of a Lightning object
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    string = json.dumps({'type': 'kk', "elems": [lightning, lightning, lightning]}, cls=Lightning.GeoJSONEncoder)
+    assert string == ('{"meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
+                      '"chi_squared": 0.40000001, "ellipse_major_axis": 4000, "ellipse_minor_axis": 600, '
+                      '"ellipse_angle": 51, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 170144, '
+                      '"coordinates_latitude": 42.407753, "coordinates_longitude": 2.7945485, '
+                      '"coordinates_epsg": 4258}')
+
+
+def test_geojson_encoder_lightning_01():
+    """
+    Tests the JSON encoding of a Lightning object
+
+    :return: None
+    """
+    lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
+                          42.407753, 2.7945485)
+    string = json.dumps(lightning, cls=Lightning.GeoJSONEncoder)
+    assert string == ('{"meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
+                      '"chi_squared": 0.40000001, "ellipse_major_axis": 4000, "ellipse_minor_axis": 600, '
+                      '"ellipse_angle": 51, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 170144, '
+                      '"coordinates_latitude": 42.407753, "coordinates_longitude": 2.7945485, '
+                      '"coordinates_epsg": 4258}')
