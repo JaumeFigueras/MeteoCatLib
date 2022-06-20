@@ -6,6 +6,7 @@ from . import Base
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import Float
+from sqlalchemy import String
 from sqlalchemy import DateTime
 from sqlalchemy import func
 from sqlalchemy import ForeignKey
@@ -62,24 +63,33 @@ class Measure(Base):
    """
     __tablename__ = 'meteocat_measure'
     id = Column(Integer, primary_key=True)
+    meteocat_id = Column('_meteocat_id', String, nullable=False)
     date = Column('_data', DateTime(timezone=True), nullable=False)
+    date_extreme = Column('_data_extrem', DateTime(timezone=True))
     value = Column('_valor', Float, nullable=False)
     validity_state = Column('_estat', Enum(MeasureValidityCategory), nullable=False)
     time_base = Column('_base_horaria', Enum(MeasureValidityCategory), nullable=False)
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
     meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    station = relationship('WeatherStation', back_populates='measures')
-    variable = relationship('Variable', back_populates='measures')
+    station = relationship('WeatherStation', back_populates='measures', foreign_keys=[meteocat_weather_station_id])
+    variable = relationship('Variable', back_populates='measures', foreign_keys=[meteocat_variable_id])
 
-    def __init__(self, date: Optional[datetime.datetime, None] = None, value: Optional[float, None] = None,
+    def __init__(self, meteocat_id: Optional[str, None] = None,
+                 date: Optional[datetime.datetime, None] = None,
+                 date_extreme: Optional[datetime.datetime, None] = None,
+                 value: Optional[float, None] = None,
                  validity_state: Optional[MeasureValidityCategory, None] = None,
                  time_base: Optional[VariableTimeBaseCategory, None] = None) -> None:
         """
         Class constructor
 
+        :param meteocat_id: Possible ID of the MeteoCat weather agency
+        :type meteocat_id: str
         :param date: Date of the measure
         :type date: datetime.datetime
+        :param date_extreme: Date of the extreme measure recorded
+        :type date_extreme: datetime.datetime
         :param value: Value of the measure
         :type value: float
         :param validity_state: Validation state. The data read can have different validation stages (pending,
@@ -88,7 +98,9 @@ class Measure(Base):
         :param time_base: Data sampling period. The period can be every hour (HO) or every 30 min. (SH)
         :type time_base: MeasureTimeBaseCategory
         """
+        self.meteocat_id = meteocat_id
         self.date = date
+        self.date_extreme = date_extreme
         self.value = value
         self.validity_state = validity_state
         self.time_base = time_base

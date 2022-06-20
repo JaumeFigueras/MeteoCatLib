@@ -167,6 +167,7 @@ class WeatherStation(Base):
     __geom = Column('geom', Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
     states = relationship("WeatherStationState", back_populates='station', lazy='joined')
     measures = relationship("Measure", back_populates='station', lazy='select')
+    # TODO: add variables relationship
 
     def __init__(self, code: Optional[str, None] = None, name: Optional[str, None] = None,
                  category: Optional[WeatherStationCategory, None] = None,

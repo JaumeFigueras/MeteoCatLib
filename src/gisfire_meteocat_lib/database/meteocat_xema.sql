@@ -165,7 +165,7 @@ CREATE TYPE measure_time_base_type AS ENUM('HO', 'SH', 'DM', 'MI', 'D5');
 ALTER TYPE measure_time_base_type
   OWNER TO gisfireuser
 ;
-CREATE TYPE measure_validity_type AS ENUM(' ', 'V', 'T');
+CREATE TYPE measure_validity_type AS ENUM('PENDING', 'VALID', 'VALIDATING');
 ALTER TYPE measure_validity_type
   OWNER TO gisfireuser
 ;
@@ -173,7 +173,9 @@ ALTER TYPE measure_validity_type
 CREATE TABLE public.meteocat_measure
 (
   id bigserial,
+  _meteocat_id varchar DEFAULT NULL,
   _data timestamp with time zone NOT NULL,
+  _data_extrem timestamp with time zone DEFAULT NULL,
   _valor double precision NOT NULL,
   _estat measure_validity_type NOT NULL,
   _base_horaria measure_time_base_type NOT NULL,
@@ -192,5 +194,5 @@ WITH (
 ALTER TABLE public.meteocat_measure
   OWNER TO gisfireuser
 ;
-
-
+CREATE INDEX idx_meteocat_measure_data on meteocat_measure(_data);
+CREATE INDEX idx_meteocat_measure_data_weather_station_id on meteocat_measure(_data, meteocat_weather_station_id);

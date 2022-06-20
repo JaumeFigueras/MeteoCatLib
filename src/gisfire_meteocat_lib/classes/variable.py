@@ -226,7 +226,7 @@ class Variable(Base):
 
     :type __tablename__: str
     :type id: int
-    :type code: str
+    :type code: int
     :type unit: str
     :type acronym: str
     :type category: VariableCategory
@@ -245,6 +245,7 @@ class Variable(Base):
     decimal_positions = Column('_decimals', Integer, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
     measures = relationship('Measure', back_populates='variable')
+    # TODO: Add weather station relationship
 
     def __init__(self, code: Optional[int, None] = None, name: Optional[str, None] = None,
                  unit: Optional[str, None] = None, acronym: Optional[str, None] = None,
