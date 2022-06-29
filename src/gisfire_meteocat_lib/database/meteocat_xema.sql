@@ -32,6 +32,9 @@ WITH (
 ALTER TABLE public.meteocat_weather_station
   OWNER TO gisfireuser
 ;
+GRANT ALL ON public.meteocat_weather_station
+  TO remotegisfireuser
+;
 SELECT AddGeometryColumn ('public', 'meteocat_weather_station', 'geom', 4258, 'POINT', 2)
 ;
 
@@ -53,6 +56,9 @@ WITH (
 ;
 ALTER TABLE public.meteocat_weather_station_state
   OWNER TO gisfireuser
+;
+GRANT ALL ON public.meteocat_weather_station_state
+  TO remotegisfireuser
 ;
 
 CREATE TYPE variable_type AS ENUM('DAT', 'AUX', 'CMV');
@@ -88,6 +94,9 @@ WITH (
 ALTER TABLE public.meteocat_variable
   OWNER TO gisfireuser
 ;
+GRANT ALL ON public.meteocat_variable
+  TO remotegisfireuser
+;
 
 CREATE TABLE public.meteocat_variable_state
 (
@@ -105,6 +114,9 @@ WITH (
 ALTER TABLE public.meteocat_variable_state
   OWNER TO gisfireuser
 ;
+GRANT ALL ON public.meteocat_variable_state
+  TO remotegisfireuser
+;
 
 CREATE TABLE public.meteocat_variable_time_base
 (
@@ -121,6 +133,9 @@ WITH (
 ;
 ALTER TABLE public.meteocat_variable_time_base
   OWNER TO gisfireuser
+;
+GRANT ALL ON public.meteocat_variable_time_base
+  TO remotegisfireuser
 ;
 
 CREATE TABLE public.meteocat_station_variable_state_assoc
@@ -141,6 +156,9 @@ WITH (
 ALTER TABLE public.meteocat_station_variable_state_assoc
   OWNER TO gisfireuser
 ;
+GRANT ALL ON public.meteocat_station_variable_state_assoc
+  TO remotegisfireuser
+;
 
 CREATE TABLE public.meteocat_station_variable_time_assoc
 (
@@ -159,6 +177,9 @@ WITH (
 ;
 ALTER TABLE public.meteocat_station_variable_time_assoc
   OWNER TO gisfireuser
+;
+GRANT ALL ON public.meteocat_station_variable_time_assoc
+  TO remotegisfireuser
 ;
 
 CREATE TYPE measure_time_base_type AS ENUM('HO', 'SH', 'DM', 'MI', 'D5');
@@ -193,6 +214,9 @@ WITH (
 ;
 ALTER TABLE public.meteocat_measure
   OWNER TO gisfireuser
+;
+GRANT ALL ON public.meteocat_measure
+  TO remotegisfireuser
 ;
 CREATE INDEX idx_meteocat_measure_data on meteocat_measure(_data);
 CREATE INDEX idx_meteocat_measure_data_weather_station_id on meteocat_measure(_data, meteocat_weather_station_id);
