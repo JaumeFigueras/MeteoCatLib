@@ -140,7 +140,7 @@ class WeatherStation(Base):
     :type network_code: int
     :type network_name: str
     :type ts: datetime
-    :type __geom = str or Column
+    :type postgis_geometry = str or Column
     :type states: relationship
     :type measures: relationship
     :type SRID_WEATHER_STATIONS: int
@@ -164,7 +164,7 @@ class WeatherStation(Base):
     network_code = Column('_xarxa_codi', Integer, nullable=False)
     network_name = Column('_xarxa_nom', String, nullable=False)
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    __geom = Column('geom', Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
+    postgis_geometry = Column('geom', Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
     states = relationship("WeatherStationState", back_populates='station', lazy='joined')
     measures = relationship("Measure", back_populates='station', lazy='select')
     # TODO: add variables relationship
@@ -236,20 +236,10 @@ class WeatherStation(Base):
         :return: None
         """
         if (self._coordinates_latitude is not None) and (self._coordinates_longitude is not None):
-            self.__geom = "SRID={2:};POINT({0:} {1:})".format(self._coordinates_longitude, self._coordinates_latitude,
-                                                              self.SRID_WEATHER_STATIONS)
+            self.postgis_geometry = "SRID={2:};POINT({0:} {1:})".format(self._coordinates_longitude, self._coordinates_latitude,
+                                                                        self.SRID_WEATHER_STATIONS)
         else:
-            self.__geom = None
-
-    @property
-    def geom(self) -> str:
-        """
-        Latitude getter
-
-        :return: Lightning latitude
-        :rtype: float
-        """
-        return self.__geom
+            self.postgis_geometry = None
 
     @property
     def lat(self) -> float:

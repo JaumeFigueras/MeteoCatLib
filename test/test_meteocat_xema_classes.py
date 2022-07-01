@@ -238,7 +238,7 @@ def test_latitude_and_longitude_getter_weather_station_01():
                              province_name='Lleida', network_code=1, network_name='XEMA')
     assert station.lat == 41.46014
     assert station.lon == 0.40562
-    assert station.geom == 'SRID=4258;POINT(0.40562 41.46014)'
+    assert station.postgis_geometry == 'SRID=4258;POINT(0.40562 41.46014)'
 
 
 def test_latitude_setter_weather_station_01():
@@ -258,17 +258,17 @@ def test_latitude_setter_weather_station_01():
         station.lat = -123
     station.lat = -34
     assert station._coordinates_latitude == -34
-    assert station.geom == "SRID={0:};POINT(0.40562 -34)".format(WeatherStation.SRID_WEATHER_STATIONS)
+    assert station.postgis_geometry == "SRID={0:};POINT(0.40562 -34)".format(WeatherStation.SRID_WEATHER_STATIONS)
     station.lat = 19
     assert station._coordinates_latitude == 19
-    assert station.geom == "SRID={0:};POINT(0.40562 19)".format(WeatherStation.SRID_WEATHER_STATIONS)
+    assert station.postgis_geometry == "SRID={0:};POINT(0.40562 19)".format(WeatherStation.SRID_WEATHER_STATIONS)
     station = WeatherStation()
     station.lat = -34
     assert station._coordinates_latitude == -34
-    assert station.geom is None
+    assert station.postgis_geometry is None
     station.lat = 19
     assert station._coordinates_latitude == 19
-    assert station.geom is None
+    assert station.postgis_geometry is None
 
 
 def test_longitude_setter_weather_station_01():
@@ -288,17 +288,17 @@ def test_longitude_setter_weather_station_01():
         station.lon = -1234
     station.lon = -34
     assert station._coordinates_longitude == -34
-    assert station.geom == "SRID={0:};POINT(-34 41.46014)".format(WeatherStation.SRID_WEATHER_STATIONS)
+    assert station.postgis_geometry == "SRID={0:};POINT(-34 41.46014)".format(WeatherStation.SRID_WEATHER_STATIONS)
     station.lon = 19
     assert station._coordinates_longitude == 19
-    assert station.geom == "SRID={0:};POINT(19 41.46014)".format(WeatherStation.SRID_WEATHER_STATIONS)
+    assert station.postgis_geometry == "SRID={0:};POINT(19 41.46014)".format(WeatherStation.SRID_WEATHER_STATIONS)
     station = WeatherStation()
     station.lon = -34
     assert station._coordinates_longitude == -34
-    assert station.geom is None
+    assert station.postgis_geometry is None
     station.lon = 19
     assert station._coordinates_longitude == 19
-    assert station.geom is None
+    assert station.postgis_geometry is None
 
 
 def test_json_parse_variable_state_01(variable_state_str_closed: str) -> None:
