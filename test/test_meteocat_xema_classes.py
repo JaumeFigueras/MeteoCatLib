@@ -502,7 +502,18 @@ def test_json_encode_measure_01() -> None:
     """
     measure = Measure(value=12.34, date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
                       validity_state=MeasureValidityCategory.VALID, time_base=MeasureTimeBaseCategory.SH)
-    string = '{"value": 12.34, "date": "2020-01-01T10:30Z", "validity_state": "V", "time_base": "SH"}'
+    string = '{"value": 12.34, "date": "2020-01-01T10:30Z", "date_extreme": null, "validity_state": "V", "time_base": "SH"}'
+    assert json.loads(string) == json.loads(json.dumps(measure, cls=Measure.JSONEncoder, ensure_ascii=False))
+
+
+def test_json_encode_measure_02() -> None:
+    """
+    Tests the encoding into JSON of a Measure
+    """
+    measure = Measure(value=12.34, date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
+                      date_extreme=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
+                      validity_state=MeasureValidityCategory.VALID, time_base=MeasureTimeBaseCategory.SH)
+    string = '{"value": 12.34, "date": "2020-01-01T10:30Z", "date_extreme": "2020-01-01T10:30Z", "validity_state": "V", "time_base": "SH"}'
     assert json.loads(string) == json.loads(json.dumps(measure, cls=Measure.JSONEncoder, ensure_ascii=False))
 
 
@@ -531,8 +542,29 @@ def test_geojson_encode_measure_02() -> None:
     string = ('{"type": "Feature", "id": null, "crs": {"type": "link", '
               '"properties": {"href": "https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, '
               '"geometry": {"type": "Point", "coordinates": [0.40562, 41.46014]}, "properties": {"value": 12.34, '
-              '"date": "2020-01-01T10:30Z", "validity_state": "V", "time_base": "SH"}}')
+              '"date": "2020-01-01T10:30Z", "date_extreme": null, "validity_state": "V", "time_base": "SH"}}')
     assert json.loads(string) == json.loads(json.dumps(measure, cls=Measure.GeoJSONEncoder, ensure_ascii=False))
+
+
+def test_geojson_encode_measure_03() -> None:
+    """
+    Tests the encoding into a GeoJSON of a Measure with a valid station
+    """
+    measure = Measure(value=12.34, date=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
+                      date_extreme=datetime.datetime(2020, 1, 1, 10, 30, tzinfo=pytz.UTC),
+                      validity_state=MeasureValidityCategory.VALID, time_base=MeasureTimeBaseCategory.SH)
+    station = WeatherStation(code='VL', name='Seròs - la Creu', category=WeatherStationCategory.AUTO,
+                             coordinates_latitude=41.46014, coordinates_longitude=0.40562,
+                             placement='Crta. de Seròs a la Granja d\'Escarp', altitude=100, municipality_code=252043,
+                             municipality_name='Seròs', county_code=33, county_name='Segrià', province_code=25,
+                             province_name='Lleida', network_code=1, network_name='XEMA')
+    measure.station = station
+    string = ('{"type": "Feature", "id": null, "crs": {"type": "link", '
+              '"properties": {"href": "https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, '
+              '"geometry": {"type": "Point", "coordinates": [0.40562, 41.46014]}, "properties": {"value": 12.34, '
+              '"date": "2020-01-01T10:30Z", "date_extreme": "2020-01-01T10:30Z", "validity_state": "V", "time_base": "SH"}}')
+    assert json.loads(string) == json.loads(json.dumps(measure, cls=Measure.GeoJSONEncoder, ensure_ascii=False))
+
 
 
 

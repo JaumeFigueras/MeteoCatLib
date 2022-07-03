@@ -51,13 +51,14 @@ class Measure(Base):
 
     :type __tablename__: str
     :type id: int
-    :type date: datetime
+    :type date: datetime.datetime
+    :type date_extreme: datetime.datetime
     :type value: float
     :type validity_state: MeasureState
     :type time_base: VariableTimeBaseCategory
     :type meteocat_weather_station_id: int
     :type meteocat_variable_id: int
-    :type ts: datetime
+    :type ts: datetime.datetime
     :type station: relationship
     :type variable: relationship
    """
@@ -68,7 +69,7 @@ class Measure(Base):
     date_extreme = Column('_data_extrem', DateTime(timezone=True))
     value = Column('_valor', Float, nullable=False)
     validity_state = Column('_estat', Enum(MeasureValidityCategory), nullable=False)
-    time_base = Column('_base_horaria', Enum(MeasureValidityCategory), nullable=False)
+    time_base = Column('_base_horaria', Enum(MeasureTimeBaseCategory), nullable=False)
     meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
     meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'))
     ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
@@ -147,6 +148,10 @@ class Measure(Base):
                 dct = dict()
                 dct['value'] = obj.value
                 dct['date'] = obj.date.strftime("%Y-%m-%dT%H:%MZ")
+                if obj.date_extreme is not None:
+                    dct['date_extreme'] = obj.date_extreme.strftime("%Y-%m-%dT%H:%MZ")
+                else:
+                    dct['date_extreme'] = None
                 dct['validity_state'] = obj.validity_state.value
                 dct['time_base'] = obj.time_base.value
                 return dct
