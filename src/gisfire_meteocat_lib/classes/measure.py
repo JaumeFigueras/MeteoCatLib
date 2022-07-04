@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations  # Needed to allow returning type of enclosing class PEP 563
 
+import pytz
+
 from . import Base
 from sqlalchemy import Column
 from sqlalchemy import Integer
@@ -147,9 +149,9 @@ class Measure(Base):
                 obj: Measure
                 dct = dict()
                 dct['value'] = obj.value
-                dct['date'] = obj.date.strftime("%Y-%m-%dT%H:%MZ")
+                dct['date'] = obj.date.astimezone(pytz.UTC).strftime("%Y-%m-%dT%H:%M%Z")
                 if obj.date_extreme is not None:
-                    dct['date_extreme'] = obj.date_extreme.strftime("%Y-%m-%dT%H:%MZ")
+                    dct['date_extreme'] = obj.date_extreme.astimezone(pytz.UTC).strftime("%Y-%m-%dT%H:%M%Z")
                 else:
                     dct['date_extreme'] = None
                 dct['validity_state'] = obj.validity_state.value
