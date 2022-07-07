@@ -282,7 +282,7 @@ class Lightning(Base):
         return lightning
 
     @staticmethod
-    def object_hook_gisfire(dct: Dict[Any]) -> Union[Dict[Any], Lightning, None]:
+    def object_hook_gisfire(dct: Dict[Any]) -> Union[Lightning, None]:
         """
         Decodes a JSON originated dict from the GisFIRE API to a Lightning object
 
@@ -304,7 +304,10 @@ class Lightning(Base):
         lightning.ellipse_angle = float(dct['ellipse_angle'])
         lightning.number_of_sensors = int(dct['number_of_sensors'])
         lightning.hit_ground = bool(dct['hit_ground'])
-        lightning.municipality_code = int(dct['municipality_code']) if dct['municipality_code'] is not None else None
+        if dct['municipality_code'] is not None:
+            lightning.municipality_code = int(dct['municipality_code'])
+        else:
+            lightning.municipality_code = None
         lightning._coordinates_longitude = float(dct['coordinates_x']) if 'coordinates_x' in dct else float(dct['coordinates_longitude'])
         lightning._coordinates_latitude = float(dct['coordinates_y']) if 'coordinates_y' in dct else float(dct['coordinates_latitude'])
         lightning.srid = int(dct['coordinates_epsg'])
