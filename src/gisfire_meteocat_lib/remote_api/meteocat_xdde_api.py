@@ -27,7 +27,7 @@ def get_lightnings(api_token: str, date: datetime.datetime) -> Dict[str, Any]:
     lightning_api_request = LightningAPIRequest(date, response.status_code)
     lightnings = list()
     if response.status_code == 200:
-        lightnings = json.loads(response.text, object_hook=Lightning.object_hook)
+        lightnings = json.loads(response.text, object_hook=Lightning.object_hook_meteocat)
         lightning_api_request.number_of_lightnings = len(lightnings)
     return {
         'lightnings': lightnings,

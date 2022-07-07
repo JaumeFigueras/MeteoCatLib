@@ -242,7 +242,7 @@ class Lightning(Base):
         self._coordinates_latitude = value
 
     @staticmethod
-    def object_hook(dct: Dict[Any]) -> Union[Dict[Any], Lightning, None]:
+    def object_hook_meteocat(dct: Dict[Any]) -> Union[Dict[Any], Lightning, None]:
         """
         Decodes a JSON originated dict from the Meteocat API to a Lightning object
 
@@ -260,7 +260,7 @@ class Lightning(Base):
                                        'coordenades'))):
             return None
         lightning = Lightning()
-        lightning.meteocat_id = dct['id']
+        lightning.meteocat_id = int(dct['id'])
         try:
             lightning.date = dateutil.parser.isoparse(dct['data'])
         except ValueError:
@@ -281,6 +281,36 @@ class Lightning(Base):
         lightning.__format_geom()
         return lightning
 
+    @staticmethod
+    def object_hook_gisfire(dct: Dict[Any]) -> Union[Dict[Any], Lightning, None]:
+        """
+        Decodes a JSON originated dict from the GisFIRE API to a Lightning object
+
+        :param dct: Dictionary with the standard parsing of the json library
+        :type dct: dict
+        :return: Lightning
+        """
+        lightning = Lightning()
+        lightning.id = int(dct['id'])
+        lightning.meteocat_id = int(dct['meteocat_id'])
+        try:
+            lightning.date = dateutil.parser.isoparse(dct['date'])
+        except ValueError:
+            return None
+        lightning.peak_current = float(dct['peak_current'])
+        lightning.chi_squared = float(dct['chi_squared'])
+        lightning.ellipse_major_axis = float(dct['ellipse_major_axis'])
+        lightning.ellipse_minor_axis = float(dct['ellipse_minor_axis'])
+        lightning.ellipse_angle = float(dct['ellipse_angle'])
+        lightning.number_of_sensors = int(dct['number_of_sensors'])
+        lightning.hit_ground = bool(dct['hit_ground'])
+        lightning.municipality_code = int(dct['municipality_code']) if dct['municipality_code'] is not None else None
+        lightning._coordinates_longitude = float(dct['coordinates_x']) if 'coordinates_x' in dct else float(dct['coordinates_longitude'])
+        lightning._coordinates_latitude = float(dct['coordinates_y']) if 'coordinates_y' in dct else float(dct['coordinates_latitude'])
+        lightning.srid = int(dct['coordinates_epsg'])
+        lightning.__format_geom()
+        return lightning
+
     class JSONEncoder(json.JSONEncoder):
         """
         JSON Encoder to convert a database lightning to JSON
@@ -296,6 +326,7 @@ class Lightning(Base):
             """
             if isinstance(obj, Lightning):
                 dct = dict()
+                dct['id'] = obj.id
                 dct['meteocat_id'] = obj.meteocat_id
                 dct['date'] = obj.date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
                 dct['peak_current'] = obj.peak_current
@@ -333,7 +364,7 @@ class Lightning(Base):
             if isinstance(obj, Lightning):
                 dct = dict()
                 dct['type'] = 'Feature'
-                dct['id'] = obj.meteocat_id
+                dct['id'] = obj.id
                 dct['geometry'] = dict()
                 dct['geometry']['type'] = 'Point'
                 dct['geometry']['coordinates'] = [obj._coordinates_longitude, obj._coordinates_latitude]
@@ -348,6 +379,7 @@ class Lightning(Base):
                                                        str(obj.srid) + '/proj4/'
                 dct['crs']['properties']['type'] = 'proj4'
                 dct['properties'] = dict()
+                dct['properties']['id'] = obj.id
                 dct['properties']['meteocat_id'] = obj.meteocat_id
                 dct['properties']['date'] = obj.date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
                 dct['properties']['peak_current'] = obj.peak_current

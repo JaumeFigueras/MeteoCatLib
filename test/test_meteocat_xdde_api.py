@@ -75,3 +75,4 @@ def test_lightnings_04(requests_mock, meteocat_lightnings_meteocat_api_invalid_d
     assert lightning_api_request.date == datetime.datetime(2021, 11, 11, 10, 0, 0, tzinfo=pytz.UTC)
     assert lightning_api_request.http_status_code == 500
     assert lightning_api_request.number_of_lightnings is None
+

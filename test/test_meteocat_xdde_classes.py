@@ -22,7 +22,7 @@ def test_json_parse_lightning_01(meteocat_lightning_meteocat_api_string, meteoca
     :type meteocat_lightning_meteocat_api_json: dict
     :return: None
     """
-    lightning = json.loads(meteocat_lightning_meteocat_api_string, object_hook=Lightning.object_hook)
+    lightning = json.loads(meteocat_lightning_meteocat_api_string, object_hook=Lightning.object_hook_meteocat)
     assert not(lightning is None)
     assert type(lightning) is Lightning
     assert lightning.meteocat_id == meteocat_lightning_meteocat_api_json['id']
@@ -57,7 +57,7 @@ def test_json_parse_lightning_02(meteocat_lightning_meteocat_api_string_list,
     :type meteocat_lightning_meteocat_api_json_list: list(dict)
     :return: None
     """
-    lightnings = json.loads(meteocat_lightning_meteocat_api_string_list, object_hook=Lightning.object_hook)
+    lightnings = json.loads(meteocat_lightning_meteocat_api_string_list, object_hook=Lightning.object_hook_meteocat)
     assert len(lightnings) == len(meteocat_lightning_meteocat_api_json_list)
     for i in range(len(lightnings)):
         assert lightnings[i] is not None
@@ -95,7 +95,7 @@ def test_json_parse_lightning_03(meteocat_lightning_meteocat_api_string_error_el
     :type meteocat_lightning_meteocat_api_string_error_ellipse: str
     :return:
     """
-    lightning = json.loads(meteocat_lightning_meteocat_api_string_error_ellipse, object_hook=Lightning.object_hook)
+    lightning = json.loads(meteocat_lightning_meteocat_api_string_error_ellipse, object_hook=Lightning.object_hook_meteocat)
     assert lightning is None
 
 
@@ -109,7 +109,7 @@ def test_json_parse_lightning_04(meteocat_lightning_meteocat_api_string_error_da
     :type meteocat_lightning_meteocat_api_string_error_date: str
     :return: None
     """
-    lightning = json.loads(meteocat_lightning_meteocat_api_string_error_date, object_hook=Lightning.object_hook)
+    lightning = json.loads(meteocat_lightning_meteocat_api_string_error_date, object_hook=Lightning.object_hook_meteocat)
     assert lightning is None
 
 
@@ -122,7 +122,7 @@ def test_json_encoder_lightning_01():
     lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
                           42.407753, 2.7945485)
     string = json.dumps(lightning, cls=Lightning.JSONEncoder)
-    assert string == ('{"meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
+    assert string == ('{"id": null, "meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
                       '"chi_squared": 0.40000001, "ellipse_major_axis": 4000, "ellipse_minor_axis": 600, '
                       '"ellipse_angle": 51, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 170144, '
                       '"coordinates_latitude": 42.407753, "coordinates_longitude": 2.7945485, '
@@ -309,24 +309,24 @@ def test_geojson_encoder_lightning_00():
                           42.407753, 2.7945485)
     string = json.dumps({'type': 'featureCollection', "features": [lightning, lightning, lightning]},
                         cls=Lightning.GeoJSONEncoder)
-    assert string == ('{"type": "featureCollection", "features": [{"type": "Feature", "id": 22449035, "geometry": '
+    assert string == ('{"type": "featureCollection", "features": [{"type": "Feature", "id": null, "geometry": '
                       '{"type": "Point", "coordinates": [2.7945485, 42.407753]}, "crs": {"type": "link", "properties": '
                       '{"href": "https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, "properties": '
-                      '{"meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
+                      '{"id": null, "meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
                       '"chi_squared": 0.40000001, "ellipse_major_axis": 4000, "ellipse_minor_axis": 600, '
                       '"ellipse_angle": 51, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 170144, '
                       '"coordinates_latitude": 42.407753, "coordinates_longitude": 2.7945485, '
-                      '"coordinates_epsg": 4258}}, {"type": "Feature", "id": 22449035, "geometry": {"type": "Point", '
+                      '"coordinates_epsg": 4258}}, {"type": "Feature", "id": null, "geometry": {"type": "Point", '
                       '"coordinates": [2.7945485, 42.407753]}, "crs": {"type": "link", "properties": {"href": '
                       '"https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, "properties": '
-                      '{"meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
+                      '{"id": null, "meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
                       '"chi_squared": 0.40000001, "ellipse_major_axis": 4000, "ellipse_minor_axis": 600, '
                       '"ellipse_angle": 51, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 170144, '
                       '"coordinates_latitude": 42.407753, "coordinates_longitude": 2.7945485, "coordinates_epsg": '
-                      '4258}}, {"type": "Feature", "id": 22449035, "geometry": {"type": "Point", "coordinates": '
+                      '4258}}, {"type": "Feature", "id": null, "geometry": {"type": "Point", "coordinates": '
                       '[2.7945485, 42.407753]}, "crs": {"type": "link", "properties": {"href": '
                       '"https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, "properties": '
-                      '{"meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
+                      '{"id": null, "meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
                       '"chi_squared": 0.40000001, "ellipse_major_axis": 4000, "ellipse_minor_axis": 600, '
                       '"ellipse_angle": 51, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 170144, '
                       '"coordinates_latitude": 42.407753, "coordinates_longitude": 2.7945485, '
@@ -342,10 +342,10 @@ def test_geojson_encoder_lightning_01():
     lightning = Lightning(22449035, "2021-11-11T08:45:00.868454Z", -137.455, 0.40000001, 4000, 600, 51, 3, True, 170144,
                           42.407753, 2.7945485)
     string = json.dumps(lightning, cls=Lightning.GeoJSONEncoder)
-    assert string == ('{"type": "Feature", "id": 22449035, "geometry": {"type": "Point", "coordinates": '
+    assert string == ('{"type": "Feature", "id": null, "geometry": {"type": "Point", "coordinates": '
                       '[2.7945485, 42.407753]}, "crs": {"type": "link", "properties": '
                       '{"href": "https://spatialreference.org/ref/epsg/4258/proj4/", "type": "proj4"}}, "properties": '
-                      '{"meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
+                      '{"id": null, "meteocat_id": 22449035, "date": "2021-11-11T08:45:00.868454Z", "peak_current": -137.455, '
                       '"chi_squared": 0.40000001, "ellipse_major_axis": 4000, "ellipse_minor_axis": 600, '
                       '"ellipse_angle": 51, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 170144, '
                       '"coordinates_latitude": 42.407753, "coordinates_longitude": 2.7945485, '
@@ -368,11 +368,10 @@ def test_geojson_encoder_lightning_02(db_session):
         lightning.srid = 25831
         lightnings.append(lightning)
     string = json.dumps(lightnings[0], cls=Lightning.GeoJSONEncoder)
-    print(string)
-    assert string == ('{"type": "Feature", "id": 123456789, "geometry": {"type": "Point", "coordinates": '
+    assert string == ('{"type": "Feature", "id": 1, "geometry": {"type": "Point", "coordinates": '
                       '[444572.9733367264, 4618246.101945659]}, "crs": {"type": "link", "properties": '
                       '{"href": "https://spatialreference.org/ref/epsg/25831/proj4/", "type": "proj4"}}, "properties": '
-                      '{"meteocat_id": 123456789, "date": "2021-11-02T01:05:37.000000Z", "peak_current": 12.45, '
+                      '{"id": 1, "meteocat_id": 123456789, "date": "2021-11-02T01:05:37.000000Z", "peak_current": 12.45, '
                       '"chi_squared": 0.57, "ellipse_major_axis": 1500.0, "ellipse_minor_axis": 300.0, '
                       '"ellipse_angle": 0.27, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 8007, '
                       '"coordinates_y": 4618246.101945659, "coordinates_x": 444572.9733367264, '
@@ -396,9 +395,46 @@ def test_json_encoder_lightning_02(db_session):
         lightning.srid = 25831
         lightnings.append(lightning)
     string = json.dumps(lightnings[0], cls=Lightning.JSONEncoder)
-    print(string)
-    assert string == ('{"meteocat_id": 123456789, "date": "2021-11-02T01:05:37.000000Z", "peak_current": 12.45, '
+    assert string == ('{"id": 1, "meteocat_id": 123456789, "date": "2021-11-02T01:05:37.000000Z", "peak_current": 12.45, '
                       '"chi_squared": 0.57, "ellipse_major_axis": 1500.0, "ellipse_minor_axis": 300.0, '
                       '"ellipse_angle": 0.27, "number_of_sensors": 3, "hit_ground": true, "municipality_code": 8007, '
                       '"coordinates_y": 4618246.101945659, "coordinates_x": 444572.9733367264, '
                       '"coordinates_epsg": 25831}')
+
+
+def test_json_parse_lightning_gisfire_01(meteocat_lightning_meteocat_api_string, meteocat_lightning_meteocat_api_json):
+    """
+    Test JSON parsing, a list of Lightning objects have to be returned when the parsing of a Meteocat API string of
+    three lightnings
+
+    :param meteocat_lightning_meteocat_api_string: Pytest fixture with a Meteocat API XDDE lightning stored in a string
+    :type meteocat_lightning_meteocat_api_string: str
+    :param meteocat_lightning_meteocat_api_json: Pytest fixture with a Meteocat API XDDE lightning parsed with the json
+    standard library to check the results
+    :type meteocat_lightning_meteocat_api_json: dict
+    :return: None
+    """
+    stj = '{"id": 123, "chi_squared":2.29999995,"coordinates_epsg":25831,"coordinates_x":211339.23024068534,' \
+          '"coordinates_y":4618049.312329493,"date":"2022-07-04T00:22:35.849800Z","ellipse_angle":125.699997,' \
+          '"ellipse_major_axis":7700.0,"ellipse_minor_axis":3000.0,"hit_ground":false,"meteocat_id":22654838,' \
+          '"municipality_code":null,"number_of_sensors":3,"peak_current":0.0}'
+    lightning = json.loads(stj, object_hook=Lightning.object_hook_gisfire)
+    assert not(lightning is None)
+    assert type(lightning) is Lightning
+    """assert lightning.meteocat_id == meteocat_lightning_meteocat_api_json['id']
+    assert lightning.date == datetime.datetime.strptime(meteocat_lightning_meteocat_api_json['data'],
+                                                        "%Y-%m-%dT%H:%M:%S.%f%z")
+    assert lightning.peak_current == meteocat_lightning_meteocat_api_json['correntPic']
+    assert lightning.chi_squared == meteocat_lightning_meteocat_api_json['chi2']
+    assert lightning.ellipse_major_axis == meteocat_lightning_meteocat_api_json['ellipse']['eixMajor']
+    assert lightning.ellipse_minor_axis == meteocat_lightning_meteocat_api_json['ellipse']['eixMenor']
+    assert lightning.ellipse_angle == meteocat_lightning_meteocat_api_json['ellipse']['angle']
+    assert lightning.number_of_sensors == meteocat_lightning_meteocat_api_json['numSensors']
+    assert lightning.hit_ground == meteocat_lightning_meteocat_api_json['nuvolTerra']
+    assert lightning._coordinates_latitude == meteocat_lightning_meteocat_api_json['coordenades']['latitud']
+    assert lightning._coordinates_longitude == meteocat_lightning_meteocat_api_json['coordenades']['longitud']
+    assert lightning.municipality_code == int(meteocat_lightning_meteocat_api_json['idMunicipi'])
+    assert lightning.geom == "SRID={2:};POINT({0:} {1:})".format(lightning._coordinates_longitude,
+                                                                 lightning._coordinates_latitude,
+                                                                 Lightning.DEFAULT_SRID_LIGHTNINGS)
+    """
