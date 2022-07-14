@@ -301,7 +301,10 @@ class Lightning(Base):
         lightning.chi_squared = float(dct['chi_squared'])
         lightning.ellipse_major_axis = float(dct['ellipse_major_axis'])
         lightning.ellipse_minor_axis = float(dct['ellipse_minor_axis'])
-        lightning.ellipse_angle = float(dct['ellipse_angle'])
+        if dct['ellipse_angle'] is None:
+            lightning.ellipse_angle = 0.0
+        else:
+            lightning.ellipse_angle = float(dct['ellipse_angle'])
         lightning.number_of_sensors = int(dct['number_of_sensors'])
         lightning.hit_ground = bool(dct['hit_ground'])
         if dct['municipality_code'] is not None:
