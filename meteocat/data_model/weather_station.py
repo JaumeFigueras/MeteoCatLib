@@ -4,7 +4,6 @@ from __future__ import annotations  # Needed to allow returning type of enclosin
 
 import enum
 import datetime
-import dateutil.parser
 import json
 
 from . import Base
@@ -18,13 +17,16 @@ from sqlalchemy import func
 from sqlalchemy import ForeignKey
 from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 
 from typing import Union
 from typing import Dict
 from typing import Optional
 from typing import Any
+from typing import List
 
-from .state import State
+from meteocat.data_model.state import State
 
 
 class WeatherStationCategory(enum.Enum):
@@ -62,17 +64,17 @@ class WeatherStationState(State):
 
     :type __tablename__: str
     :type code: WeatherStationStateCategory or Column or None
-    :type meteocat_weather_station_id: int or Column
+    :type weather_station_id: int or Column
     :type ts: datetime.datetime or Column
     :type station: relationship
     """
-    __tablename__ = 'meteocat_weather_station_state'
-    code = Column('_codi', Enum(WeatherStationStateCategory), nullable=False)
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
-    station = relationship('WeatherStation', back_populates='states')
+    __tablename__ = 'weather_station_state'
+    code = mapped_column('_codi', Enum(WeatherStationStateCategory, name='weather_station_state_category'), nullable=False)
+    ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+    weather_station_id = Column(Integer, ForeignKey('weather_station.id'))
+    station: Mapped["WeatherStation"] = relationship(back_populates='states')
 
-    def __init__(self, code: Optional[WeatherStationStateCategory, None] = None,
+    def __init__(self, code: Optional[WeatherStationStateCategory] = None,
                  from_date: Optional[datetime.datetime, None] = None,
                  to_date: Optional[datetime.datetime, None] = None) -> None:
         super().__init__(from_date, to_date)
@@ -146,26 +148,26 @@ class WeatherStation(Base):
     :type SRID_WEATHER_STATIONS: int
     """
     SRID_WEATHER_STATIONS = 4258
-    __tablename__ = 'meteocat_weather_station'
-    id = Column(Integer, primary_key=True)
-    code = Column('_codi', String, nullable=False, unique=True)
-    name = Column('_nom', String, nullable=False)
-    category = Column('_tipus', Enum(WeatherStationCategory), nullable=False)
-    _coordinates_latitude = Column('_coordenades_latitud', Float, nullable=False)
-    _coordinates_longitude = Column('_coordenades_longitud', Float, nullable=False)
-    placement = Column('_emplacament', String, nullable=False)
-    altitude = Column('_altitud', Float, nullable=False)
-    municipality_code = Column('_municipi_codi', Integer, nullable=False)
-    municipality_name = Column('_municipi_nom', String, nullable=False)
-    county_code = Column('_comarca_codi', Integer, nullable=False)
-    county_name = Column('_comarca_nom', String, nullable=False)
-    province_code = Column('_provincia_codi', Integer, nullable=False)
-    province_name = Column('_provincia_nom', String, nullable=False)
-    network_code = Column('_xarxa_codi', Integer, nullable=False)
-    network_name = Column('_xarxa_nom', String, nullable=False)
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    postgis_geometry = Column('geom', Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
-    states = relationship("WeatherStationState", back_populates='station', lazy='joined')
+    __tablename__ = 'weather_station'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    code = mapped_column('_codi', String, nullable=False, unique=True)
+    name = mapped_column('_nom', String, nullable=False)
+    category = mapped_column('_tipus', Enum(WeatherStationCategory, name='weather_station_category'), nullable=False)
+    _coordinates_latitude = mapped_column('_coordenades_latitud', Float, nullable=False)
+    _coordinates_longitude = mapped_column('_coordenades_longitud', Float, nullable=False)
+    placement = mapped_column('_emplacament', String, nullable=False)
+    altitude = mapped_column('_altitud', Float, nullable=False)
+    municipality_code = mapped_column('_municipi_codi', Integer, nullable=False)
+    municipality_name = mapped_column('_municipi_nom', String, nullable=False)
+    county_code = mapped_column('_comarca_codi', Integer, nullable=False)
+    county_name = mapped_column('_comarca_nom', String, nullable=False)
+    province_code = mapped_column('_provincia_codi', Integer, nullable=False)
+    province_name = mapped_column('_provincia_nom', String, nullable=False)
+    network_code = mapped_column('_xarxa_codi', Integer, nullable=False)
+    network_name = mapped_column('_xarxa_nom', String, nullable=False)
+    ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    postgis_geometry = mapped_column('geom', Geometry(geometry_type='POINT', srid=SRID_WEATHER_STATIONS))
+    states: Mapped[List["WeatherStationState"]] = relationship("WeatherStationState", back_populates='station', lazy='joined')
     measures = relationship("Measure", back_populates='station', lazy='select')
     # TODO: add variables relationship
 
@@ -211,6 +213,7 @@ class WeatherStation(Base):
         :param network_name: Name of the network where the station belongs
         :type network_name: str
         """
+        super().__init__()
         self.code = code
         self.name = name
         self.category = category
@@ -296,7 +299,7 @@ class WeatherStation(Base):
             raise ValueError("Longitude value must be between -180 and 180 degrees")
 
     @staticmethod
-    def object_hook(dct: Dict[str, Any]) -> Union[WeatherStation, Dict[str, Any], None]:
+    def object_hook(dct: Dict[str, Any]) -> Union[WeatherStation, Dict[str, Any], WeatherStationState, None]:
         """
         Decodes a JSON originated dict from the Meteocat API to a Lightning object
 

@@ -3,9 +3,8 @@
 
 from . import meteocat_urls
 from . import meteocat_api
-from ..classes.weather_station import WeatherStation
-from ..classes.weather_station import WeatherStationState
-from ..classes.variable import Variable
+from ..data_model.weather_station import WeatherStation
+from ..data_model.variable import Variable
 import json
 
 from typing import List

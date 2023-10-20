@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from src.gisfire_meteocat_lib.classes.weather_station import WeatherStation
-from src.gisfire_meteocat_lib.classes.weather_station import WeatherStationCategory
-from src.gisfire_meteocat_lib.classes.weather_station import WeatherStationState
-from src.gisfire_meteocat_lib.classes.weather_station import WeatherStationStateCategory
-from src.gisfire_meteocat_lib.classes.variable import Variable
-from src.gisfire_meteocat_lib.classes.variable import VariableCategory
-from src.gisfire_meteocat_lib.classes.variable import VariableState
-from src.gisfire_meteocat_lib.classes.variable import VariableStateCategory
-from src.gisfire_meteocat_lib.classes.variable import VariableTimeBase
-from src.gisfire_meteocat_lib.classes.variable import VariableTimeBaseCategory
-from src.gisfire_meteocat_lib.classes.measure import Measure
-from src.gisfire_meteocat_lib.classes.measure import MeasureValidityCategory
-from src.gisfire_meteocat_lib.classes.measure import MeasureTimeBaseCategory
+from meteocat.data_model.weather_station import WeatherStation
+from meteocat.data_model.weather_station import WeatherStationCategory
+from meteocat.data_model.weather_station import WeatherStationState
+from meteocat.data_model.weather_station import WeatherStationStateCategory
+from meteocat.data_model.variable import Variable
+from meteocat.data_model.variable import VariableCategory
+from meteocat.data_model.variable import VariableState
+from meteocat.data_model.variable import VariableStateCategory
+from meteocat.data_model.variable import VariableTimeBase
+from meteocat.data_model.variable import VariableTimeBaseCategory
+from meteocat.data_model.measure import Measure
+from meteocat.data_model.measure import MeasureValidityCategory
+from meteocat.data_model.measure import MeasureTimeBaseCategory
+from meteocat.data_model.relations import AssociationStationVariableState
 
 import pytest
 import json
@@ -405,7 +406,7 @@ def test_json_parse_variable_01(variable_str: str) -> None:
             assert state.to_date == datetime.datetime.strptime(variable_json['estats'][idx]['dataFi'],
                                                                "%Y-%m-%dT%H:%M%z")
     # There is an error in the API and multiple equal time bases are sent, so in the fixture there appear the error
-    # but the tests checks the classes recover from it
+    # but the tests checks the data_model recover from it
     assert len(variable.time_bases) == 2  # len(variable_json['basesTemporals'])
     assert len(variable_json['basesTemporals']) == 4  # the error described
     for idx in range(len(variable.time_bases)):
@@ -565,6 +566,30 @@ def test_geojson_encode_measure_03() -> None:
               '"date": "2020-01-01T10:30UTC", "date_extreme": "2020-01-01T10:30UTC", "validity_state": "V", "time_base": "SH"}}')
     assert json.loads(string) == json.loads(json.dumps(measure, cls=Measure.GeoJSONEncoder, ensure_ascii=False))
 
+
+def test_new_relation(db_session, postgresql_schema) -> None:
+    cursor = postgresql_schema.cursor()
+    cursor.execute("SELECT COUNT(*) FROM assoc_station_variable_state")
+    result = cursor.fetchone()
+    assert result[0] == 0
+    ws = WeatherStation(code='VL', name='Seròs - la Creu', category=WeatherStationCategory.AUTO,
+                             coordinates_latitude=41.46014, coordinates_longitude=0.40562,
+                             placement='Crta. de Seròs a la Granja d\'Escarp', altitude=100, municipality_code=252043,
+                             municipality_name='Seròs', county_code=33, county_name='Segrià', province_code=25,
+                             province_name='Lleida', network_code=1, network_name='XEMA')
+    var = Variable(code=3, name="variable", unit='kk*ms', acronym='KMS', category=VariableCategory.DAT, decimal_positions=2)
+    st = VariableState(code=VariableStateCategory.ACTIVE, from_date=datetime.datetime(2020, 1, 1, 2, 3, 4))
+    db_session.add(st)
+    db_session.add(var)
+    db_session.add(ws)
+    db_session.commit()
+    assert 0 == db_session.query(AssociationStationVariableState).count()
+    rel = AssociationStationVariableState()
+    rel.variable = var
+    rel.state = st
+    rel.station = ws
+    db_session.add(rel)
+    db_session.commit()
 
 
 

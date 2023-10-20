@@ -6,8 +6,9 @@ import datetime
 import dateutil.parser
 import json
 
-from . import Base
-from sqlalchemy import Column
+from meteocat.data_model import Base
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 from sqlalchemy import Integer
 from sqlalchemy import DateTime
 from sqlalchemy import func
@@ -27,14 +28,14 @@ class State(Base):
     :type to_date: datetime.datetime or Column or None
     :type ts: datetime.datetime or Column
     """
-    __abstract__ = True  # SQLAlchemy directive for abstract classes
-    id = Column(Integer, primary_key=True)
-    from_date = Column('_data_inici', DateTime(timezone=True), nullable=False)
-    to_date = Column('_data_fi', DateTime(timezone=True))
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+    __abstract__ = True  # SQLAlchemy directive for abstract data_model
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    from_date = mapped_column('_data_inici', DateTime(timezone=True), nullable=False)
+    to_date = mapped_column('_data_fi', DateTime(timezone=True))
+    ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    def __init__(self, from_date: Optional[datetime.datetime, None] = None,
-                 to_date: Optional[datetime.datetime, None] = None) -> None:
+    def __init__(self, from_date: Optional[datetime.datetime] = None,
+                 to_date: Optional[datetime.datetime] = None) -> None:
         """
         Class constructor
 
@@ -43,6 +44,7 @@ class State(Base):
         :param to_date: Date when the state finishes its validity
         :type to_date: datetime
         """
+        super().__init__()
         self.from_date = from_date
         self.to_date = to_date
 

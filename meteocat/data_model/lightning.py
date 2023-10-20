@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from __future__ import annotations  # Needed to allow returning type of enclosing class PEP 563
-from . import Base
+
+import pytz
+import json
+import datetime
+import dateutil.parser
+
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import Float
@@ -10,13 +16,13 @@ from sqlalchemy import Boolean
 from sqlalchemy import DateTime
 from sqlalchemy import func
 from geoalchemy2 import Geometry
-import dateutil.parser
-import pytz
-import json
+
+from meteocat.data_model import Base
+
 from typing import Union
+from typing import Optional
 from typing import Dict
 from typing import Any
-import datetime
 
 
 class Lightning(Base):
@@ -42,38 +48,33 @@ class Lightning(Base):
 
     TODO Testing for custom SRID
     """
-    __tablename__ = 'meteocat_lightning'
-    """SQL Alchemy database table mapping"""
-    DEFAULT_SRID_LIGHTNINGS = 4258
-    """EPSG code for the used SRS in the locations"""
-    id = Column(Integer, primary_key=True)
+    __tablename__ = 'lightning'
+    DEFAULT_SRID_LIGHTNINGS = 4258  # EPSG code for the used SRS in the locations
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     """Unique ID in the table for a lightning. Differs from the meteocat ID because it is used as a Feature id in 
     geospatial formats"""
-    meteocat_id = Column('_id', Integer, unique=True, nullable=False)
-    """Meteocat ID for the lightning"""
-    date = Column('_data', DateTime(timezone=True), nullable=False)
-    """Date when the lighting struck"""
-    peak_current = Column('_corrent_pic', Float, nullable=False)
-    chi_squared = Column('_chi2', Float, default=None)
-    ellipse_major_axis = Column('_ellipse_eix_major', Float, nullable=False)
-    ellipse_minor_axis = Column('_ellipse_eix_menor', Float, nullable=False)
-    ellipse_angle = Column('_ellipse_angle', Float, nullable=False)
-    number_of_sensors = Column('_num_sensors', Integer, nullable=False)
-    hit_ground = Column('_nuvol_terra', Boolean, nullable=False)
-    municipality_code = Column('_id_municipi', Integer, default=None)
-    _coordinates_latitude = Column('_coordenades_latitud', Float, nullable=False)
-    _coordinates_longitude = Column('_coordenades_longitud', Float, nullable=False)
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    geometry = Column('geom', Geometry(geometry_type='POINT', srid=DEFAULT_SRID_LIGHTNINGS))
+    meteocat_id = mapped_column('_id', Integer, unique=True, nullable=False)
+    date = mapped_column('_data', DateTime(timezone=True), nullable=False)
+    peak_current = mapped_column('_corrent_pic', Float, nullable=False)
+    chi_squared = mapped_column('_chi2', Float, default=None)
+    ellipse_major_axis = mapped_column('_ellipse_eix_major', Float, nullable=False)
+    ellipse_minor_axis = mapped_column('_ellipse_eix_menor', Float, nullable=False)
+    ellipse_angle = mapped_column('_ellipse_angle', Float, nullable=False)
+    number_of_sensors = mapped_column('_num_sensors', Integer, nullable=False)
+    hit_ground = mapped_column('_nuvol_terra', Boolean, nullable=False)
+    municipality_code = mapped_column('_id_municipi', Integer, default=None)
+    _coordinates_latitude = mapped_column('_coordenades_latitud', Float, nullable=False)
+    _coordinates_longitude = mapped_column('_coordenades_longitud', Float, nullable=False)
+    ts = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    geometry = mapped_column('geom', Geometry(geometry_type='POINT', srid=DEFAULT_SRID_LIGHTNINGS))
     srid = None
 
-    def __init__(self, meteocat_id: Union[int, None] = None, date: Union[str, datetime.datetime, None] = None,
-                 peak_current: Union[float, None] = None, chi_squared: Union[float, None] = None,
-                 ellipse_major_axis: Union[float, None] = None, ellipse_minor_axis: Union[float, None] = None,
-                 ellipse_angle: Union[float, None] = None, number_of_sensors: Union[int, None] = None,
-                 hit_ground: Union[bool, None] = None, municipality_code: Union[int, None] = None,
-                 coordinates_latitude: Union[float, None] = None, coordinates_longitude: Union[float, None] = None) \
-            -> None:
+    def __init__(self, meteocat_id: Optional[int] = None, date: Optional[Union[str, datetime.datetime]] = None,
+                 peak_current: Optional[float] = None, chi_squared: Optional[float] = None,
+                 ellipse_major_axis: Optional[float] = None, ellipse_minor_axis: Optional[float] = None,
+                 ellipse_angle: Optional[float] = None, number_of_sensors: Optional[int] = None,
+                 hit_ground: Optional[bool] = None, municipality_code: Optional[int] = None,
+                 coordinates_latitude: Optional[float] = None, coordinates_longitude: Optional[float] = None) -> None:
         """
         Lightning constructor
 
@@ -102,8 +103,9 @@ class Lightning(Base):
         :param coordinates_longitude: Longitude of the hit location (EPSG:4258)
         :type coordinates_longitude: float
         """
+        super().__init__()
         self.meteocat_id = meteocat_id
-        if type(date) is str:
+        if isinstance(date, str):
             self.date = dateutil.parser.isoparse(date)
         else:
             self.date = date
@@ -311,8 +313,10 @@ class Lightning(Base):
             lightning.municipality_code = int(dct['municipality_code'])
         else:
             lightning.municipality_code = None
-        lightning._coordinates_longitude = float(dct['coordinates_x']) if 'coordinates_x' in dct else float(dct['coordinates_longitude'])
-        lightning._coordinates_latitude = float(dct['coordinates_y']) if 'coordinates_y' in dct else float(dct['coordinates_latitude'])
+        lightning._coordinates_longitude = float(dct['coordinates_x']) if 'coordinates_x' in dct else (
+            float(dct['coordinates_longitude']))
+        lightning._coordinates_latitude = float(dct['coordinates_y']) if 'coordinates_y' in dct else (
+            float(dct['coordinates_latitude']))
         lightning.srid = int(dct['coordinates_epsg'])
         lightning.__format_geom()
         return lightning
@@ -418,11 +422,11 @@ class LightningAPIRequest(Base):
     :type number_of_lightnings: int
     :type ts: datetime.datetime
     """
-    __tablename__ = 'meteocat_xdde_request'
+    __tablename__ = 'xdde_request'
     date = Column('request_date', DateTime(timezone=True), primary_key=True)
     http_status_code = Column(Integer, nullable=False, default=200)
     number_of_lightnings = Column(Integer, nullable=True, default=None)
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+    ts = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     def __init__(self, date: Union[str, datetime.datetime, None] = None, http_status_code: Union[int, None] = None,
                  number_of_lightnings: Union[int, None] = None):
@@ -437,6 +441,7 @@ class LightningAPIRequest(Base):
         :param number_of_lightnings: Number of lightnings obtained from the Meteocat API call
         :type number_of_lightnings: int
         """
+        super().__init__()
         if type(date) is str:
             self.date = dateutil.parser.isoparse(date).replace(minute=0, second=0, microsecond=0, tzinfo=pytz.UTC)
         else:

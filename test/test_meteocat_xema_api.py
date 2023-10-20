@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import pytz
 
-from src.gisfire_meteocat_lib.remote_api import meteocat_xema_api
-from src.gisfire_meteocat_lib.remote_api import meteocat_urls
-from src.gisfire_meteocat_lib.classes.weather_station import WeatherStation
-from src.gisfire_meteocat_lib.classes.variable import Variable
-import datetime
+from meteocat.api import meteocat_urls, meteocat_xema_api
+from meteocat.data_model.weather_station import WeatherStation
+from meteocat.data_model import Variable
 import requests
 import pytest
-
-from typing import List
 
 
 def test_weather_stations_01(requests_mock, weather_station_api_response):

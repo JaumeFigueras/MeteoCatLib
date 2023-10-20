@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 import pytz
 
-from src.gisfire_meteocat_lib.remote_api import meteocat_xdde_api
-from src.gisfire_meteocat_lib.remote_api import meteocat_urls
-from src.gisfire_meteocat_lib.classes.lightning import Lightning
-from src.gisfire_meteocat_lib.classes.lightning import LightningAPIRequest
+from meteocat.api import meteocat_urls, meteocat_xdde_api
+from meteocat.data_model.lightning import Lightning
+from meteocat.data_model.lightning import LightningAPIRequest
 import datetime
 import requests
 import pytest

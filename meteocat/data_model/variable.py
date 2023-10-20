@@ -6,21 +6,23 @@ import enum
 import datetime
 import json
 
-from . import Base
-from .state import State
+from meteocat.data_model import Base
+from meteocat.data_model.state import State
+
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 from sqlalchemy import Enum
-from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import DateTime
 from sqlalchemy import func
-from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
 from typing import Union
 from typing import Dict
 from typing import Optional
 from typing import Any
+from typing import List
 
 
 class VariableCategory(str, enum.Enum):
@@ -74,10 +76,9 @@ class VariableState(State):
     :type code: VariableStateCategory or Column or None
     :type ts: datetime.datetime or Column
     """
-    __tablename__ = 'meteocat_variable_state'
-    code = Column('_codi', Enum(VariableStateCategory), nullable=False)
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    # assoc = relationship('WeatherStationVariableStateAssociation', back_populates='state', lazy='dynamic')
+    __tablename__ = 'variable_state'
+    code = mapped_column('_codi', Enum(VariableStateCategory, name='variable_state_category'), nullable=False)
+    ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     def __init__(self, code: Optional[VariableStateCategory, None] = None,
                  from_date: Optional[datetime.datetime, None] = None,
@@ -147,10 +148,9 @@ class VariableTimeBase(State):
     :type code: VariableStateCategory or Column or None
     :type ts: datetime.datetime or Column
     """
-    __tablename__ = 'meteocat_variable_time_base'
-    code = Column('_codi', Enum(VariableTimeBaseCategory), nullable=False)
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    # assoc_variable_time_base = relationship('WeatherStationVariableTimeBaseAssociation', back_populates='time_base', lazy='dynamic')
+    __tablename__ = 'variable_time_base'
+    code = mapped_column('_codi', Enum(VariableTimeBaseCategory, name='variable_time_base_category'), nullable=False)
+    ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     def __init__(self, code: Optional[VariableTimeBaseCategory, None] = None,
                  from_date: Optional[datetime.datetime, None] = None,
@@ -235,22 +235,22 @@ class Variable(Base):
     :type states: list()
     :type time_bases: list()
     """
-    __tablename__ = 'meteocat_variable'
-    id = Column(Integer, primary_key=True)
-    code = Column('_codi', Integer, nullable=False, unique=True)
-    name = Column('_nom', String, nullable=False)
-    unit = Column('_unitat', String, nullable=False)
-    acronym = Column('_acronim', String, nullable=False)
-    category = Column('_tipus', Enum(VariableCategory), nullable=False)
-    decimal_positions = Column('_decimals', Integer, nullable=False)
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    measures = relationship('Measure', back_populates='variable')
+    __tablename__ = 'variable'
+    id = mapped_column(Integer, primary_key=True)
+    code = mapped_column('_codi', Integer, nullable=False, unique=True)
+    name = mapped_column('_nom', String, nullable=False)
+    unit = mapped_column('_unitat', String, nullable=False)
+    acronym = mapped_column('_acronim', String, nullable=False)
+    category = mapped_column('_tipus', Enum(VariableCategory, name='variable_category'), nullable=False)
+    decimal_positions = mapped_column('_decimals', Integer, nullable=False)
+    ts = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    measures: Mapped[List["Measure"]] = relationship(back_populates="variable")
     # TODO: Add weather station relationship
 
-    def __init__(self, code: Optional[int, None] = None, name: Optional[str, None] = None,
-                 unit: Optional[str, None] = None, acronym: Optional[str, None] = None,
-                 category: Optional[VariableCategory, None] = None,
-                 decimal_positions: Optional[int, None] = None) -> None:
+    def __init__(self, code: Optional[int] = None, name: Optional[str] = None,
+                 unit: Optional[str] = None, acronym: Optional[str] = None,
+                 category: Optional[VariableCategory] = None,
+                 decimal_positions: Optional[int] = None) -> None:
         """
         Variable constructor
 
@@ -268,17 +268,17 @@ class Variable(Base):
         :param decimal_positions: Number of significant decimals of the measures
         :type decimal_positions: int
         """
+        super().__init__()
         self.code = code
         self.name = name
         self.unit = unit
         self.acronym = acronym
         self.category = category
         self.decimal_positions = decimal_positions
-        self.states = list()
-        self.time_bases = list()
-
+        self.states: List[VariableState] = list()
+        self.time_bases: List[VariableTimeBase] = list()
     @staticmethod
-    def object_hook(dct: Dict[str, Any]) -> Union[Variable, Dict[str, Any], None]:
+    def object_hook(dct: Dict[str, Any]) -> Union[Variable, Dict[str, Any], VariableTimeBase, VariableState, None]:
         """
         Decodes a JSON originated dict from the Meteocat API to a Lightning object
 
@@ -289,10 +289,10 @@ class Variable(Base):
         # weather station state dict of the Meteocat API JSON
         if all(k in dct for k in ('codi', 'dataInici', 'dataFi')):
             if isinstance(dct['codi'], str):
-                time_base = VariableTimeBase.object_hook(dct)
+                time_base: VariableTimeBase = VariableTimeBase.object_hook(dct)
                 return time_base
             else:
-                state = VariableState.object_hook(dct)
+                state: VariableState = VariableState.object_hook(dct)
                 return state
         if not (all(k in dct for k in ('codi', 'nom', 'unitat', 'acronim', 'tipus', 'decimals', 'basesTemporals'))):
             return None
@@ -309,8 +309,9 @@ class Variable(Base):
             for state in dct['estats']:
                 state: VariableState
                 variable.states.append(state)
+
         else:
-            variable.states = None
+            variable.states = list()
         for time_base in dct['basesTemporals']:
             time_base: VariableTimeBase
             if time_base not in variable.time_bases:

@@ -1,22 +1,23 @@
-CREATE TABLE public.meteocat_xdde_request
+-- meteocat_xdde.sql
+
+CREATE TABLE public.xdde_request
 (
    request_date timestamp with time zone NOT NULL,
    http_status_code integer NOT NULL DEFAULT 200,
    number_of_lightnings integer DEFAULT NULL,
    ts timestamp with time zone DEFAULT (now() at time zone 'utc'),
-   CONSTRAINT pk_xdde_requests PRIMARY KEY (request_date)
+   CONSTRAINT pk_xdde_request PRIMARY KEY (request_date)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_xdde_request
-  OWNER TO gisfireuser
+ALTER TABLE public.xdde_request
+  OWNER TO gisfire_user
 ;
-CREATE INDEX ON public.meteocat_xdde_request (request_date)
-;
+GRANT SELECT on public.xdde_request to gisfire_remoteuser;
 
-CREATE TABLE public.meteocat_lightning
+CREATE TABLE public.lightning
 (
   id bigserial,
   _id bigint NOT NULL,
@@ -31,17 +32,18 @@ CREATE TABLE public.meteocat_lightning
   _id_municipi integer DEFAULT NULL,
   _coordenades_latitud double precision NOT NULL,
   _coordenades_longitud double precision NOT NULL,
-  ts timestamp with time zone DEFAULT (now() at time zone 'utc'),
-  CONSTRAINT pk_lightnings PRIMARY KEY (id)
+  ts timestamp with time zone DEFAULT (now()),
+  CONSTRAINT pk_lightning PRIMARY KEY (id)
 )
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE public.meteocat_lightning
-  OWNER TO gisfireuser
+ALTER TABLE public.lightning
+  OWNER TO gisfire_user
 ;
-SELECT AddGeometryColumn ('public', 'meteocat_lightning', 'geom', 4258, 'POINT', 2)
+GRANT SELECT on public.lightning to gisfire_remoteuser;
+SELECT AddGeometryColumn ('public', 'lightning', 'geom', 4258, 'POINT', 2)
 ;
-CREATE INDEX ON public.meteocat_lightning (_data)
+CREATE INDEX ON public.lightning (_data)
 ;

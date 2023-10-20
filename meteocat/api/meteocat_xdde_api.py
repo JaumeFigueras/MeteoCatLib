@@ -3,8 +3,8 @@
 
 from . import meteocat_urls
 from . import meteocat_api
-from ..classes.lightning import Lightning
-from ..classes.lightning import LightningAPIRequest
+from ..data_model.lightning import Lightning
+from ..data_model.lightning import LightningAPIRequest
 import json
 import datetime
 from typing import Dict

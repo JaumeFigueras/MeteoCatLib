@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from src.gisfire_meteocat_lib.classes.lightning import Lightning
-from src.gisfire_meteocat_lib.classes.lightning import LightningAPIRequest
+from meteocat.data_model.lightning import Lightning
+from meteocat.data_model.lightning import LightningAPIRequest
 import pytest
 import json
 import datetime

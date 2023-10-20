@@ -4,8 +4,9 @@ from __future__ import annotations  # Needed to allow returning type of enclosin
 
 import pytz
 
-from . import Base
-from sqlalchemy import Column
+from meteocat.data_model import Base
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 from sqlalchemy import Integer
 from sqlalchemy import Float
 from sqlalchemy import String
@@ -15,8 +16,9 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Enum
 from sqlalchemy.orm import relationship
 
-from .variable import VariableTimeBaseCategory
-from .weather_station import WeatherStation
+from meteocat.data_model.variable import Variable
+from meteocat.data_model.variable import VariableTimeBaseCategory
+from meteocat.data_model.weather_station import WeatherStation
 
 import enum
 import datetime
@@ -64,24 +66,22 @@ class Measure(Base):
     :type station: relationship
     :type variable: relationship
    """
-    __tablename__ = 'meteocat_measure'
-    id = Column(Integer, primary_key=True)
-    meteocat_id = Column('_meteocat_id', String, nullable=False)
-    date = Column('_data', DateTime(timezone=True), nullable=False)
-    date_extreme = Column('_data_extrem', DateTime(timezone=True))
-    value = Column('_valor', Float, nullable=False)
-    validity_state = Column('_estat', Enum(MeasureValidityCategory), nullable=False)
-    time_base = Column('_base_horaria', Enum(MeasureTimeBaseCategory), nullable=False)
-    meteocat_weather_station_id = Column(Integer, ForeignKey('meteocat_weather_station.id'))
-    meteocat_variable_id = Column(Integer, ForeignKey('meteocat_variable.id'))
-    ts = Column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
-    station = relationship('WeatherStation', back_populates='measures', foreign_keys=[meteocat_weather_station_id])
-    variable = relationship('Variable', back_populates='measures', foreign_keys=[meteocat_variable_id])
+    __tablename__ = 'measure'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    meteocat_id = mapped_column('_id', String, nullable=False)
+    date = mapped_column('_data', DateTime(timezone=True), nullable=False)
+    date_extreme = mapped_column('_data_extrem', DateTime(timezone=True))
+    value = mapped_column('_valor', Float, nullable=False)
+    validity_state = mapped_column('_estat', Enum(MeasureValidityCategory), nullable=False)
+    time_base = mapped_column('_base_horaria', Enum(MeasureTimeBaseCategory), nullable=False)
+    weather_station_id = mapped_column(Integer, ForeignKey('weather_station.id'))
+    variable_id = mapped_column(Integer, ForeignKey('variable.id'))
+    ts = mapped_column(DateTime(timezone=True), server_default=func.utcnow(), nullable=False)
+    station: Mapped["WeatherStation"] = relationship(back_populates='measures')
+    variable: Mapped["Variable"] = relationship(back_populates='measures')
 
-    def __init__(self, meteocat_id: Optional[str, None] = None,
-                 date: Optional[datetime.datetime, None] = None,
-                 date_extreme: Optional[datetime.datetime, None] = None,
-                 value: Optional[float, None] = None,
+    def __init__(self, meteocat_id: Optional[str, None] = None, date: Optional[datetime.datetime, None] = None,
+                 date_extreme: Optional[datetime.datetime, None] = None, value: Optional[float, None] = None,
                  validity_state: Optional[MeasureValidityCategory, None] = None,
                  time_base: Optional[VariableTimeBaseCategory, None] = None) -> None:
         """
@@ -101,6 +101,7 @@ class Measure(Base):
         :param time_base: Data sampling period. The period can be every hour (HO) or every 30 min. (SH)
         :type time_base: MeasureTimeBaseCategory
         """
+        super().__init__()
         self.meteocat_id = meteocat_id
         self.date = date
         self.date_extreme = date_extreme
